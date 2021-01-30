@@ -55,5 +55,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "https://virtserver.swaggerhub.com/A7972/ExpressApi/1.0.0/"
 }

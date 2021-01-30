@@ -1,10 +1,15 @@
-import React, { Fragment, useCallback, useState } from 'react';
-import { TextInputField, Text, Button, toaster } from 'evergreen-ui';
+import React, { useCallback, useState } from 'react';
 import { useQueryParams, navigate } from 'raviger';
+import { Button } from '@material-ui/core';
 
 import { useAPI, useBoolean, useMountEffect } from 'lib/hooks';
 
 import { rootRoute } from 'routes';
+import Wrapper from 'components/Wrapper';
+import TextField from 'components/TextField';
+
+import styles from './index.module.scss';
+const { main, incorrect, active, header } = styles;
 
 const LoginPage = () => {
     const [user, setUser] = useState<string>('');
@@ -19,12 +24,10 @@ const LoginPage = () => {
     });
 
     return (
-        <Fragment>
-            <Text>
-                Please enter your credentials.
-            </Text>
-            <TextInputField
-                isInvalid={invalid}
+        <Wrapper size="small" className={main}>
+            <label className={header}>Please enter your credentials.</label>
+            <TextField
+                error={invalid}
                 label="Username"
                 value={user}
                 onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,8 +35,8 @@ const LoginPage = () => {
                     clearInvalid();
                 }, [clearInvalid])}
             />
-            <TextInputField
-                isInvalid={invalid}
+            <TextField
+                error={invalid}
                 label="Password"
                 type="password"
                 value={pass}
@@ -42,6 +45,7 @@ const LoginPage = () => {
                     clearInvalid();
                 }, [clearInvalid])}
             />
+            <label className={`${incorrect} ${invalid ? active : ''}`}>Invalid credentials entered.</label>
             <Button
                 disabled={invalid}
                 onClick={async () => {
@@ -53,12 +57,10 @@ const LoginPage = () => {
                         return;
                     }
                     setInvalid();
-                    toaster.danger('Wrong username or password');
+                    // toaster.danger('Wrong username or password');
                 }}
-            >
-                Log In
-            </Button>
-        </Fragment>
+            >Log In</Button>
+        </Wrapper>
     );
 };
 

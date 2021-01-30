@@ -1,8 +1,8 @@
 import React from 'react';
 import { useRoutes, Link } from 'raviger';
-import { Button } from 'evergreen-ui';
 
 import FourOhFourPage from 'containers/404';
+import { Button } from '@material-ui/core';
 
 import routing, { loginRoute } from 'routes';
 import { AuthProvider } from 'lib/hooks/Auth';

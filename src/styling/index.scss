@@ -1,0 +1,10 @@
+@import-sanitize;
+@import "./variables.scss";
+
+a {
+    text-decoration: unset;
+}
+
+body {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}

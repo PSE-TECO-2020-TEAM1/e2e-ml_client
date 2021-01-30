@@ -8,14 +8,14 @@ import { APIProvider } from 'lib/hooks/API';
 
 const entry = process.env.REACT_APP_ENTRYPOINT === 'mobile' ? './entrypoints/mobile/index.tsx' : './entrypoints/desktop/index.tsx';
 import(`${entry}`).then(({ default: App }) => {
-  ReactDOM.render(
-    <React.StrictMode>
-      <APIProvider value={new API()}>
-        <App />
-      </APIProvider>
-    </React.StrictMode>,
-    document.getElementById('root')
-  );
+    ReactDOM.render(
+        <React.StrictMode>
+            <APIProvider value={new API()}>
+                <App />
+            </APIProvider>
+        </React.StrictMode>,
+        document.getElementById('root')
+    );
 });
 
 

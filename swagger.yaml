@@ -1,0 +1,1269 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: http://localhost:5000
+info:
+  description: This is the API for An Interactive End-To-End Machine Learning Platform
+  version: "1.0.0"
+  title: An Interactive End-To-End Machine Learning Platform API
+  
+tags:
+  - name: Authentication
+  - name: Workspace Management
+  - name: Model Management
+  
+paths:
+  /auth/signup:
+    post:
+      tags:
+      - Authentication
+      operationId: signup
+      description: Registers a new user to the platform
+      parameters:
+        - name: email
+          in: query
+          schema:
+            type: string
+            example: alice@kit.edu
+        - name: username
+          in: query
+          schema:
+            type: string
+            example: Alice
+        - name: passwordHash
+          in: query
+          schema:
+            type: string
+            example: abb4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: OK
+  
+  /auth/validateEmail:
+    post:
+      tags:
+      - Authentication
+      operationId: validateEmail
+      description: compares the token that has been sent to the email of the user
+      parameters:
+        - name: token
+          in: query
+          schema:
+            type: string
+            example: abb4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: OK
+  
+  /auth/login:
+    post:
+      tags:
+      - Authentication
+      operationId: login
+      description: Authenticates the user with their credentials
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+            example: Alice
+        - name: passwordHash
+          in: query
+          schema:
+            type: string
+            example: abb4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: Tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: abb4861f0affcd32cebb65daab9c8795
+                  refresh_token:
+                    type: string
+                    example: abb4861f0affcd32cebb65daab9c8795
+  
+  /auth/refresh:
+    post:
+      tags:
+      - Authentication
+      operationId: refresh
+      description: Refreshes the access token of the user
+      parameters:
+        - name: refresh_token
+          in: query
+          schema:
+            type: string
+            example: abb4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: {new_access_token}
+        
+  
+  /api/sensors:
+    get:
+      tags:
+      - Workspace Management
+      operationId: getSensors
+      description: Lists all the available sensors with their maximum sampling rates and the
+        default sampling rate.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: all the available sensors
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      enum: [Accelerometer, Gyroscope, Magnetometer]
+                      description: name of the sensor
+                    maxSamplingRate:
+                      type: integer
+                      example: 200
+                      description: maximum sampling rate of the sensor
+                    defaultSamplingRate:
+                      type: integer
+                      example: 50
+                      description: default sampling rate of the sensor
+        '401':
+          description: Unauthorized
+  
+  /api/workspaces:
+    get:
+      tags:
+      - Workspace Management
+      operationId: getWorkspaces
+      description: Lists all the available workspaces of the user.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: all workspaces of this user
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 5ff0945f4dc30550d8f7372
+                      description: workspace ID
+                    name:
+                      type: string
+                      example: Elite Workspace
+                      description: name of the workspace
+        '401':
+          description: Unauthorized
+  
+  /api/workspaces/create:
+    post:
+      tags:
+      - Workspace Management
+      operationId: createWorkspace
+      description: Creates a new workspace with the given name and sensors.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the new workspace
+                  example: Elite Workspace
+                sensors:
+                  type: array
+                  description: sensors to be used in the new workspace
+                  items:
+                    type: object
+                    properties:
+                      sensorName:
+                        type: string
+                        enum: [Accelerometer, Gyroscope, Magnetometer]
+                        example: Gyroscope
+                        description: name of the sensor
+                      samplingRate:
+                        type: integer
+                        description: sampling rate of the sensor
+                        example: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                description: ID of the created workspace
+                example: 5ff47365a59db6b506edef06
+        '400':
+          description: Illegal name or sampling rate
+        '401':
+          description: Unauthorized
+  
+  /api/workspaces/{workspaceId}:
+    put:
+      tags:
+        - Workspace Management
+      operationId: renameWorkspace
+      description: Changes the name of the workspace to the supplied name
+      parameters: 
+      - name: workspaceId
+        in: path
+        description: ID of the workspace to be renamed
+        required: true
+        schema:
+          type: string
+          example: 5ff47800d27db878a150c51c
+      - name: workspaceName
+        in: query
+        description: new name of the workspace
+        schema:
+          type: string
+          example: Elite Workspace
+      responses:
+        '200':
+          description: Changed successfully
+        '400':
+          description: Illegal name
+        '401':
+          description: Unauthorized
+    delete:
+      tags:
+        - Workspace Management
+      operationId: deleteWorkspace
+      description: Deletes the workspace with the given id
+      parameters:
+        - name: workspaceId
+          in: path
+          description: ID of the workspace to be renamed
+          required: true
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          
+  /api/workspaces/{workspaceId}/sensors:
+    get:
+      tags:
+      - Workspace Management
+      operationId: getWorkspaceSensors
+      description: Lists the sensors used in the workspace with their sampling rates.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace to be renamed
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: sensors of the workspace
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID of the sensor
+                      example: 5ff47800d27db878a150c51c
+                    name:
+                      type: string
+                      enum: [Accelerometer, Gyroscope, Magnetometer]
+                      example: Accelerometer
+                      description: name of the sensor
+                    dataFormat:
+                      type: array
+                      description: data format of the sensor
+                      items:
+                        type: string
+                      example: [x, y, z]
+                    samplingRate:
+                      type: integer
+                      example: 50
+                      description: sampling rate of the sensor
+        '401':
+          description: Unauthorized
+
+  /api/workspaces/{workspaceId}/samples:
+    get:
+      tags:
+      - Workspace Management
+      operationId: getSamples
+      description: Lists the samples of the workspace.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: query
+          name: onlyIDs
+          description: whether the samples should include only sample IDs or also the data points it stores
+          schema:
+            type: boolean
+        - in: query
+          name: onlyHash
+          description: a unique identifier of the sample set
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    description: all samples in the workspace
+                    items:
+                      type: object
+                      properties:
+                        label:
+                          type: string
+                          description: name of the label
+                          example: Jump
+                        sensorDataPoints:
+                          type: array
+                          description: all the data points of the sample data from all the sensors of the workspace
+                          items:
+                            type: object
+                            properties:
+                              sensorId:
+                                type: string
+                                description: ID of the sensor of the data point
+                                example: 5ff47c3aa7063ee33caa5335
+                              dataPoints:
+                                type: array
+                                description: all data points of one sensor
+                                items:
+                                  type: object
+                                  properties:
+                                    timestamp:
+                                      type: integer
+                                      description: timestamp of the data point
+                                      format: number
+                                      example: 1609945761
+                                    data:
+                                      type: array
+                                      description: values of the data point
+                                      example: [24, 12, 123]
+                                      items:
+                                        type: integer
+                  - type: array
+                    description: all IDs of samples in the workspace
+                    example: [5ff47c3aa7063ee33caa5331, 5ff47c3aa7063ee33caa5332]
+                    items:
+                      type: string
+                      description: sample ID
+                      example: 5ff47c3aa7063ee33caa5331
+                  - type: string
+                    description: hash of the samples in the workspace
+        '401':
+          description: Unauthorized
+          
+  /api/workspaces/{workspaceId}/samples/{sampleId}:
+    get:
+      tags:
+      - Workspace Management
+      description: Returns the data points of the sample.
+      operationId: getSampleDataPoints
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: sampleId
+          required: true
+          description: ID of the sample
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  label:
+                    type: string
+                    description: name of the label
+                    example: Jump
+                  start:
+                    type: integer
+                    format: number
+                    description: timestamp of the start of the sample data
+                    example: 1609945761
+                  end:
+                    type: integer
+                    format: number
+                    description: timestamp of the end of the sample data
+                    example: 1609945852
+                  sensorDataPoints:
+                    type: array
+                    description: all the data points of the sample data from all the sensors of the workspace
+                    items:
+                      type: object
+                      properties:
+                        sensorId:
+                          type: string
+                          description: ID of the sensor of the data point
+                          example: 5ff47c3aa7063ee33caa5335
+                        dataPoints:
+                          type: array
+                          description: all data points of one sensor
+                          items:
+                            type: object
+                            properties:
+                              timestamp:
+                                type: integer
+                                description: timestamp of the data point
+                                format: number
+                                example: 1609945761
+                              data:
+                                type: array
+                                description: values of the data point
+                                example: [24, 12, 123]
+                                items:
+                                  type: integer
+        '401':
+            description: Unauthorized
+    delete:
+      tags:
+      - Workspace Management
+      description: Deletes the sample.
+      operationId: deleteSample
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: sampleId
+          required: true
+          description: ID of the sample to be deleted
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+          
+  /api/workspaces/{workspaceId}/samples/{sampleId}/relabel:
+    put:
+      tags:
+      - Workspace Management
+      description: Changes the label of a sample.
+      operationId: relabelSample
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: sampleId
+          required: true
+          description: ID of the sample
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: query
+          name: labelId
+          description: ID of the label
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+          
+  /api/workspaces/{workspaceId}/samples/{sampleId}/timeframes:
+    put:
+      tags:
+      - Workspace Management
+      description: Changes the timeframes of the sample.
+      operationId: setTimeFrames
+      parameters:
+        - in: path
+          name: workspaceId
+          description: ID of the workspace
+          required: true
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: sampleId
+          description: ID of the sample
+          required: true
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: new timeframes of the sample
+              items:
+                type: object
+                description: a new timeframe of the sample
+                properties:
+                  start:
+                    type: integer
+                    format: number
+                    description: timestamp of the start of the timeframe
+                    example: 1609945400
+                  end:
+                    type: integer
+                    format: number
+                    description: timestamp of the end of the timeframe
+                    example: 1609945761
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+  
+  /api/workspaces/{workspaceId}/labels:
+    get:
+      tags:
+      - Workspace Management
+      description: Lists the labels of the workspace.
+      operationId: getLabels
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: all labels of the workspace
+                items:
+                  type: object
+                  properties:
+                    labelId:
+                      type: string
+                      description: ID of the label
+                      example: 5ff47800d27db878a150c51c
+                    name:
+                      type: string
+                      description: name of the label
+                      example: Jump
+                    description:
+                      type: string
+                      description: description of the label
+                      example: Jump three times with one second pause inbetween
+        '401':
+          description: Unauthorized
+          
+  /api/workspaces/{workspaceId}/labels/create:
+    post:
+      tags:
+      - Workspace Management
+      description: Create the label
+      operationId: createLabel
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: query
+          name: labelName
+          required: true
+          description: name of the label
+          schema:
+            type: string
+            example: Elite Label
+      responses:
+        '200':
+          description: OK
+        
+  /api/workspaces/{workspaceId}/labels/{labelId}:
+    delete:
+      tags:
+      - Workspace Management
+      description: Delete the label together with its associated samples.
+      operationId: deleteLabel
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: labelId
+          required: true
+          description: ID of the label
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+  
+  /api/workspaces/{workspaceId}/labels/{labelId}/rename:
+    put:
+      tags:
+      - Workspace Management
+      description: Renames the label of the workspace.
+      operationId: renameLabel
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: labelId
+          required: true
+          description: ID of the label
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: query
+          name: labelName
+          description: new name of the label
+          schema:
+            type: string
+            example: Throw
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+  
+  /api/workspaces/{workspaceId}/labels/{labelId}/describe:
+    put:
+      tags:
+      - Workspace Management
+      description: Sets the description of the workspace to the given description.
+      operationId: describeLabel
+      parameters:
+        - in: path
+          name: workspaceId
+          description: ID of the workspace
+          required: true
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: path
+          name: labelId
+          description: ID of the label
+          required: true
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+        - in: query
+          name: description
+          description: new description of the label
+          schema:
+            type: string
+            example: Throw the device to the sky
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauhtorized
+        
+  
+  /api/workspaces/{workspaceId}/submissionId:
+    get:
+      tags:
+      - Workspace Management
+      description: Returns a submission ID that can be used to gather data to the workspace.
+      operationId: getSubmissionId
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                description: a submission ID of the workspace
+                example: abb4861f0affcd32cebb65daab9c8795
+        '401':
+          description: Unauthorized
+  
+  /api/submissionConfig:
+    get:
+      tags:
+      - Workspace Management
+      description: Returns the configuration to initiate data collection.
+      operationId: getSubmissionConfig
+      parameters:
+        - in: query
+          name: submissionId
+          description: submission ID of a workspace
+          schema:
+            type: string
+            example: abb4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sensors:
+                    type: array
+                    description: sensors to be used in data collection
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          enum: [Accelerometer, Gyroscope, Magnetometer]
+                          example: Gyroscope
+                          description: name of the sensor
+                        samplingRate:
+                          type: integer
+                          example: 50
+                          description: sampling rate of the sensor
+                  labels:
+                    type: array
+                    description: labels that can be used for the data sample to be recorded
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: name of the label
+                          example: Jump
+                        description:
+                          type: string
+                          description: description of the label
+                          example: Jump three times with one second pause inbetween
+        '400':
+          description: Invalid submission id
+
+  /api/submitSample:
+    post:
+      tags:
+      - Workspace Management
+      operationId: submitSample
+      description: Submits sample to the workspace to which the submission id belongs to.
+      parameters:
+        - in: query
+          name: submissionId
+          description: submission ID of a workspace
+          schema:
+            type: string
+            example: abb4861f0affcd32cebb65daab9c8795
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+                  example: Throw
+                start:
+                  type: integer
+                  format: number
+                  example: 1609945761
+                end:
+                  type: integer
+                  format: number
+                  example: 1609945852
+                sensorDataPoints:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      sensor:
+                        type: string
+                        description: name of the sensor of the data point
+                        enum: [Accelerometer, Gyroscope, Magnetometer]
+                        example: Gyroscope
+                      dataPoints:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            timestamp:
+                              type: integer
+                              format: number
+                              description: timestamp of the data point
+                              example: 1609945761
+                            data:
+                              type: array
+                              description: the values of the data point
+                              example: [24, 12, 123]
+                              items:
+                                type: integer
+                            
+      responses:
+        '200':
+          description: OK
+        
+  /api/parameters:
+    get:
+      tags:
+      - Model Management
+      description: Lists all the supported parameters for the training of a machine learning model.
+      operationId: parameters
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imputations:
+                    type: array
+                    items:
+                      type: string
+                      example: Mean Imputation
+                  features:
+                    type: array
+                    items:
+                      type: string
+                      example: Min
+                  normalizers:
+                    type: array
+                    items:
+                      type: string
+                      example: MinMaxScaler
+                  classifiers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: RandomForestClassifier
+                        hyperparameters:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: Window size
+                              format:
+                                type: string
+                                example: number
+                            
+  /api/workspaces/createModelWorkspace:
+    post:
+      tags:
+      - Model Management
+      description: Creates the corresponding workspace in the model management service.
+      operationId: createModelWorkspace
+      parameters:
+        - in: query
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+              type: string
+              example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+
+  /api/workspaces/{workspaceId}/models:
+    get:
+      tags:
+      - Model Management
+      description: Lists all the trained models of the workspace.
+      operationId: models
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: trained models of the workspace
+                items:
+                  type: object
+                  properties:
+                    modelId:
+                      type: string
+                      description: ID of the model
+                      example: 5ff47800d21db878a150c51c
+                    name:
+                      type: string
+                      description: name of the model
+                      example: Elite Model
+      
+  /api/workspaces/{workspaceId}/train:
+    post:
+      tags:
+      - Model Management
+      description: Trains a machine learning model with the given parameters.
+      operationId: train
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: selected parameters for the machine learning model
+              properties:
+                model_name:
+                  type: string
+                  example: Elite Model
+                imputation:
+                  type: string
+                  example: Mean Imputation
+                features:
+                  type: array
+                  items:
+                    type: string
+                    example: Min
+                normalizer:
+                  type: string
+                  example: MinMaxScaler
+                classifier:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: RandomForestClassifier
+                    hyperparameters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: Elite Parameter
+                          value:
+                            type: object
+                            example: True
+      responses:
+        '200':
+          description: OK
+      
+  /api/workspaces/{workspaceId}/trainingProgress:
+    get:
+      tags:
+      - Model Management
+      description: Returns the progress percentage of the current training.
+      operationId: trainingProgress
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: number
+                example: 0.985
+        
+  
+  /api/workspaces/{workspaceId}/models/{modelId}:
+    get:
+      tags:
+      - Model Management
+      description: Returns the model with the model ID in the workspace.
+      operationId: getModel
+      parameters:
+        - in: path
+          name: modelId
+          required: true
+          description: ID of the model
+          schema:
+            type: string
+            example: 5ff27800d27db878a150c51c
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  label_performance_metrics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        label:
+                          type: string
+                          example: Throw
+                        performance_metrics:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: F1 Score
+                              score:
+                                type: number
+                                example: 0.85
+                  imputation:
+                    type: string
+                    example: Mean Imputation
+                  features:
+                    type: array
+                    items:
+                      type: string
+                      example: Min
+                  normalizer:
+                    type: string
+                    example: MinMaxScaler
+                  classifier:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: RandomForestClassifier
+                      hyperparameters:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: Elite Parameter
+                            value:
+                              type: object
+                              example: True
+        '401':
+          description: Unauthorized
+      
+  /api/workspaces/{workspaceId}/models/{modelId}/predictionId:
+    get:
+      tags:
+      - Model Management
+      description: Returns a prediction ID that can be used to classify actions with the model.
+      operationId: predictionId
+      parameters:
+        - in: path
+          name: modelId
+          required: true
+          description: ID of the model
+          schema:
+            type: string
+            example: 5ff27800d27db878a150c51c
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                description: a prediction ID of the model
+                example: abc4861f0affcd32cebb65daab9c8795
+        '401':
+          description: Unauthorized
+
+  /api/predictionConfig:
+    get:
+      tags:
+      - Model Management
+      description: Returns the configuration to initiate action classification.
+      operationId: predictionConfig
+      parameters:
+      - in: query
+        name: predictionId
+        description: predictionId of a model which will classify actions
+        schema:
+          type: string
+          example: abc4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: sensors to be used to classify actions
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      enum: [Accelerometer, Gyroscope, Magnetometer]
+                      description: name of the sensor to be used
+                      example: Gyroscope
+                    samplingRate:
+                      type: integer
+                      description: sampling rate of the sensor to be used
+                      example: 50
+      
+  /api/submitData:
+    post:
+      tags:
+      - Model Management
+      description: upload raw sensor data to the server which will be used to
+          recognize activities
+      operationId: submitData
+      parameters:
+      - in: query
+        name: prediction_id
+        schema:
+          type: string
+          example: abc4861f0affcd32cebb65daab9c8795
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    sensorDataPoints:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          sensor:
+                            type: string
+                            description: name of the sensor of the data point
+                            enum: [Accelerometer, Gyroscope, Magnetometer]
+                            example: Gyroscope
+                          dataPoints:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                timestamp:
+                                  type: integer
+                                  format: number
+                                  description: timestamp of the data point
+                                  example: 1609945761
+                                data:
+                                  type: array
+                                  description: the values of the data point
+                                  example: [24, 12, 123]
+                                  items:
+                                    type: integer
+      
+  /api/getPrediction:
+    get:
+      tags:
+      - Model Management
+      description: returns the last prediction of the model
+      parameters:
+        - in: query
+          name: predictionId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

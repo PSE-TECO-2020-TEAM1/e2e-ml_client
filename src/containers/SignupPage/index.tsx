@@ -33,16 +33,16 @@ const SignupPage = () => {
             <TextField
                 label="Username"
                 value={user}
-                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-                    setUser(e.target.value);
+                onType={useCallback((str: string) => {
+                    setUser(str);
                 }, [])}
             />
             <TextField
                 label="Password"
                 type="password"
                 value={pass}
-                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPass(e.target.value);
+                onType={useCallback((str: string) => {
+                    setPass(str);
                 }, [])}
             />
             <TextField
@@ -50,8 +50,8 @@ const SignupPage = () => {
                 label="Email"
                 type="email"
                 value={email}
-                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-                    setEmail(e.target.value);
+                onType={useCallback((str: string) => {
+                    setEmail(str);
                 }, [])}
             />
             <label className={`${incorrect} ${wrongEmail ? active : ''}`}>{wrongEmail

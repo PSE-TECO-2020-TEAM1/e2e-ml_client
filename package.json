@@ -43,7 +43,8 @@
       "indent": [
         "error",
         4
-      ]
+      ],
+      "no-warning-comments": 1
     }
   },
   "browserslist": {
@@ -56,5 +57,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://virtserver.swaggerhub.com/A7972/ExpressApi/1.0.0/"
+  "proxy": "http://localhost:5000"
 }

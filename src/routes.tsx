@@ -4,6 +4,10 @@ import WorkspacesListPage from 'containers/WorkspacesListPage';
 import LoginPage from 'containers/LoginPage';
 import SignupPage from 'containers/SignupPage';
 
+// const WorkspacesListPage = React.lazy(() => import('./containers/WorkspacesListPage'));
+// const LoginPage = React.lazy(() => import('./containers/LoginPage'));
+// const SignupPage = React.lazy(() => import('./containers/SignupPage'));
+
 const routing = {
     '/': () => <WorkspacesListPage />,
     '/login': () => <LoginPage />,
@@ -22,3 +26,4 @@ export const workspacesListRoute = '/';
 export const rootRoute = workspacesListRoute;
 export const loginRoute = '/login';
 export const signupRoute = '/signup';
+export const workspaceRoute = (workspaceId: string) => `/w/${workspaceId}`;

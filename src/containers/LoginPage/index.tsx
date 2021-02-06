@@ -30,8 +30,8 @@ const LoginPage = () => {
                 error={invalid}
                 label="Username"
                 value={user}
-                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-                    setUser(e.target.value);
+                onType={useCallback((str: string) => {
+                    setUser(str);
                     clearInvalid();
                 }, [clearInvalid])}
             />
@@ -40,8 +40,8 @@ const LoginPage = () => {
                 label="Password"
                 type="password"
                 value={pass}
-                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPass(e.target.value);
+                onType={useCallback((str: string) => {
+                    setPass(str);
                     clearInvalid();
                 }, [clearInvalid])}
             />

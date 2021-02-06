@@ -1,5 +1,5 @@
 import { navigate, usePath } from 'raviger';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import useAPI from './API';
 
 const AuthContext = React.createContext<string>('/');
@@ -10,9 +10,12 @@ const useAuth = () => {
     
     const api = useAPI();
     const path = usePath();
-    if (api.isAuthenticated()) return;
-    if (path.startsWith(route)) return;
-    navigate(`${route}?ref=${path}`);
+
+    useEffect(() => {
+        if (api.isAuthenticated()) return;
+        if (path.startsWith(route)) return;
+        navigate(`${route}?ref=${path}`);
+    }, [api, path, route]);
 };
 
 export default useAuth;

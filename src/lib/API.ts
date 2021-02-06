@@ -27,7 +27,6 @@ export default class SameOriginAPI implements API {
     }
 
     async login(username: string, password: string): Promise<boolean> {
-        return false;
         try {
             ({
                 access_token: this.accessToken,

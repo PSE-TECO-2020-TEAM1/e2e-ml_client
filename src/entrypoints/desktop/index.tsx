@@ -16,8 +16,8 @@ const App = () => {
                 <Link href="/"><Button>workspaces</Button></Link>
                 <Link href="/login"><Button>login</Button></Link>
                 <Link href="/signup"><Button>signup</Button></Link>
-                <Link href="/w/yoooo/model/looo444/classify"><Button>yooo loooo</Button></Link>
-                <Link href="/keky"><Button>kekkk</Button></Link>
+                <Link href="/w/test/model/desd/classify"><Button>test test</Button></Link>
+                <Link href="/ktest"><Button>testk</Button></Link>
             </div>
             {route || <FourOhFourPage />}
         </AuthProvider>

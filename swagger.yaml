@@ -337,52 +337,52 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - type: array
-                    description: all samples in the workspace
-                    items:
-                      type: object
-                      properties:
-                        label:
-                          type: string
-                          description: name of the label
-                          example: Jump
-                        sensorDataPoints:
-                          type: array
-                          description: all the data points of the sample data from all the sensors of the workspace
-                          items:
-                            type: object
-                            properties:
-                              sensorId:
-                                type: string
-                                description: ID of the sensor of the data point
-                                example: 5ff47c3aa7063ee33caa5335
-                              dataPoints:
-                                type: array
-                                description: all data points of one sensor
-                                items:
-                                  type: object
-                                  properties:
-                                    timestamp:
-                                      type: integer
-                                      description: timestamp of the data point
-                                      format: number
-                                      example: 1609945761
-                                    data:
-                                      type: array
-                                      description: values of the data point
-                                      example: [24, 12, 123]
-                                      items:
-                                        type: integer
-                  - type: array
-                    description: all IDs of samples in the workspace
-                    example: [5ff47c3aa7063ee33caa5331, 5ff47c3aa7063ee33caa5332]
-                    items:
-                      type: string
-                      description: sample ID
-                      example: 5ff47c3aa7063ee33caa5331
-                  - type: string
-                    description: hash of the samples in the workspace
+                # oneOf:
+                #   - type: array
+                #     description: all samples in the workspace
+                #     items:
+                #       type: object
+                #       properties:
+                #         label:
+                #           type: string
+                #           description: name of the label
+                #           example: Jump
+                #         sensorDataPoints:
+                #           type: array
+                #           description: all the data points of the sample data from all the sensors of the workspace
+                #           items:
+                #             type: object
+                #             properties:
+                #               sensorId:
+                #                 type: string
+                #                 description: ID of the sensor of the data point
+                #                 example: 5ff47c3aa7063ee33caa5335
+                #               dataPoints:
+                #                 type: array
+                #                 description: all data points of one sensor
+                #                 items:
+                #                   type: object
+                #                   properties:
+                #                     timestamp:
+                #                       type: integer
+                #                       description: timestamp of the data point
+                #                       format: number
+                #                       example: 1609945761
+                #                     data:
+                #                       type: array
+                #                       description: values of the data point
+                #                       example: [24, 12, 123]
+                #                       items:
+                #                         type: integer
+                type: array
+                description: all IDs of samples in the workspace
+                example: [5ff47c3aa7063ee33caa5331, 5ff47c3aa7063ee33caa5332]
+                items:
+                  type: string
+                  description: sample ID
+                  example: 5ff47c3aa7063ee33caa5331
+                  # - type: string
+                  #   description: hash of the samples in the workspace
         '401':
           description: Unauthorized
           

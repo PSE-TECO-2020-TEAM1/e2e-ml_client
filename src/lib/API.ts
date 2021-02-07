@@ -32,15 +32,22 @@ export interface ISensor {
     samplingRate: SamplingRate,
 }
 
+export type Username = string;
+export type Password = string;
+export type Email = string;
+export type WorkspaceID = string;
+export type SampleID = string;
 export interface API {
-    login(username: string, password: string): Promise<boolean>,
-    signup(username: string, password: string, email: string): Promise<void>,
+    login(username: Username, password: Password): Promise<boolean>,
+    signup(username: Username, password: Password, email: Email): Promise<void>,
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>,
     train(options: IModelOptions): Promise<boolean>,
     getTrainingProgress(): Promise<number>,
     getWorkspaces(): Promise<IWorkspace[]>,
     createWorkspace(name: string, sensors: ISensor[]): Promise<boolean>
+    getWorkspaceSensors(): Promise<ISensor[]>,
+    getSamples(w: WorkspaceID): Promise<SampleID[]>,
 }
 
 export default class SameOriginAPI implements API {
@@ -51,7 +58,7 @@ export default class SameOriginAPI implements API {
         const headers: HeadersInit = new Headers();
         noauth = false; // FIXME: waiting for enes to fix swagger
         if (!noauth) headers.set('Authorization', `Bearer ${this.accessToken}`);
-
+        
         const res = await fetch(url, {
             method: 'GET',
             headers,
@@ -62,13 +69,13 @@ export default class SameOriginAPI implements API {
         if (res.status === 200 && body === '') return JSON.parse('{}');
         return JSON.parse(body);
     }
-
+    
     private post = async <T,>(url: string, data: Object, noauth: boolean = false): Promise<T> => {
         const headers: HeadersInit = new Headers();
         headers.set('Content-Type', 'application/json');
         noauth = false; // FIXME: waiting for enes to fix swagger
         if (!noauth) headers.set('Authorization', `Bearer ${this.accessToken}`);
-
+        
         const res = await fetch(url, {
             method: 'POST',
             headers,
@@ -76,12 +83,12 @@ export default class SameOriginAPI implements API {
         });
         
         const body = await res.text();
-
+        
         if (res.status === 200 && body === '') return JSON.parse('{}');
         return JSON.parse(body);
     }
     
-    async login(username: string, password: string): Promise<boolean> {
+    async login(username: Username, password: Password): Promise<boolean> {
         try {
             ({
                 access_token: this.accessToken,
@@ -93,7 +100,7 @@ export default class SameOriginAPI implements API {
         }
     }
     
-    async signup(username: string, password: string, email: string): Promise<void> {
+    async signup(username: Username, password: Password, email: Email): Promise<void> {
         await this.post('/auth/signup', { username, passwordHash: password, email }, true);
         return;
     }
@@ -115,8 +122,16 @@ export default class SameOriginAPI implements API {
     async getWorkspaces(): Promise<IWorkspace[]> {
         return await this.get<IWorkspace[]>('/api/workspaces');
     }
-
+    
     async createWorkspace(name: string, sensors: ISensor[]): Promise<boolean> {
         return this.post('/api/workspaces/create', { name, sensors });
+    }
+
+    getWorkspaceSensors(): Promise<ISensor[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {
+        const samples = await this.get<>(`/api/workspaces/${w}/samples?onlyIDs=true`);
     }
 }

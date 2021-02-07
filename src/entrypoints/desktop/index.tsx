@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRoutes, Link } from 'raviger';
 
-import FourOhFourPage from 'containers/404';
+import FourOhFourPage from 'components/404';
 import { Button } from '@material-ui/core';
 
 import routing, { loginRoute } from 'routes';

@@ -1,12 +1,18 @@
 import React from 'react';
 
-import WorkspacesListPage from 'containers/WorkspacesListPage';
-import LoginPage from 'containers/LoginPage';
-import SignupPage from 'containers/SignupPage';
+import WorkspacesListPageView from 'components/WorkspacesListPageView';
+import LoginPageView from 'components/LoginPageView';
+import SignupPageView from 'components/SignupPageView';
 
-// const WorkspacesListPage = React.lazy(() => import('./containers/WorkspacesListPage'));
-// const LoginPage = React.lazy(() => import('./containers/LoginPage'));
-// const SignupPage = React.lazy(() => import('./containers/SignupPage'));
+import useLoginPage from 'containers/useLoginPage';
+import useWorkspacesListPage from 'containers/useWorkspacesListPage';
+
+const WorkspacesListPage = () => <WorkspacesListPageView {...useWorkspacesListPage()} />;
+const LoginPage = () => <LoginPageView {...useLoginPage()} />;
+const SignupPage = () => <SignupPageView />;
+// const WorkspacesListPageView = React.lazy(() => import('./containers/WorkspacesListPageView'));
+// const LoginPageView = React.lazy(() => import('./containers/LoginPageView'));
+// const SignupPageView = React.lazy(() => import('./containers/SignupPageView'));
 
 const routing = {
     '/': () => <WorkspacesListPage />,

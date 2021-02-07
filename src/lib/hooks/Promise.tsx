@@ -7,8 +7,10 @@ export enum State {
     Rejected
 }
 
-const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>)): [State, T | undefined, any] => {
-    const [state, setState] = useState<[State, T | undefined, any]>([State.Pending, undefined, undefined]);
+export type PromisePack<T> = [State, T | undefined, any];
+
+const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>)): PromisePack<T> => {
+    const [state, setState] = useState<PromisePack<T>>([State.Pending, undefined, undefined]);
 
     useEffect(() => {
         let cancelled = false;
@@ -31,11 +33,11 @@ const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>)): [State, T | u
 
 export default usePromise;
 
-export interface PromisedProps<T,> {
+export type PromisedProps<T,> = {
     pending?: React.ReactNode,
     rejected?: React.ReactNode,
 
-    promise: [State, T | undefined, any],
+    promise: PromisePack<T>,
     children: (promiseResult: T) => React.ReactNode
 }
 

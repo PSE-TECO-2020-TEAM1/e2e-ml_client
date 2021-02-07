@@ -8,7 +8,7 @@ import Wrapper from 'components/Wrapper';
 import { Button } from '@material-ui/core';
 
 import TextField from 'components/TextField';
-import styles from 'containers/LoginPage/index.module.scss';
+import styles from 'components/LoginPageView/index.module.scss';
 const { main, incorrect, active, header } = styles;
 
 const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

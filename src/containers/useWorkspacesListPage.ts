@@ -15,7 +15,7 @@ const useWorkspacesListPage = (): WorkspaceListPageProps => {
 
     // invalidate current list after creating new one
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const workspacesPH = usePromise(useCallback(async () => (await api.getWorkspaces()).map(({ name, id }) => ({ text: name, href: workspaceRoute(id) })), [api, validity]));
+    const workspacesPH = usePromise(async () => (await api.getWorkspaces()).map(({ name, id }) => ({ text: name, href: workspaceRoute(id) })), [validity]);
 
     const createWorkspace = useCallback(async (name: string, sensors: ISensor[]) => {
         const res = await api.createWorkspace(name, sensors);

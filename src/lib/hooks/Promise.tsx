@@ -9,7 +9,7 @@ export enum State {
 
 export type PromisePack<T> = [State, T | undefined, any];
 
-const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>)): PromisePack<T> => {
+const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>), inputs: any[]): PromisePack<T> => {
     const [state, setState] = useState<PromisePack<T>>([State.Pending, undefined, undefined]);
 
     useEffect(() => {
@@ -26,7 +26,9 @@ const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>)): PromisePack<T
         return () => {
             cancelled = true;
         };
-    }, [promise]);
+    // intended charge behaviour
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, inputs);
 
     return state;
 };

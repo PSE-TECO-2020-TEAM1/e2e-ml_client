@@ -47,20 +47,21 @@ export interface API {
     getWorkspaces(): Promise<IWorkspace[]>,
     createWorkspace(name: string, sensors: ISensor[]): Promise<boolean>
     getWorkspaceSensors(): Promise<ISensor[]>,
-    getSamples(w: WorkspaceID): Promise<SampleID[]>,
+    getSampleIds(w: WorkspaceID): Promise<SampleID[]>,
+    deleteSample(w: WorkspaceID, sample: string): Promise<void>; 
 }
 
 export default class SameOriginAPI implements API {
     private accessToken: string | null = null;
     private refreshToken: string | null = null;
     
-    private get = async <T,>(url: string, noauth: boolean = false): Promise<T> => {
+    private get = async <T,>(url: string, noauth: boolean = false, method: string = 'GET'): Promise<T> => {
         const headers: HeadersInit = new Headers();
         noauth = false; // FIXME: waiting for enes to fix swagger
         if (!noauth) headers.set('Authorization', `Bearer ${this.accessToken}`);
         
         const res = await fetch(url, {
-            method: 'GET',
+            method,
             headers,
         });
         
@@ -69,6 +70,8 @@ export default class SameOriginAPI implements API {
         if (res.status === 200 && body === '') return JSON.parse('{}');
         return JSON.parse(body);
     }
+
+    private delete = <T,>(url: string) => this.get<T>(url, undefined, 'DELETE');
     
     private post = async <T,>(url: string, data: Object, noauth: boolean = false): Promise<T> => {
         const headers: HeadersInit = new Headers();
@@ -104,7 +107,7 @@ export default class SameOriginAPI implements API {
         await this.post('/auth/signup', { username, passwordHash: password, email }, true);
         return;
     }
-
+    
     isAuthenticated(): boolean {
         return !!this.accessToken;
     }
@@ -126,12 +129,16 @@ export default class SameOriginAPI implements API {
     async createWorkspace(name: string, sensors: ISensor[]): Promise<boolean> {
         return this.post('/api/workspaces/create', { name, sensors });
     }
-
+    
     getWorkspaceSensors(): Promise<ISensor[]> {
         throw new Error('Method not implemented.');
     }
-
+    
     async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {
-        const samples = await this.get<>(`/api/workspaces/${w}/samples?onlyIDs=true`);
+        return await this.get<SampleID[]>(`/api/workspaces/${w}/samples?onlyIDs=true`);
+    }
+
+    async deleteSample(w: string, sample: string): Promise<void> {
+        return await this.delete(`/api/workspaces/${w}/samples/${sample}`);
     }
 }

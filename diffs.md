@@ -6,3 +6,5 @@ API methods don't accept IWorkspace, rather workspaceId
 
 getSamples -> getSampleIds
 getDataCollectionURL -> getDataCollectionID
+
++++ deleteLabel

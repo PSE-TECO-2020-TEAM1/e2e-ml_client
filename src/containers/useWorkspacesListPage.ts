@@ -6,8 +6,6 @@ import { SensorOptions } from 'lib/API';
 import useWorkspaceCreationState from './useWorkspaceCreation';
 import { WorkspaceListPageProps } from 'components/WorkspacesListPageView';
 
-console.log('only one plzzzzz');
-
 const useWorkspacesListPage = (): WorkspaceListPageProps => {
     useAuth();
     const [validity, , , flipValidation] = useBoolean(false);

@@ -601,6 +601,10 @@ paths:
                       type: string
                       description: description of the label
                       example: Jump three times with one second pause inbetween
+                    sampleCount:
+                      type: number
+                      description: sample counts
+                      example: 42
         '401':
           description: Unauthorized
           
@@ -618,13 +622,16 @@ paths:
           schema:
             type: string
             example: 5ff47800d27db878a150c51c
-        - in: query
-          name: labelName
-          required: true
-          description: name of the label
-          schema:
-            type: string
-            example: Elite Label
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the label
+                  example: Elite Label
       responses:
         '200':
           description: OK
@@ -677,12 +684,16 @@ paths:
           schema:
             type: string
             example: 5ff47800d27db878a150c51c
-        - in: query
-          name: labelName
-          description: new name of the label
-          schema:
-            type: string
-            example: Throw
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: new name of the label
+                  example: Elite New Label Name
       responses:
         '200':
           description: OK
@@ -710,12 +721,16 @@ paths:
           schema:
             type: string
             example: 5ff47800d27db878a150c51c
-        - in: query
-          name: description
-          description: new description of the label
-          schema:
-            type: string
-            example: Throw the device to the sky
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: description of label
+                  example: Throw the device to the sky
       responses:
         '200':
           description: OK

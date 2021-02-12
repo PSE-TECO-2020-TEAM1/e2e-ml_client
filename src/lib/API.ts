@@ -52,9 +52,10 @@ export interface ISensor {
 }
 
 export interface ILabel {
-    id: LabelID,
+    labelId: LabelID,
     name: string,
-    description: string
+    description: string,
+    sampleCount: number
 }
 
 export interface IDatapoint {
@@ -93,6 +94,7 @@ export interface API {
     createLabel(w: WorkspaceID, labelName: string): Promise<void>;
     renameLabel(w: WorkspaceID, l: LabelID, name: string): Promise<void>;
     describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void>;
+    deleteLabel(w: WorkspaceID, l: LabelID): Promise<void>;
     getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample>;
 }
 
@@ -186,33 +188,37 @@ export default class SameOriginAPI implements API {
     async deleteSample(w: WorkspaceID, sample: string): Promise<void> {
         return await this.delete(`/api/workspaces/${w}/samples/${sample}`);
     }
-
+    
     async getDataCollectionID(w: WorkspaceID): Promise<string> {
         return await this.get<string>(`/api/workspaces/${w}/submissionId`);
     }
-
+    
     getPredictionID(w: string, m: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
-
-    getLabels(w: string): Promise<ILabel[]> {
-        throw new Error('Method not implemented.');
+    
+    async getLabels(w: string): Promise<ILabel[]> {
+        return await this.get<ILabel[]>(`/api/workspaces/${w}/labels`);
     }
-
+    
     deleteWorkspace(w: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-
+    
     createLabel(w: string, labelName: string): Promise<void> {
-        throw new Error('Method not implemented.');
+        return this.post(`/api/workspaces/${w}/labels/create`, { name: labelName });
     }
-
+    
     renameLabel(w: string, l: string, name: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-
+    
     describeLabel(w: string, l: string, desc: string): Promise<void> {
         throw new Error('Method not implemented.');
+    }
+    
+    deleteLabel(w: string, l: string): Promise<void> {
+        return this.delete(`/api/workspaces/${w}/labels/${l}`);
     }
     
     getSampleDetails(w: string, s: string): Promise<ISample> {

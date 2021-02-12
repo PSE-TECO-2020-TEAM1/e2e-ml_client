@@ -119,15 +119,16 @@ export default class SameOriginAPI implements API {
     }
     
     private delete = <T,>(url: string) => this.get<T>(url, undefined, 'DELETE');
+    private put = <T,Y>(url: string, data: T) => this.post<T,Y>(url, data, undefined, 'PUT');
     
-    private post = async <T,>(url: string, data: Object, noauth: boolean = false): Promise<T> => {
+    private post = async <Input,Output>(url: string, data: Input, noauth: boolean = false, method: string = 'POST'): Promise<Output> => {
         const headers: HeadersInit = new Headers();
         headers.set('Content-Type', 'application/json');
         noauth = false; // FIXME: waiting for enes to fix swagger
         if (!noauth) headers.set('Authorization', `Bearer ${this.accessToken}`);
         
         const res = await fetch(url, {
-            method: 'POST',
+            method: method,
             headers,
             body: JSON.stringify(data)
         });
@@ -193,35 +194,35 @@ export default class SameOriginAPI implements API {
         return await this.get<string>(`/api/workspaces/${w}/submissionId`);
     }
     
-    getPredictionID(w: string, m: string): Promise<string> {
+    getPredictionID(w: WorkspaceID, m: ModelID): Promise<string> {
         throw new Error('Method not implemented.');
     }
     
-    async getLabels(w: string): Promise<ILabel[]> {
+    async getLabels(w: WorkspaceID): Promise<ILabel[]> {
         return await this.get<ILabel[]>(`/api/workspaces/${w}/labels`);
     }
     
-    deleteWorkspace(w: string): Promise<void> {
+    deleteWorkspace(w: WorkspaceID): Promise<void> {
         throw new Error('Method not implemented.');
     }
     
-    createLabel(w: string, labelName: string): Promise<void> {
+    createLabel(w: WorkspaceID, labelName: string): Promise<void> {
         return this.post(`/api/workspaces/${w}/labels/create`, { name: labelName });
     }
     
-    renameLabel(w: string, l: string, name: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    renameLabel(w: WorkspaceID, l: LabelID, name: string): Promise<void> {
+        return this.put(`/api/workspaces/${w}/labels/${l}/rename`, { name });
     }
     
-    describeLabel(w: string, l: string, desc: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void> {
+        return this.put(`/api/workspaces/${w}/labels/${l}/describe`, { description: desc });
     }
     
-    deleteLabel(w: string, l: string): Promise<void> {
+    deleteLabel(w: WorkspaceID, l: LabelID): Promise<void> {
         return this.delete(`/api/workspaces/${w}/labels/${l}`);
     }
     
-    getSampleDetails(w: string, s: string): Promise<ISample> {
+    getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample> {
         throw new Error('Method not implemented.');
     }
 }

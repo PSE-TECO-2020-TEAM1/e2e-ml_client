@@ -1,18 +1,28 @@
+import CovertTextInput from 'components/CovertTextButtonInput';
 import { TextInput } from 'components/TextField';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import React from 'react';
 
-type Label = { name: string, count: number, id: string, desc: string };
+type Label = {
+    name: string,
+    count: number,
+    id: string,
+    desc: string,
+    onNameChange: (n: string) => void | Promise<void>,
+    onDescChange: (n: string) => void | Promise<void>,
+};
 
 export type WorkspaceLabelsPageViewProps = {
     labelsPH: PromisePack<Label[]>,
-    name: string,
-    onName: (s: string) => void | Promise<void>,
+    createName: string,
+    onCreateName: (s: string) => void | Promise<void>,
     onCreate: () => void | Promise<void>,
     onDeleteLabel: (id: string) => void | Promise<void>
 }
 
-const WorkspaceLabelsPageView = ({ labelsPH, name, onName, onDeleteLabel, onCreate }: WorkspaceLabelsPageViewProps) => <>
+const WorkspaceLabelsPageView = ({
+    labelsPH, createName, onCreateName, onDeleteLabel, onCreate
+}: WorkspaceLabelsPageViewProps) => <>
     <table>
         <thead>
             <tr>
@@ -32,11 +42,11 @@ const WorkspaceLabelsPageView = ({ labelsPH, name, onName, onDeleteLabel, onCrea
                     <td>0</td>
                     <td></td>
                 </tr>
-            }>{labels => labels.map(({name, count, id, desc}, i) =>
+            }>{labels => labels.map(({name, count, id, desc, onNameChange, onDescChange}, i) =>
                     <tr key={name}>
                         <td>{i}</td>
-                        <td>{name}</td>
-                        <td>{desc}</td>
+                        <td><CovertTextInput value={name} onChange={onNameChange}/></td>
+                        <td><CovertTextInput value={desc} onChange={onDescChange}/></td>
                         <td>{count}</td>
                         <td><button onClick={() => onDeleteLabel(id)}>DEL</button></td>
                     </tr>
@@ -46,7 +56,7 @@ const WorkspaceLabelsPageView = ({ labelsPH, name, onName, onDeleteLabel, onCrea
         <tfoot>
             <tr>
                 <td></td>
-                <td><TextInput value={name} onType={onName}/></td>
+                <td><TextInput value={createName} onType={onCreateName}/></td>
                 <td><button onClick={onCreate}>CREATE</button></td>
                 <td></td>
             </tr>

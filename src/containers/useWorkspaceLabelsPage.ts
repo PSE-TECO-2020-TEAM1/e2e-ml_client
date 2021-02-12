@@ -1,31 +1,47 @@
 import { WorkspaceLabelsPageViewProps } from 'components/WorkspaceLabelsPageView';
-import { useAPI, useAuth, useBoolean, usePromise } from 'lib/hooks';
+import { useAPI, useAuth, useCounter, usePromise } from 'lib/hooks';
 import { useCallback, useState } from 'react';
 
 const useWorkspaceLabelsPage = (workspaceId: string): WorkspaceLabelsPageViewProps => {
     useAuth();
     const api = useAPI();
-    const [validity, , ,flip] = useBoolean();
+    const [validity, flip] = useCounter();
 
-    const [name, setName] = useState<string>('');
-    const onName = useCallback((str: string) => setName(str), []);
+    const [createName, setName] = useState<string>('');
+    const onCreateName = useCallback((str: string) => setName(str), []);
     const onCreate = useCallback(async () => {
-        const pr = api.createLabel(workspaceId, name);
+        const pr = api.createLabel(workspaceId, createName);
         setName('');
         await pr;
         flip();
-    }, [api, name, workspaceId, flip]);
+    }, [api, createName, workspaceId, flip]);
     const onDeleteLabel = useCallback(async (id: string) => {
         await api.deleteLabel(workspaceId, id);
         flip();
     }, [api, workspaceId, flip]);
 
+    const onNameChange = (id: string) => async (str: string) => {
+        await api.renameLabel(workspaceId, id, str);
+        flip();
+    };
+
+    const onDescChange = (id: string) => async (str: string) => {
+        await api.describeLabel(workspaceId, id, str);
+        flip();
+    };
+
     const labelsPH = usePromise(async() => 
         (await api.getLabels(workspaceId))
-            .map(({ name, sampleCount: count, labelId: id, description: desc }) => ({ name, count, id, desc }))
+            .map(({ name, sampleCount: count, labelId: id, description: desc }) => {
+                return {
+                    name, count, id, desc,
+                    onNameChange: onNameChange(id),
+                    onDescChange: onDescChange(id)
+                };
+            })
     , [validity]);
 
-    return { name, onName, onCreate, onDeleteLabel, labelsPH };
+    return { createName, onCreateName, onCreate, onDeleteLabel, labelsPH };
 }; 
 
 export default useWorkspaceLabelsPage;

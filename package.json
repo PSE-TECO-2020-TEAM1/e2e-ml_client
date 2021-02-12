@@ -16,6 +16,7 @@
     "qrcode.react": "^1.0.1",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
+    "react-contenteditable": "^3.3.5",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "sass": "^1.32.5",

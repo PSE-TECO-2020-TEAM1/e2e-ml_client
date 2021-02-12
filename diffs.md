@@ -5,3 +5,4 @@ WorkspaceCreation page has 'name' state
 API methods don't accept IWorkspace, rather workspaceId
 
 getSamples -> getSampleIds
+getDataCollectionURL -> getDataCollectionID

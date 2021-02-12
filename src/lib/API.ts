@@ -49,6 +49,7 @@ export interface API {
     getWorkspaceSensors(): Promise<ISensor[]>,
     getSampleIds(w: WorkspaceID): Promise<SampleID[]>,
     deleteSample(w: WorkspaceID, sample: string): Promise<void>; 
+    getDataCollectionID(w: WorkspaceID): Promise<string>;
 }
 
 export default class SameOriginAPI implements API {
@@ -70,7 +71,7 @@ export default class SameOriginAPI implements API {
         if (res.status === 200 && body === '') return JSON.parse('{}');
         return JSON.parse(body);
     }
-
+    
     private delete = <T,>(url: string) => this.get<T>(url, undefined, 'DELETE');
     
     private post = async <T,>(url: string, data: Object, noauth: boolean = false): Promise<T> => {
@@ -137,8 +138,12 @@ export default class SameOriginAPI implements API {
     async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {
         return await this.get<SampleID[]>(`/api/workspaces/${w}/samples?onlyIDs=true`);
     }
-
-    async deleteSample(w: string, sample: string): Promise<void> {
+    
+    async deleteSample(w: WorkspaceID, sample: string): Promise<void> {
         return await this.delete(`/api/workspaces/${w}/samples/${sample}`);
+    }
+
+    async getDataCollectionID(w: WorkspaceID): Promise<string> {
+        return await this.get<string>(`/api/workspaces/${w}/submissionId`);
     }
 }

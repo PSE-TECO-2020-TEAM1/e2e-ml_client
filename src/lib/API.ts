@@ -1,5 +1,17 @@
 import { SamplingRate, SensorName } from 'lib/sensors';
 
+export type Username = string;
+export type Password = string;
+export type Email = string;
+export type WorkspaceID = string;
+export type SampleID = string;
+export type ModelID = string;
+export type LabelID = string;
+export type SensorID = string;
+export type UnixTimestamp = number;
+export type DataFormat = string[];
+export type Data = number[];
+
 export interface Hyperparameter {
     name: string,
     format: string
@@ -14,7 +26,7 @@ export interface TrainingParameters {
     classifier: Classifier[]
 }
 
-export interface IModelOptions {
+export interface ModelOptions {
     name: string,
     features: string[],
     imputation: string,
@@ -22,34 +34,66 @@ export interface IModelOptions {
     classifier: Classifier
 }
 
+export interface SensorOptions {
+    sensorName: SensorName,
+    samplingRate: SamplingRate,
+}
+
 export interface IWorkspace {
-    id: string,
+    id: WorkspaceID,
     name: string
 }
 
 export interface ISensor {
-    sensorName: SensorName
+    id: SensorID,
+    name: SensorName,
     samplingRate: SamplingRate,
+    dataFormat: DataFormat
 }
 
-export type Username = string;
-export type Password = string;
-export type Email = string;
-export type WorkspaceID = string;
-export type SampleID = string;
+export interface ILabel {
+    id: LabelID,
+    name: string,
+    description: string
+}
+
+export interface IDatapoint {
+    timestamp: UnixTimestamp,
+    data: Data
+}
+
+export interface ISensorDatapoints {
+    sensorId: SensorID,
+    datapoints: IDatapoint[]
+}
+
+export interface ISample {
+    label: ILabel,
+    start: UnixTimestamp,
+    end: UnixTimestamp,
+    data: ISensorDatapoints[]
+}
+
 export interface API {
-    login(username: Username, password: Password): Promise<boolean>,
-    signup(username: Username, password: Password, email: Email): Promise<void>,
+    login(username: Username, password: Password): Promise<boolean>;
+    signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
-    getAvailableTrainingParameters(): Promise<TrainingParameters>,
-    train(options: IModelOptions): Promise<boolean>,
-    getTrainingProgress(): Promise<number>,
-    getWorkspaces(): Promise<IWorkspace[]>,
-    createWorkspace(name: string, sensors: ISensor[]): Promise<boolean>
-    getWorkspaceSensors(): Promise<ISensor[]>,
-    getSampleIds(w: WorkspaceID): Promise<SampleID[]>,
+    getAvailableTrainingParameters(): Promise<TrainingParameters>;
+    train(options: ModelOptions): Promise<boolean>;
+    getTrainingProgress(): Promise<number>;
+    getWorkspaces(): Promise<IWorkspace[]>;
+    createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
+    getWorkspaceSensors(): Promise<ISensor[]>;
+    getSampleIds(w: WorkspaceID): Promise<SampleID[]>;
     deleteSample(w: WorkspaceID, sample: string): Promise<void>; 
     getDataCollectionID(w: WorkspaceID): Promise<string>;
+    getPredictionID(w: WorkspaceID, m: ModelID): Promise<string>;
+    getLabels(w: WorkspaceID): Promise<ILabel[]>;
+    deleteWorkspace(w: WorkspaceID): Promise<void>;
+    createLabel(w: WorkspaceID, labelName: string): Promise<void>;
+    renameLabel(w: WorkspaceID, l: LabelID, name: string): Promise<void>;
+    describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void>;
+    getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample>;
 }
 
 export default class SameOriginAPI implements API {
@@ -116,7 +160,7 @@ export default class SameOriginAPI implements API {
     getAvailableTrainingParameters(): Promise<TrainingParameters> {
         throw new Error('Method not implemented.');
     }
-    train(options: IModelOptions): Promise<boolean> {
+    train(options: ModelOptions): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
     getTrainingProgress(): Promise<number> {
@@ -127,7 +171,7 @@ export default class SameOriginAPI implements API {
         return await this.get<IWorkspace[]>('/api/workspaces');
     }
     
-    async createWorkspace(name: string, sensors: ISensor[]): Promise<boolean> {
+    async createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean> {
         return this.post('/api/workspaces/create', { name, sensors });
     }
     
@@ -145,5 +189,33 @@ export default class SameOriginAPI implements API {
 
     async getDataCollectionID(w: WorkspaceID): Promise<string> {
         return await this.get<string>(`/api/workspaces/${w}/submissionId`);
+    }
+
+    getPredictionID(w: string, m: string): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
+
+    getLabels(w: string): Promise<ILabel[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    deleteWorkspace(w: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    createLabel(w: string, labelName: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    renameLabel(w: string, l: string, name: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    describeLabel(w: string, l: string, desc: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+    
+    getSampleDetails(w: string, s: string): Promise<ISample> {
+        throw new Error('Method not implemented.');
     }
 }

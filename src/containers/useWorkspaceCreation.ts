@@ -1,5 +1,5 @@
 import { WorkspaceCreationProps, WorkspaceCreationSensorAttrs } from 'components/WorkspaceCreation';
-import { ISensor } from 'lib/API';
+import { SensorOptions } from 'lib/API';
 import sensors, { SensorName } from 'lib/sensors';
 import { useCallback, useReducer, useState } from 'react';
 
@@ -31,7 +31,7 @@ const areRatesValid = (state: State) => {
 
 // const areRatesValid = (state: State) => Object.values(state).reduce((agg, cur) => agg && cur.rateValid, true);
 
-const useWorkspaceCreation = (create: (name: string, sensors: ISensor[]) => Promise<boolean>): WorkspaceCreationProps => {
+const useWorkspaceCreation = (create: (name: string, sensors: SensorOptions[]) => Promise<boolean>): WorkspaceCreationProps => {
     const [name, setName] = useState<string>('');
     const [state, dispatch] = useReducer(reduceSensors, undefined, initialSensors);
 

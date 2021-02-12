@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useAPI, useAuth, useBoolean } from 'lib/hooks';
 import usePromise from 'lib/hooks/Promise';
 import { workspaceRoute } from 'routes';
-import { ISensor } from 'lib/API';
+import { SensorOptions } from 'lib/API';
 import useWorkspaceCreationState from './useWorkspaceCreation';
 import { WorkspaceListPageProps } from 'components/WorkspacesListPageView';
 
@@ -17,7 +17,7 @@ const useWorkspacesListPage = (): WorkspaceListPageProps => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const workspacesPH = usePromise(async () => (await api.getWorkspaces()).map(({ name, id }) => ({ text: name, href: workspaceRoute(id) })), [validity]);
 
-    const createWorkspace = useCallback(async (name: string, sensors: ISensor[]) => {
+    const createWorkspace = useCallback(async (name: string, sensors: SensorOptions[]) => {
         const res = await api.createWorkspace(name, sensors);
         flipValidation();
         return res;

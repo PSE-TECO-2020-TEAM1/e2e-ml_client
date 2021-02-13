@@ -12,18 +12,18 @@ export type UnixTimestamp = number;
 export type DataFormat = string[];
 export type Data = number[];
 
-export interface Hyperparameter {
+export interface HyperparameterOptions {
     name: string,
     format: string
 }
 
-export interface Classifier {
+export interface ClassifierOptions {
     name: string,
-    hyperparameters: Hyperparameter[]
+    hyperparameters: HyperparameterOptions[]
 }
 
 export interface TrainingParameters {
-    classifier: Classifier[]
+    classifier: ClassifierOptions[]
 }
 
 export interface ModelOptions {
@@ -31,12 +31,17 @@ export interface ModelOptions {
     features: string[],
     imputation: string,
     normalizer: string,
-    classifier: Classifier
+    classifier: ClassifierOptions
 }
 
 export interface SensorOptions {
     sensorName: SensorName,
     samplingRate: SamplingRate,
+}
+
+export interface Timeframe {
+    start: UnixTimestamp;
+    end: UnixTimestamp;
 }
 
 export interface IWorkspace {
@@ -75,6 +80,37 @@ export interface ISample {
     data: ISensorDatapoints[]
 }
 
+export interface IModel {
+    id: ModelID,
+    name: string,
+}
+
+export type IMetric = { name: string, score: number };
+
+export type ILabelPerformance = {
+    label: LabelID,
+    metrics: IMetric[]
+}
+
+export interface IHyperparameter {
+    name: string,
+    value: any
+}
+
+export interface IClassifier {
+    name: string,
+    hyperparameters: IHyperparameter[]
+}
+
+export interface IModelDetails {
+    name: string,
+    labelPerformance: ILabelPerformance[],
+    imputation: string,
+    normalizer: string,
+    features: string[],
+    classifier: IClassifier
+}
+
 export interface API {
     login(username: Username, password: Password): Promise<boolean>;
     signup(username: Username, password: Password, email: Email): Promise<void>;
@@ -96,6 +132,13 @@ export interface API {
     describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void>;
     deleteLabel(w: WorkspaceID, l: LabelID): Promise<void>;
     getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample>;
+    setSampleLabel(w: WorkspaceID, s: SampleID, l: LabelID): Promise<void>;
+    setSampleTimeframe(w: WorkspaceID, s: SampleID, frame: Timeframe): Promise<void>;
+    getModels(w: WorkspaceID): Promise<IModel[]>;
+    getModelDetails(w: WorkspaceID, m: ModelID): Promise<IModelDetails>;
+    renameModel(w: WorkspaceID, m: ModelID, name: string): Promise<void>;
+    deleteModel(w: WorkspaceID, m: ModelID): Promise<void>;
+
 }
 
 export default class SameOriginAPI implements API {
@@ -175,7 +218,7 @@ export default class SameOriginAPI implements API {
     }
     
     async createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean> {
-        return this.post('/api/workspaces/create', { name, sensors });
+        return await this.post('/api/workspaces/create', { name, sensors });
     }
     
     getWorkspaceSensors(): Promise<ISensor[]> {
@@ -206,23 +249,58 @@ export default class SameOriginAPI implements API {
         throw new Error('Method not implemented.');
     }
     
-    createLabel(w: WorkspaceID, labelName: string): Promise<void> {
-        return this.post(`/api/workspaces/${w}/labels/create`, { name: labelName });
+    async createLabel(w: WorkspaceID, labelName: string): Promise<void> {
+        return await this.post(`/api/workspaces/${w}/labels/create`, { name: labelName });
     }
     
-    renameLabel(w: WorkspaceID, l: LabelID, name: string): Promise<void> {
-        return this.put(`/api/workspaces/${w}/labels/${l}/rename`, { name });
+    async renameLabel(w: WorkspaceID, l: LabelID, name: string): Promise<void> {
+        return await this.put(`/api/workspaces/${w}/labels/${l}/rename`, { name });
     }
     
-    describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void> {
-        return this.put(`/api/workspaces/${w}/labels/${l}/describe`, { description: desc });
+    async describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void> {
+        return await this.put(`/api/workspaces/${w}/labels/${l}/describe`, { description: desc });
     }
     
-    deleteLabel(w: WorkspaceID, l: LabelID): Promise<void> {
-        return this.delete(`/api/workspaces/${w}/labels/${l}`);
+    async deleteLabel(w: WorkspaceID, l: LabelID): Promise<void> {
+        return await this.delete(`/api/workspaces/${w}/labels/${l}`);
     }
     
     getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample> {
         throw new Error('Method not implemented.');
+    }
+
+    setSampleLabel(w: string, s: string, l: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+    setSampleTimeframe(w: string, s: string, frame: Timeframe): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+    async getModels(w: string): Promise<IModel[]> {
+        const list = await this.get<{ modelId: string, name: string }[]>(`/api/workspaces/${w}/models`);
+        return list.map(({ modelId: id, name }) => ({ id, name }));
+    }
+    
+    async getModelDetails(w: string, m: string): Promise<IModelDetails> {
+        const { label_performance_metrics: labelPerformance, ...rest } = await this.get<{
+            name: string,
+            label_performance_metrics: {
+                label: string,
+                performance_metrics: IMetric[]
+            }[],
+            imputation: string,
+            normalizer: string,
+            features: string[],
+            classifier: IClassifier
+        }>(`/api/workspaces/${w}/models/${m}`);
+        
+        return { ...rest, labelPerformance: labelPerformance.map(({ label, performance_metrics: metrics }) => ({ label, metrics })) };
+    }
+
+    async renameModel(w: string, m: string, name: string): Promise<void> {
+        return await this.put(`/api/workspaces/${w}/models/${m}`, { name });
+    }
+
+    async deleteModel(w: string, m: string): Promise<void> {
+        return await this.delete(`/api/workspaces/${w}/models/${m}`);
     }
 }

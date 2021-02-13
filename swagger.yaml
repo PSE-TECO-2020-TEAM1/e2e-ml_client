@@ -1088,6 +1088,9 @@ paths:
               schema:
                 type: object
                 properties:
+                  name:
+                    type: string
+                    example: Elite Model
                   label_performance_metrics:
                     type: array
                     items:
@@ -1095,7 +1098,7 @@ paths:
                       properties:
                         label:
                           type: string
-                          example: Throw
+                          example: 5ff47800d27db878a150c51c
                         performance_metrics:
                           type: array
                           items:
@@ -1137,6 +1140,57 @@ paths:
                               example: True
         '401':
           description: Unauthorized
+
+    put:
+      description: rename model
+      parameters:
+        - in: path
+          name: modelId
+          required: true
+          description: ID of the model
+          schema:
+            type: string
+            example: 5ff27800d27db878a150c51c
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: CoolModel
+      responses:
+        '200':
+          description: OK
+
+    delete:
+      description: delete model
+      parameters:
+        - in: path
+          name: modelId
+          required: true
+          description: ID of the model
+          schema:
+            type: string
+            example: 5ff27800d27db878a150c51c
+        - in: path
+          name: workspaceId
+          required: true
+          description: ID of the workspace
+          schema:
+            type: string
+            example: 5ff47800d27db878a150c51c
+      responses:
+        '200':
+          description: OK
       
   /api/workspaces/{workspaceId}/models/{modelId}/predictionId:
     get:

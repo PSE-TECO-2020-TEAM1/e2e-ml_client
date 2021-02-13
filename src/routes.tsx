@@ -12,6 +12,8 @@ import WorkspaceCollectDataPageView from 'components/WorkspaceCollectDataPageVie
 import useWorkspaceCollectDataPage from 'containers/useWorkspaceCollectDataPage';
 import WorkspaceLabelsPageView from 'components/WorkspaceLabelsPageView';
 import useWorkspaceLabelsPage from 'containers/useWorkspaceLabelsPage';
+import WorkspaceModelsPageView from 'components/WorkspaceModelsPageView';
+import useWorkspaceModelsPage from 'containers/useWorkspaceModelsPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -21,9 +23,7 @@ const SignupPage = () => <SignupPageView />;
 const WorkspacePage = ({ workspaceId }: QueryParams) => <WorkspacePageView {...useWorkspacePage(workspaceId)} />;
 const WorkspaceCollectDataPage = ({ workspaceId }: QueryParams) => <WorkspaceCollectDataPageView {...useWorkspaceCollectDataPage(workspaceId)} />;
 const WorkspaceLabelsPage = ({ workspaceId }: QueryParams) => <WorkspaceLabelsPageView {...useWorkspaceLabelsPage(workspaceId)} />;
-// const WorkspacesListPageView = React.lazy(() => import('./containers/WorkspacesListPageView'));
-// const LoginPageView = React.lazy(() => import('./containers/LoginPageView'));
-// const SignupPageView = React.lazy(() => import('./containers/SignupPageView'));
+const WorkspaceModelsPage = ({ workspaceId }: QueryParams) => <WorkspaceModelsPageView {...useWorkspaceModelsPage(workspaceId)} />;
 
 const routing = {
     '/': () => <WorkspacesListPage />,
@@ -32,8 +32,8 @@ const routing = {
     '/w/:workspaceId': ({ workspaceId } : QueryParams) => <WorkspacePage workspaceId={workspaceId} />,
     '/w/:workspaceId/collect': ({ workspaceId } : QueryParams) => <WorkspaceCollectDataPage workspaceId={workspaceId} />,
     '/w/:workspaceId/labels': ({ workspaceId } : QueryParams) => <WorkspaceLabelsPage workspaceId={workspaceId} />,
+    '/w/:workspaceId/model': ({ workspaceId } : QueryParams) => <WorkspaceModelsPage workspaceId={workspaceId} />,
     
-    '/w/:workspaceId/model': ({ workspaceId } : QueryParams) => <div>/w/{workspaceId}/model</div>,
     '/w/:workspaceId/model/:modelId': ({ workspaceId, modelId } : QueryParams) => <div>/w/{workspaceId}/model/{modelId}</div>,
     '/w/:workspaceId/model/:modelId/classify': ({ workspaceId, modelId } : QueryParams) => <div>/w/{workspaceId}/model/{modelId}/classify</div>,
     '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>
@@ -49,5 +49,7 @@ export const sampleRoute = (workspaceId: string, sampleId: string) => `/w/${work
 export const collectRoute = (workspaceId: string) => `/w/${workspaceId}/collect`;
 export const modelsRoute = (workspaceId: string) => `/w/${workspaceId}/model`;
 export const labelsRoute = (workspaceId: string) => `/w/${workspaceId}/labels`;
+export const modelDetailsRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}`;
+export const classifyRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}/classify`;
 
 export const createCollectionLink = (submissionId: string) => `/collect/${submissionId}`;

@@ -8,3 +8,6 @@ getSamples -> getSampleIds
 getDataCollectionURL -> getDataCollectionID
 
 +++ deleteLabel
+modelMetrics => modelDetails
+
++ add renameModel, deleteModel methods

@@ -12,11 +12,9 @@ const App = () => {
     return (
         <AuthProvider value={loginRoute} >
             <div>
-                <Link href="/"><button>workspaces</button></Link>
+                <Link href="/"><button>/</button></Link>
                 <Link href="/login"><button>login</button></Link>
                 <Link href="/signup"><button>signup</button></Link>
-                <Link href="/w/test/model/desd/classify"><button>test test</button></Link>
-                <Link href="/ktest"><button>testk</button></Link>
             </div>
             {route || <FourOhFourPage />}
         </AuthProvider>

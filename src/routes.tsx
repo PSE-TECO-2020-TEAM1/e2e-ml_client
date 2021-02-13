@@ -14,6 +14,8 @@ import WorkspaceLabelsPageView from 'components/WorkspaceLabelsPageView';
 import useWorkspaceLabelsPage from 'containers/useWorkspaceLabelsPage';
 import WorkspaceModelsPageView from 'components/WorkspaceModelsPageView';
 import useWorkspaceModelsPage from 'containers/useWorkspaceModelsPage';
+import WorkspaceModelDetailsPageView from 'components/WorkspaceModelDetailsPageView';
+import useWorkspaceModelDetailsPage from 'containers/useWorkspaceModelDetailsPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -24,6 +26,7 @@ const WorkspacePage = ({ workspaceId }: QueryParams) => <WorkspacePageView {...u
 const WorkspaceCollectDataPage = ({ workspaceId }: QueryParams) => <WorkspaceCollectDataPageView {...useWorkspaceCollectDataPage(workspaceId)} />;
 const WorkspaceLabelsPage = ({ workspaceId }: QueryParams) => <WorkspaceLabelsPageView {...useWorkspaceLabelsPage(workspaceId)} />;
 const WorkspaceModelsPage = ({ workspaceId }: QueryParams) => <WorkspaceModelsPageView {...useWorkspaceModelsPage(workspaceId)} />;
+const WorkspaceModelDetailsPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelDetailsPageView {...useWorkspaceModelDetailsPage(workspaceId, modelId)} />;
 
 const routing = {
     '/': () => <WorkspacesListPage />,
@@ -33,8 +36,8 @@ const routing = {
     '/w/:workspaceId/collect': ({ workspaceId } : QueryParams) => <WorkspaceCollectDataPage workspaceId={workspaceId} />,
     '/w/:workspaceId/labels': ({ workspaceId } : QueryParams) => <WorkspaceLabelsPage workspaceId={workspaceId} />,
     '/w/:workspaceId/model': ({ workspaceId } : QueryParams) => <WorkspaceModelsPage workspaceId={workspaceId} />,
+    '/w/:workspaceId/model/:modelId': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelDetailsPage workspaceId={workspaceId} modelId={modelId} />,
     
-    '/w/:workspaceId/model/:modelId': ({ workspaceId, modelId } : QueryParams) => <div>/w/{workspaceId}/model/{modelId}</div>,
     '/w/:workspaceId/model/:modelId/classify': ({ workspaceId, modelId } : QueryParams) => <div>/w/{workspaceId}/model/{modelId}/classify</div>,
     '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>
 };

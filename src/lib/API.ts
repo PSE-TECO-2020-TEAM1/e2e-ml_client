@@ -88,7 +88,7 @@ export interface IModel {
 export type IMetric = { name: string, score: number };
 
 export type ILabelPerformance = {
-    label: LabelID,
+    label: string,
     metrics: IMetric[]
 }
 
@@ -292,7 +292,7 @@ export default class SameOriginAPI implements API {
             features: string[],
             classifier: IClassifier
         }>(`/api/workspaces/${w}/models/${m}`);
-        
+
         return { ...rest, labelPerformance: labelPerformance.map(({ label, performance_metrics: metrics }) => ({ label, metrics })) };
     }
 

@@ -1098,7 +1098,7 @@ paths:
                       properties:
                         label:
                           type: string
-                          example: 5ff47800d27db878a150c51c
+                          example: Jump
                         performance_metrics:
                           type: array
                           items:

@@ -2,9 +2,9 @@ import { useCallback } from 'react';
 import { useAPI, useAuth, useBoolean } from 'lib/hooks';
 import usePromise from 'lib/hooks/Promise';
 import { workspaceRoute } from 'routes';
-import { SensorOptions } from 'lib/API';
 import useWorkspaceCreationState from './useWorkspaceCreation';
 import { WorkspaceListPageProps } from 'components/WorkspacesListPageView';
+import { SensorOptions } from 'lib/API/DesktopAPI';
 
 const useWorkspacesListPage = (): WorkspaceListPageProps => {
     useAuth();

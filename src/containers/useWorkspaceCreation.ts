@@ -1,5 +1,5 @@
 import { WorkspaceCreationProps, WorkspaceCreationSensorAttrs } from 'components/WorkspaceCreation';
-import { SensorOptions } from 'lib/API';
+import { SensorOptions } from 'lib/API/DesktopAPI';
 import sensors, { SensorName } from 'lib/sensors';
 import { useCallback, useReducer, useState } from 'react';
 

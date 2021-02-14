@@ -1,32 +1,33 @@
 import { SamplingRate, SensorName } from 'lib/sensors';
+import { del, get, post, put } from './utils';
 
-export type Username = string;
-export type Password = string;
-export type Email = string;
-export type WorkspaceID = string;
-export type SampleID = string;
-export type ModelID = string;
+type Username = string;
+type Password = string;
+type Email = string;
+type WorkspaceID = string;
+type SampleID = string;
+type ModelID = string;
 export type LabelID = string;
-export type SensorID = string;
+type SensorID = string;
 export type UnixTimestamp = number;
-export type DataFormat = string[];
-export type Data = number[];
+type DataFormat = string[];
+type Data = number[];
 
-export interface HyperparameterOptions {
+interface HyperparameterOptions {
     name: string,
     format: string
 }
 
-export interface ClassifierOptions {
+interface ClassifierOptions {
     name: string,
     hyperparameters: HyperparameterOptions[]
 }
 
-export interface TrainingParameters {
+interface TrainingParameters {
     classifier: ClassifierOptions[]
 }
 
-export interface ModelOptions {
+interface ModelOptions {
     name: string,
     features: string[],
     imputation: string,
@@ -39,31 +40,31 @@ export interface SensorOptions {
     samplingRate: SamplingRate,
 }
 
-export interface Timeframe {
+interface Timeframe {
     start: UnixTimestamp;
     end: UnixTimestamp;
 }
 
-export interface IWorkspace {
+interface IWorkspace {
     id: WorkspaceID,
     name: string
 }
 
-export interface ISensor {
+interface ISensor {
     id: SensorID,
     name: SensorName,
     samplingRate: SamplingRate,
     dataFormat: DataFormat
 }
 
-export interface ILabel {
+interface ILabel {
     labelId: LabelID,
     name: string,
     description: string,
     sampleCount: number
 }
 
-export interface IDatapoint {
+interface IDatapoint {
     timestamp: UnixTimestamp,
     data: Data
 }
@@ -73,36 +74,36 @@ export interface ISensorDatapoints {
     datapoints: IDatapoint[]
 }
 
-export interface ISample {
+interface ISample {
     label: ILabel,
     start: UnixTimestamp,
     end: UnixTimestamp,
     data: ISensorDatapoints[]
 }
 
-export interface IModel {
+interface IModel {
     id: ModelID,
     name: string,
 }
 
-export type IMetric = { name: string, score: number };
+interface IMetric { name: string, score: number };
 
-export type ILabelPerformance = {
+interface ILabelPerformance {
     label: string,
     metrics: IMetric[]
 }
 
-export interface IHyperparameter {
+interface IHyperparameter {
     name: string,
     value: any
 }
 
-export interface IClassifier {
+interface IClassifier {
     name: string,
     hyperparameters: IHyperparameter[]
 }
 
-export interface IModelDetails {
+interface IModelDetails {
     name: string,
     labelPerformance: ILabelPerformance[],
     imputation: string,
@@ -111,7 +112,7 @@ export interface IModelDetails {
     classifier: IClassifier
 }
 
-export interface API {
+export interface DesktopAPI {
     login(username: Username, password: Password): Promise<boolean>;
     signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
@@ -141,53 +142,21 @@ export interface API {
 
 }
 
-export default class SameOriginAPI implements API {
-    private accessToken: string | null = null;
-    private refreshToken: string | null = null;
+export default class SameOriginDesktopAPI implements DesktopAPI {
+    private accessToken: string | undefined = undefined;
+    private refreshToken: string | undefined = undefined;
     
-    private get = async <T,>(url: string, noauth: boolean = false, method: string = 'GET'): Promise<T> => {
-        const headers: HeadersInit = new Headers();
-        noauth = false; // FIXME: waiting for enes to fix swagger
-        if (!noauth) headers.set('Authorization', `Bearer ${this.accessToken}`);
-        
-        const res = await fetch(url, {
-            method,
-            headers,
-        });
-        
-        const body = await res.text();
-        
-        if (res.status === 200 && body === '') return JSON.parse('{}');
-        return JSON.parse(body);
-    }
-    
-    private delete = <T,>(url: string) => this.get<T>(url, undefined, 'DELETE');
-    private put = <T,Y>(url: string, data: T) => this.post<T,Y>(url, data, undefined, 'PUT');
-    
-    private post = async <Input,Output>(url: string, data: Input, noauth: boolean = false, method: string = 'POST'): Promise<Output> => {
-        const headers: HeadersInit = new Headers();
-        headers.set('Content-Type', 'application/json');
-        noauth = false; // FIXME: waiting for enes to fix swagger
-        if (!noauth) headers.set('Authorization', `Bearer ${this.accessToken}`);
-        
-        const res = await fetch(url, {
-            method: method,
-            headers,
-            body: JSON.stringify(data)
-        });
-        
-        const body = await res.text();
-        
-        if (res.status === 200 && body === '') return JSON.parse('{}');
-        return JSON.parse(body);
-    }
+    private get = <T,>(url: string): Promise<T> => get(this.accessToken)<T>(url);
+    private delete = <T,>(url: string) => del(this.accessToken)<T>(url);
+    private put = <T,Y>(url: string, data: T) => put(this.accessToken)<T,Y>(url, data);
+    private post = <T,Y>(url: string, data: T) => post(this.accessToken)<T,Y>(url, data);
     
     async login(username: Username, password: Password): Promise<boolean> {
         try {
             ({
                 access_token: this.accessToken,
                 refresh_token: this.refreshToken
-            } = await this.post('/auth/login', { username, passwordHash: password }, true)); // FIXME: eeh we are using tls, so skip hashing on the client
+            } = await post()('/auth/login', { username, passwordHash: password })); // we are using tls, so skip hashing on the client
             return this.isAuthenticated();
         } catch(e) {
             return false;
@@ -195,7 +164,7 @@ export default class SameOriginAPI implements API {
     }
     
     async signup(username: Username, password: Password, email: Email): Promise<void> {
-        await this.post('/auth/signup', { username, passwordHash: password, email }, true);
+        await post()('/auth/signup', { username, passwordHash: password, email });
         return;
     }
     

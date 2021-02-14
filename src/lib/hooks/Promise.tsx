@@ -45,7 +45,10 @@ export type PromisedProps<T,> = {
 
 export const Promised = <T,>({ promise: [state, data, error], pending = <Fragment />, rejected, children } : PromisedProps<T>): React.ReactElement | null => {
     if (state === State.Pending) return <Fragment>{ pending }</Fragment>;
-    if (state === State.Rejected) return <Fragment>{ rejected || pending }</Fragment>;
+    if (state === State.Rejected) {
+        console.error('Mitigated', error);
+        return <Fragment>{ rejected || pending }</Fragment>;
+    }
     assert(state === State.Resolved, 'promise is not resolved');
     assert(typeof data !== 'undefined', 'data is undefined');
 

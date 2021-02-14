@@ -18,6 +18,8 @@ import WorkspaceModelDetailsPageView from 'components/WorkspaceModelDetailsPageV
 import useWorkspaceModelDetailsPage from 'containers/useWorkspaceModelDetailsPage';
 import WorkspaceModelClassifyPageView from 'components/WorkspaceModelClassifyPageView';
 import useWorkspaceModelClassifyPage from 'containers/useWorkspaceModelClassifyPage';
+import LabelSelectionPageView from 'components/LabelSelectionPageView';
+import useLabelSelectionPage from 'containers/useLabelSelectionPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -31,6 +33,8 @@ const WorkspaceModelsPage = ({ workspaceId }: QueryParams) => <WorkspaceModelsPa
 const WorkspaceModelDetailsPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelDetailsPageView {...useWorkspaceModelDetailsPage(workspaceId, modelId)} />;
 const WorkspaceModelClassifyPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelClassifyPageView {...useWorkspaceModelClassifyPage(workspaceId, modelId)} />;
 
+const LabelSelectionPage = ({ submissionId }: QueryParams) => <LabelSelectionPageView {...useLabelSelectionPage(submissionId)} />;
+
 const routing = {
     '/': () => <WorkspacesListPage />,
     '/login': () => <LoginPage />,
@@ -41,8 +45,11 @@ const routing = {
     '/w/:workspaceId/model': ({ workspaceId } : QueryParams) => <WorkspaceModelsPage workspaceId={workspaceId} />,
     '/w/:workspaceId/model/:modelId': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelDetailsPage workspaceId={workspaceId} modelId={modelId} />,
     '/w/:workspaceId/model/:modelId/classify': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelClassifyPage workspaceId={workspaceId} modelId={modelId} />,
+
+    '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>,
     
-    '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>
+    '/collect/:submissionId': ({ submissionId }: QueryParams) => <LabelSelectionPage submissionId={submissionId} />,
+    // '/collect/:submissionId/configure': ({ submissionId }: QueryParams) => <RecordingC submissionId={submissionId} />,
 };
 export default routing;
 
@@ -60,3 +67,5 @@ export const classifyRoute = (workspaceId: string, modelId: string) => `/w/${wor
 
 export const createCollectionLink = (submissionId: string) => `/collect/${submissionId}`;
 export const createClassificationLink = (predictionId: string) => `/classify/${predictionId}`;
+
+export const recordingConfigurationRoute = (submissionId: string, label: string) => `/collect/${submissionId}/configure?label=${label}`;

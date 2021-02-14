@@ -1,4 +1,6 @@
-import { ISensorDatapoints, LabelID, UnixTimestamp } from './DesktopAPI';
+import { SensorName } from 'lib/sensors';
+import { UnixTimestamp } from 'lib/utils';
+import { ISensorDatapoints, LabelID } from './DesktopAPI';
 import { post as postRaw, get as getRaw } from './utils';
 
 type SubmissionID = string;
@@ -10,7 +12,7 @@ interface Label {
 }
 
 interface Sensor {
-    name: string,
+    name: SensorName,
     samplingRate: number
 }
 

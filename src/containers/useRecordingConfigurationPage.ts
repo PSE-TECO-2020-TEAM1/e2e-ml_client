@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { labelQueryParam, recordingRoute } from 'routes';
 
 const DEFAULT_DURATION = 5;
-const DEFAULT_COUNTDOWN = 3;
+const DEFAULT_COUNTDOWN = 5;
 
 const useRecordingConfigurationPage = (submissionId: string): RecordingConfigurationPageViewProps => {
     const [{ [labelQueryParam]: label }] = useQueryParams();

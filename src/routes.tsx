@@ -22,6 +22,8 @@ import LabelSelectionPageView from 'components/LabelSelectionPageView';
 import useLabelSelectionPage from 'containers/useLabelSelectionPage';
 import RecordingConfigurationPageView from 'components/RecordingConfigurationPageView';
 import useRecordingConfigurationPage from 'containers/useRecordingConfigurationPage';
+import RecordingPageView from 'components/RecordingPageView';
+import useRecordingPage from 'containers/useRecordingPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -37,7 +39,7 @@ const WorkspaceModelClassifyPage = ({ workspaceId, modelId }: QueryParams) => <W
 
 const LabelSelectionPage = ({ submissionId }: QueryParams) => <LabelSelectionPageView {...useLabelSelectionPage(submissionId)} />;
 const RecordingConfigurationPage = ({ submissionId }: QueryParams) => <RecordingConfigurationPageView {...useRecordingConfigurationPage(submissionId)} />;
-// const RecordingPage = ({ submissionId }: QueryParams) => <RecordingConfigurationPageView {...useRecordingConfigurationPage(submissionId)} />;
+const RecordingPage = ({ submissionId }: QueryParams) => <RecordingPageView {...useRecordingPage(submissionId)} />;
 
 const routing = {
     '/': () => <WorkspacesListPage />,
@@ -54,7 +56,7 @@ const routing = {
     
     '/collect/:submissionId': ({ submissionId }: QueryParams) => <LabelSelectionPage submissionId={submissionId} />,
     '/collect/:submissionId/configure': ({ submissionId }: QueryParams) => <RecordingConfigurationPage submissionId={submissionId} />,
-    // '/collect/:submissionId/record': ({ submissionId }: QueryParams) => <RecordingPage submissionId={submissionId} />,
+    '/collect/:submissionId/record': ({ submissionId }: QueryParams) => <RecordingPage submissionId={submissionId} />,
 };
 export default routing;
 
@@ -74,6 +76,8 @@ export const createCollectionLink = (submissionId: string) => `/collect/${submis
 export const createClassificationLink = (predictionId: string) => `/classify/${predictionId}`;
 
 export const labelQueryParam = 'label';
+export const durationQueryParam = 'duration';
+export const countdownQueryParam = 'countdown';
 
 export const recordingConfigurationRoute = (submissionId: string, label: string) => `/collect/${submissionId}/configure?${labelQueryParam}=${label}`;
 export const recordingRoute = (submissionId: string, label: string, countdown: number, duration: number) => 

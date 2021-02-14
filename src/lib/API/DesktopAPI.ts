@@ -1,4 +1,5 @@
 import { SamplingRate, SensorName } from 'lib/sensors';
+import { UnixTimestamp } from 'lib/utils';
 import { del, get, post, put } from './utils';
 
 type Username = string;
@@ -9,7 +10,6 @@ type SampleID = string;
 type ModelID = string;
 export type LabelID = string;
 type SensorID = string;
-export type UnixTimestamp = number;
 type DataFormat = string[];
 type Data = number[];
 

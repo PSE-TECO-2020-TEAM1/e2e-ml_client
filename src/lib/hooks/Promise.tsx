@@ -9,6 +9,15 @@ export enum State {
 
 export type PromisePack<T> = [State, T | undefined, any];
 
+export const mapPack = <T,Y>([state, content, error]: PromisePack<T>, fn: (v: T) => Y): PromisePack<Y> => {
+    let mapped = undefined;
+    if (state === State.Resolved) {
+        assert(typeof content !== 'undefined');
+        mapped = fn(content);
+    };
+    return [state, mapped, error];
+};
+
 const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>), inputs: any[]): PromisePack<T> => {
     const [state, setState] = useState<PromisePack<T>>([State.Pending, undefined, undefined]);
 

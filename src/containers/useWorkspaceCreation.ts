@@ -1,23 +1,21 @@
-import { WorkspaceCreationProps, WorkspaceCreationSensorAttrs } from 'components/WorkspaceCreation';
+import { AttrCollection, WorkspaceCreationProps, WorkspaceCreationSensorAttrs } from 'components/WorkspaceCreation';
 import { SensorOptions } from 'lib/API/DesktopAPI';
-import sensors, { SensorName } from 'lib/sensors';
+import { sensorConfigurations, SensorName } from 'lib/sensors';
+import { objectMap } from 'lib/utils';
 import { useCallback, useReducer, useState } from 'react';
 
 type State = WorkspaceCreationSensorAttrs;
-type Action = {name: string, sel: boolean } | { name: string, rat: string };
-const initialSensors = () => sensors.reduce((agg: State, cur) => {
-    agg[cur.name] = {
-        selected: false,
-        rate: cur.defaultSamplingRate,
-        rateValid: true
-    };
-    return agg;
-}, {});
+type Action = {name: SensorName, sel: boolean } | { name: SensorName, rat: string };
+const initialSensors = () => objectMap(sensorConfigurations, (cur) => ({
+    selected: false,
+    rate: cur.defaultSamplingRate,
+    rateValid: true
+}));
 
 const reduceSensors = (state: State, action: Action): State => {
     if ('sel' in action) return {...state, [action.name]: {...state[action.name], selected: action.sel }};
     if ('rat' in action) return {...state, [action.name]: {
-        ...state[action.name], rate: parseInt(action.rat), rateValid: parseInt(action.rat) <= sensors.find(v => v.name === action.name)!.maxSamplingRate
+        ...state[action.name], rate: parseInt(action.rat), rateValid: parseInt(action.rat) <= sensorConfigurations[action.name].maxSamplingRate
     }};
     throw new Error('undefined action');
 };
@@ -33,12 +31,13 @@ const areRatesValid = (state: State) => {
 
 const useWorkspaceCreation = (create: (name: string, sensors: SensorOptions[]) => Promise<boolean>): WorkspaceCreationProps => {
     const [name, setName] = useState<string>('');
-    const [state, dispatch] = useReducer(reduceSensors, undefined, initialSensors);
+    const [state, dispatch] = useReducer<(state: State, action: Action) => State, undefined>(reduceSensors, undefined, initialSensors);
 
     const onCreate = useCallback(async () => {
-        await create(name, Object.entries(state)
+        // see the comments in WorkspaceCreationView
+        await create(name, (Object.entries(state) as [SensorName, AttrCollection][])
             .filter(v => v[1].selected)
-            .map(v => ({ sensorName: v[0] as SensorName, samplingRate: v[1].rate }))
+            .map(v => ({ sensorName: v[0], samplingRate: v[1].rate }))
         );
     }, [name, state, create]);
 

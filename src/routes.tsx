@@ -20,6 +20,8 @@ import WorkspaceModelClassifyPageView from 'components/WorkspaceModelClassifyPag
 import useWorkspaceModelClassifyPage from 'containers/useWorkspaceModelClassifyPage';
 import LabelSelectionPageView from 'components/LabelSelectionPageView';
 import useLabelSelectionPage from 'containers/useLabelSelectionPage';
+import RecordingConfigurationPageView from 'components/RecordingConfigurationPageView';
+import useRecordingConfigurationPage from 'containers/useRecordingConfigurationPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -34,6 +36,8 @@ const WorkspaceModelDetailsPage = ({ workspaceId, modelId }: QueryParams) => <Wo
 const WorkspaceModelClassifyPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelClassifyPageView {...useWorkspaceModelClassifyPage(workspaceId, modelId)} />;
 
 const LabelSelectionPage = ({ submissionId }: QueryParams) => <LabelSelectionPageView {...useLabelSelectionPage(submissionId)} />;
+const RecordingConfigurationPage = ({ submissionId }: QueryParams) => <RecordingConfigurationPageView {...useRecordingConfigurationPage(submissionId)} />;
+// const RecordingPage = ({ submissionId }: QueryParams) => <RecordingConfigurationPageView {...useRecordingConfigurationPage(submissionId)} />;
 
 const routing = {
     '/': () => <WorkspacesListPage />,
@@ -49,7 +53,8 @@ const routing = {
     '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>,
     
     '/collect/:submissionId': ({ submissionId }: QueryParams) => <LabelSelectionPage submissionId={submissionId} />,
-    // '/collect/:submissionId/configure': ({ submissionId }: QueryParams) => <RecordingC submissionId={submissionId} />,
+    '/collect/:submissionId/configure': ({ submissionId }: QueryParams) => <RecordingConfigurationPage submissionId={submissionId} />,
+    // '/collect/:submissionId/record': ({ submissionId }: QueryParams) => <RecordingPage submissionId={submissionId} />,
 };
 export default routing;
 
@@ -68,4 +73,8 @@ export const classifyRoute = (workspaceId: string, modelId: string) => `/w/${wor
 export const createCollectionLink = (submissionId: string) => `/collect/${submissionId}`;
 export const createClassificationLink = (predictionId: string) => `/classify/${predictionId}`;
 
-export const recordingConfigurationRoute = (submissionId: string, label: string) => `/collect/${submissionId}/configure?label=${label}`;
+export const labelQueryParam = 'label';
+
+export const recordingConfigurationRoute = (submissionId: string, label: string) => `/collect/${submissionId}/configure?${labelQueryParam}=${label}`;
+export const recordingRoute = (submissionId: string, label: string, countdown: number, duration: number) => 
+    `/collect/${submissionId}/record?label=${label}&countdown=${countdown}&duration=${duration}`;

@@ -16,6 +16,8 @@ import WorkspaceModelsPageView from 'components/WorkspaceModelsPageView';
 import useWorkspaceModelsPage from 'containers/useWorkspaceModelsPage';
 import WorkspaceModelDetailsPageView from 'components/WorkspaceModelDetailsPageView';
 import useWorkspaceModelDetailsPage from 'containers/useWorkspaceModelDetailsPage';
+import WorkspaceModelClassifyPageView from 'components/WorkspaceModelClassifyPageView';
+import useWorkspaceModelClassifyPage from 'containers/useWorkspaceModelClassifyPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -27,6 +29,7 @@ const WorkspaceCollectDataPage = ({ workspaceId }: QueryParams) => <WorkspaceCol
 const WorkspaceLabelsPage = ({ workspaceId }: QueryParams) => <WorkspaceLabelsPageView {...useWorkspaceLabelsPage(workspaceId)} />;
 const WorkspaceModelsPage = ({ workspaceId }: QueryParams) => <WorkspaceModelsPageView {...useWorkspaceModelsPage(workspaceId)} />;
 const WorkspaceModelDetailsPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelDetailsPageView {...useWorkspaceModelDetailsPage(workspaceId, modelId)} />;
+const WorkspaceModelClassifyPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelClassifyPageView {...useWorkspaceModelClassifyPage(workspaceId, modelId)} />;
 
 const routing = {
     '/': () => <WorkspacesListPage />,
@@ -37,8 +40,8 @@ const routing = {
     '/w/:workspaceId/labels': ({ workspaceId } : QueryParams) => <WorkspaceLabelsPage workspaceId={workspaceId} />,
     '/w/:workspaceId/model': ({ workspaceId } : QueryParams) => <WorkspaceModelsPage workspaceId={workspaceId} />,
     '/w/:workspaceId/model/:modelId': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelDetailsPage workspaceId={workspaceId} modelId={modelId} />,
+    '/w/:workspaceId/model/:modelId/classify': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelClassifyPage workspaceId={workspaceId} modelId={modelId} />,
     
-    '/w/:workspaceId/model/:modelId/classify': ({ workspaceId, modelId } : QueryParams) => <div>/w/{workspaceId}/model/{modelId}/classify</div>,
     '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>
 };
 export default routing;
@@ -56,3 +59,4 @@ export const modelDetailsRoute = (workspaceId: string, modelId: string) => `/w/$
 export const classifyRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}/classify`;
 
 export const createCollectionLink = (submissionId: string) => `/collect/${submissionId}`;
+export const createClassificationLink = (predictionId: string) => `/classify/${predictionId}`;

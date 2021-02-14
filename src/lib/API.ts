@@ -237,8 +237,8 @@ export default class SameOriginAPI implements API {
         return await this.get<string>(`/api/workspaces/${w}/submissionId`);
     }
     
-    getPredictionID(w: WorkspaceID, m: ModelID): Promise<string> {
-        throw new Error('Method not implemented.');
+    async getPredictionID(w: WorkspaceID, m: ModelID): Promise<string> {
+        return await this.get<string>(`/api/workspaces/${w}/models/${m}/predictionId`);
     }
     
     async getLabels(w: WorkspaceID): Promise<ILabel[]> {

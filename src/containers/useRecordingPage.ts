@@ -41,6 +41,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     useEffect(() => {
         if (isRecording) return;
         if (countdown !== 0) return;
+        if (duration === 0) return; // one turn has passed
 
         // called when starting recording for the first time
 
@@ -60,9 +61,23 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
          
     }, [beginDur, countdown, duration, forceUpdate, isRecording, res, setRecord]);
 
-    // TODO implement ending
+    useEffect(() => {
+        if (!isRecording) return;
+        if (duration !== 0) return;
 
-    return { data: data.current, label, sensorsPH, isRecording, countdown, remaining: duration };
+        // called when recording should end
+
+        clearRecord();
+        assert(typeof res !== 'undefined');
+
+        const { sensors } = res;
+        for (const { name } of sensors) {
+            sensorImplementations[name].stop();
+        }
+         
+    }, [beginDur, clearRecord, duration, isRecording, res]);
+
+    return { data: data.current, label, sensorsPH, isRecording, countdown: countdown / 1000, remaining: duration / 1000, isPre: !isRecording && countdown !== 0 };
 };
 
 export default useRecordingPage;

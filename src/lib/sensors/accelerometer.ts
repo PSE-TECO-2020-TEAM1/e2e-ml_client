@@ -14,7 +14,10 @@ export const implementation: SensorImplementation = ((() => { // FIXME implement
             f({ timestamp: Date.now(), data: [Math.random(), Math.random(), Math.random()] });
         }, 500);
     };
-    const stop = () => {};
+    const stop = () => {
+        console.log('sensor stopped');
+        f = () => {};
+    };
     const onRead = (fn: onReadCallback) => {
         console.log('sensor read callback given');
         f = fn;

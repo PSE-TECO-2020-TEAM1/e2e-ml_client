@@ -19,17 +19,20 @@ export type RecordingPageViewProps = {
     countdown: number,
     remaining: number,
     isRecording: boolean,
+    isPre: boolean,
 } 
 
-const RecordingPageView = ({ data, label, sensorsPH, countdown, remaining, isRecording }: RecordingPageViewProps) => {
+const RecordingPageView = ({ data, label, sensorsPH, countdown, remaining, isRecording, isPre }: RecordingPageViewProps) => {
     let content;
 
-    if (!isRecording) content = <>
+    if (isPre) content = <>
         <span>{countdown}</span>
         <span>seconds</span>
     </>;
     // TODO implement
     else content = <>
+        <span>{remaining}</span>
+        <span>seconds remaining</span>
         Gyroscope
         <ul>
             {data['Gyroscope'].map(({ timestamp, data }) => <li key={timestamp} >{timestamp}: {data.join(', ')}</li>)}
@@ -37,7 +40,7 @@ const RecordingPageView = ({ data, label, sensorsPH, countdown, remaining, isRec
     </>;
 
     return <>
-        <header>{!isRecording ? 'Prepare to Record Data' : 'Recording Data'}</header>
+        <header>{isPre ? 'Prepare to Record Data' : 'Recording Data'}</header>
         <b>{label}</b>
         {content}
         <em>Selected Sensors and Sampling Rates:</em>

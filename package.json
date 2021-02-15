@@ -15,6 +15,7 @@
     "highcharts": "^9.0.0",
     "highcharts-react-official": "^3.0.0",
     "patch-package": "^6.2.2",
+    "pretty": "^2.0.0",
     "qrcode.react": "^1.0.1",
     "raviger": "^2.0.1",
     "react": "^17.0.1",
@@ -54,6 +55,12 @@
       "no-warning-comments": 1
     }
   },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true
+  },
   "browserslist": {
     "production": [
       "since 2019"
@@ -66,6 +73,10 @@
   },
   "proxy": "http://localhost:5000",
   "devDependencies": {
-    "@types/qrcode.react": "^1.0.1"
+    "@testing-library/react-hooks": "^5.0.3",
+    "@types/pretty": "^2.0.0",
+    "@types/qrcode.react": "^1.0.1",
+    "prettier": "^2.2.1",
+    "react-test-renderer": "^17.0.1"
   }
 }

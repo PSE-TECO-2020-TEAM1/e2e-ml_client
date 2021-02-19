@@ -3,7 +3,7 @@ import { TextInput } from 'components/TextField';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import React from 'react';
 
-type Label = {
+export type Label = {
     name: string,
     count: number,
     id: string,

@@ -2,7 +2,7 @@ import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { Link } from 'raviger';
 import React from 'react';
 
-type Model = {
+export type Model = {
     name: string,
     id: string,
     href: string,

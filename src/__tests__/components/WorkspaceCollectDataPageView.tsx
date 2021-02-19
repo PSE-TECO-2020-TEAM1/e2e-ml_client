@@ -5,8 +5,6 @@ import { State, PromisePack } from 'lib/hooks/Promise';
 import { act } from 'react-dom/test-utils';
 import pretty from 'pretty';
 
-const noop = () => {};
-
 let tab: PromisePack<string> = [State.Pending, 'link', Error];
 describe('WorkspaceCollectDataPage', () => {
     it('renders without crashing', () => {
@@ -28,7 +26,7 @@ describe('WorkspaceCollectDataPage', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            `"<div>loading</div>"`
+            '"<div>loading</div>"'
         ); /* ... gets filled automatically by jest ... */
     });
 });

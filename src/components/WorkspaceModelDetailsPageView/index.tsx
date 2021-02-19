@@ -1,7 +1,7 @@
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import React from 'react';
 
-type ModelDetails = {
+export type ModelDetails = {
     name: string,
     perf: {
         headers: string[],

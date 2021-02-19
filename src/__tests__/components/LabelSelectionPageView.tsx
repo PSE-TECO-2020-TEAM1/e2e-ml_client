@@ -5,11 +5,10 @@ import { State, Promised, PromisePack } from 'lib/hooks/Promise';
 import { act } from 'react-dom/test-utils';
 import pretty from 'pretty';
 
-const noop = () => {};
 let tab1: {
     label: string;
     href: string;
-}[] = { label: 'lable', href: 'ref' };
+}[] = [{ label: 'labelName', href: 'ref' }];
 let tab: PromisePack<
     {
         label: string;

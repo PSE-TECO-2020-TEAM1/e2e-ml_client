@@ -20,7 +20,7 @@ describe('404', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            `"<div>FourOhFourPage</div>"`
+            '"<div>FourOhFourPage</div>"'
         ); /* ... gets filled automatically by jest ... */
     });
 });

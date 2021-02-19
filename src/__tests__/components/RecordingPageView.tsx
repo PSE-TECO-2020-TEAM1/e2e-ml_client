@@ -5,12 +5,15 @@ import { State, PromisePack } from 'lib/hooks/Promise';
 import { act } from 'react-dom/test-utils';
 import pretty from 'pretty';
 
+const sensor = {
+    timestamp: 50,
+    data: [50, 50, 1],
+};
 
-const noop = () => {};
 let tab1: {
     name: string;
     rate: number;
-}[] = { name: 'lable', rate: 5 };
+}[] = [{ name: 'label', rate: 5 }];
 let tab: PromisePack<
     {
         name: string;
@@ -21,27 +24,47 @@ describe('RecordingPage', () => {
     it('renders without crashing', () => {
         const div = document.createElement('div');
 
-        ReactDOM.render(<RecordingPageView data = {DataRecord}
-            label = {'label'}
-            sensorsPH = {tab}
-            countdown= {10}
-            remaining= {5}
-            isRecording= {false}
-            isPre={true} />, div);
+        ReactDOM.render(
+            <RecordingPageView
+                data={{
+                    Accelerometer: [sensor],
+                    Gyroscope: [sensor],
+                    Magnetometer: [sensor],
+                }}
+                label={'label'}
+                sensorsPH={tab}
+                countdown={10}
+                remaining={5}
+                isRecording={false}
+                isPre={true}
+            />,
+            div
+        );
     });
 
     it('renders correctly (snapshot)', () => {
         const div = document.createElement('div');
         act(() => {
-            ReactDOM.render(<RecordingPageView data = {DataRecord}
-                label = {'label'}
-                sensorsPH = {tab}
-                countdown= {10}
-                remaining= {5}
-                isRecording= {false}
-                isPre={true}/>, div);
+            ReactDOM.render(
+                <RecordingPageView
+                    data={{
+                        Accelerometer: [sensor],
+                        Gyroscope: [sensor],
+                        Magnetometer: [sensor],
+                    }}
+                    label={'label'}
+                    sensorsPH={tab}
+                    countdown={10}
+                    remaining={5}
+                    isRecording={false}
+                    isPre={true}
+                />,
+                div
+            );
         });
 
-        expect(pretty(div.innerHTML)).toMatchInlineSnapshot(); /* ... gets filled automatically by jest ... */
+        expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
+            `"<header>Prepare to Record Data</header><b>label</b><span>10</span><span>seconds</span><em>Selected Sensors and Sampling Rates:</em>loading..."`
+        ); /* ... gets filled automatically by jest ... */
     });
 });

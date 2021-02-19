@@ -9,7 +9,7 @@ const noop = () => {};
 let tab1: {
     id: string;
     href: string;
-}[] = { id: 'id', href: 'ref' };
+}[] = [{ id: 'id', href: 'ref' }];
 let tab: PromisePack<
     {
         id: string;

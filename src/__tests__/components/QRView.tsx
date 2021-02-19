@@ -4,9 +4,6 @@ import QRView from 'components/QRView';
 import { act } from 'react-dom/test-utils';
 import pretty from 'pretty';
 
-
-const noop = () => {};
-
 describe('QRview', () => {
     it('renders without crashing', () => {
         const div = document.createElement('div');
@@ -27,7 +24,7 @@ describe('QRview', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            `"<span>description</span><canvas style=\\"height: 128px; width: 128px;\\" height=\\"128\\" width=\\"128\\"></canvas><a href=\\"reference\\">reference</a><button>CPY</button>"`
+            '"<span>description</span><canvas style=\\"height: 128px; width: 128px;\\" height=\\"128\\" width=\\"128\\"></canvas><a href=\\"reference\\">reference</a><button>CPY</button>"'
         ); /* ... gets filled automatically by jest ... */
     });
 });

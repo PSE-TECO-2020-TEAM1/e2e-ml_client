@@ -6,8 +6,6 @@ import { act } from 'react-dom/test-utils';
 import pretty from 'pretty';
 import WorkspaceModelClassifyPageView from 'components/WorkspaceModelClassifyPageView';
 
-const noop = () => {};
-
 let tab: PromisePack<string> = [State.Pending, 'link', Error];
 describe('WorkspaceModelClassifyPage', () => {
     it('renders without crashing', () => {
@@ -29,7 +27,7 @@ describe('WorkspaceModelClassifyPage', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            `"<div>loading</div>"`
+            '"<div>loading</div>"'
         ); /* ... gets filled automatically by jest ... */
     });
 });

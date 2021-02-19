@@ -64,7 +64,7 @@ describe('RecordingPage', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            `"<header>Prepare to Record Data</header><b>label</b><span>10</span><span>seconds</span><em>Selected Sensors and Sampling Rates:</em>loading..."`
+            '"<header>Prepare to Record Data</header><b>label</b><span>10</span><span>seconds</span><em>Selected Sensors and Sampling Rates:</em>loading..."'
         ); /* ... gets filled automatically by jest ... */
     });
 });

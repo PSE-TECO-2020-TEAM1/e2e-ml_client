@@ -1,9 +1,10 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
 
 export const config: SensorConfiguration = {
-    name: 'Accelerometer',
+    name: 'Gyroscope',
     maxSamplingRate: 100,
     defaultSamplingRate: 50,
+    format: ['Accelerometer X', 'Accelerometer Y', 'Accelerometer Z']
 } as const;
 
 export const implementation: SensorImplementation = ((() => { // FIXME implement sensor collection

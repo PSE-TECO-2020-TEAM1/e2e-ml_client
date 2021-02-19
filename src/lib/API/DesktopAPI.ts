@@ -54,7 +54,7 @@ interface ISensor {
     id: SensorID,
     name: SensorName,
     samplingRate: SamplingRate,
-    dataFormat: DataFormat
+    // dataFormat: DataFormat // FIXME tell backend that we hardcode this in frontend
 }
 
 interface ILabel {

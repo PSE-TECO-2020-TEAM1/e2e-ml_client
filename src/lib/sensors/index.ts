@@ -1,21 +1,22 @@
 import { UnixTimestamp } from 'lib/utils';
 import { config as accelConfig, implementation as accelImpl } from './accelerometer';
 
-export type SensorName = 'Accelerometer' | 'Gyroscope' | 'Magnetometer';
+export type SensorName = 'Gyroscope' // | 'Accelerometer' | 'Magnetometer';
 export type SamplingRate = number;
 export type onReadCallback = (sample: { data: number[], timestamp: UnixTimestamp }) => void;
 
 // couldn't find a way to automate this with Typescript
 export const sensorNameArrayRecordGen = () => ({
-    'Accelerometer': [],
+    // 'Accelerometer': [],
     'Gyroscope': [],
-    'Magnetometer': []
+    // 'Magnetometer': []
 });
 
 export interface SensorConfiguration {
     name: SensorName,
     maxSamplingRate: SamplingRate,
-    defaultSamplingRate: SamplingRate
+    defaultSamplingRate: SamplingRate,
+    format: readonly string[]
 }
 
 export interface SensorImplementation {
@@ -25,13 +26,13 @@ export interface SensorImplementation {
 }
 
 export const sensorConfigurations: Record<SensorName, SensorConfiguration> = {
-    'Accelerometer': accelConfig,
+    // 'Accelerometer': accelConfig,
     'Gyroscope': accelConfig,
-    'Magnetometer': accelConfig,
+    // 'Magnetometer': accelConfig,
 }; // FIXME implement all and remove this
 
 export const sensorImplementations: Record<SensorName, SensorImplementation> = {
-    'Accelerometer': accelImpl,
+    // 'Accelerometer': accelImpl,
     'Gyroscope': accelImpl,
-    'Magnetometer': accelImpl,
+    // 'Magnetometer': accelImpl,
 }; // FIXME implement all and remove this

@@ -2,16 +2,19 @@ import { RecordingPageViewProps } from 'components/RecordingPageView';
 import assert from 'lib/assert';
 import { useAPI, useBoolean, useCountdown, usePromise } from 'lib/hooks';
 import { mapPack, State } from 'lib/hooks/Promise';
-import { sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
-import { UnixTimestamp } from 'lib/utils';
+import { sensorConfigurations, sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
+import { objectMap, UnixTimestamp } from 'lib/utils';
 import { useQueryParams } from 'raviger';
 import { useEffect, useRef } from 'react';
 import { countdownQueryParam, durationQueryParam, labelQueryParam } from 'routes';
 
-type DataRecord = Record<SensorName, {
+type Data = Record<SensorName, {
     timestamp: UnixTimestamp,
     data: number[]
 }[]>;
+
+type DataFormat = Record<SensorName, string[]>;
+const format: DataFormat = objectMap(sensorConfigurations, obj => obj.format) as DataFormat;
 
 const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     const api = useAPI();
@@ -22,7 +25,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
-    const data = useRef<DataRecord>(sensorNameArrayRecordGen());
+    const data = useRef<Data>(sensorNameArrayRecordGen());
     // use forceUpdate to trigger refreshes on updated ref
     const [,,,forceUpdate] = useBoolean();
 
@@ -77,7 +80,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
          
     }, [beginDur, clearRecord, duration, isRecording, res]);
 
-    return { data: data.current, label, sensorsPH, isRecording, countdown: countdown / 1000, remaining: duration / 1000, isPre: !isRecording && countdown !== 0 };
+    return { data: data.current, format, label, sensorsPH, isRecording, countdown: countdown / 1000, remaining: duration / 1000, isPre: !isRecording && countdown !== 0 };
 };
 
 export default useRecordingPage;

@@ -20,7 +20,7 @@ describe('Wrapper', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            `"<div class=\\"undefined wrapper big\\"></div>"`
+            '"<div class=\\"undefined wrapper big\\"></div>"'
         ); /* ... gets filled automatically by jest ... */
     });
 });

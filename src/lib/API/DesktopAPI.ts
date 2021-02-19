@@ -10,8 +10,8 @@ type SampleID = string;
 type ModelID = string;
 export type LabelID = string;
 type SensorID = string;
-type DataFormat = string[];
-type Data = number[];
+// type DataFormat = string[];
+export type Data = number[];
 
 interface HyperparameterOptions {
     name: string,

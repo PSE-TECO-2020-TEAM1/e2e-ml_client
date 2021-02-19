@@ -1,4 +1,3 @@
-import { timeStamp } from 'console';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { SensorName } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
@@ -25,9 +24,11 @@ export type RecordingPageViewProps = {
     remaining: number,
     isRecording: boolean,
     isPre: boolean,
+    canSend: boolean,
+    onSend: () => void
 } 
 
-const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remaining, isRecording, isPre }: RecordingPageViewProps) => {
+const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remaining, isRecording, isPre, onSend, canSend }: RecordingPageViewProps) => {
     let content;
 
     if (isPre) content = <>
@@ -61,6 +62,10 @@ const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remainin
         <Promised promise={sensorsPH} pending={'loading...'}>{sensors =>
             sensors.map(({ name, rate }) => <span key={name} >{name} ({rate} Hz)</span>)
         }</Promised>
+        {(!isRecording && !isPre) ? <>
+            {canSend ? <button onClick={onSend}>send</button> : null}
+            <span>to restart refresh page</span>
+        </> : null}
     </>;
 };
 
@@ -86,7 +91,7 @@ const Graph = ({ data }: GraphProps) => {
         scrollbar: { enabled: false },
         navigator: { enabled: false },
         legend: { enabled: true },
-        series: data,
+        series: data.filter(({ data }) => data.length > 0),
     };
 
     return <HighchartsReact constructorType={'stockChart'} options={options} highcharts={Highcharts} />;

@@ -1,10 +1,10 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
 
 export const config: SensorConfiguration = {
-    name: 'Accelerometer',
+    name: 'Gyroscope',
     maxSamplingRate: 100,
     defaultSamplingRate: 50,
-    format: ['Accelerometer X', 'Accelerometer Y', 'Accelerometer Z']
+    format: ['Gyroscope X', 'Gyroscope Y', 'Gyroscope Z']
 } as const;
 
 export const implementation: SensorImplementation = ((() => { // FIXME implement sensor collection
@@ -16,12 +16,12 @@ export const implementation: SensorImplementation = ((() => { // FIXME implement
     let accel: any = null;
     const start = async () => {
         try {
-            const res = await navigator.permissions.query({ name: 'accelerometer' });
+            const res = await navigator.permissions.query({ name: 'gyroscope' });
             if (res.state === 'denied') {
                 console.log('denied');
                 return;    
             };
-            accel = new Accelerometer({ referenceFrame: 'device' });
+            accel = new Gyroscope({ referenceFrame: 'device' });
             accel.addEventListener('error', () => {
                 console.log('Cannot connect to the sensor.');
             });

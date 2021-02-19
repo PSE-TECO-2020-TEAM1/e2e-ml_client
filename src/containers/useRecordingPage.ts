@@ -5,7 +5,7 @@ import { mapPack, State } from 'lib/hooks/Promise';
 import { sensorConfigurations, sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
 import { objectMap, UnixTimestamp } from 'lib/utils';
 import { useQueryParams } from 'raviger';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { countdownQueryParam, durationQueryParam, labelQueryParam } from 'routes';
 
 type Data = Record<SensorName, {
@@ -22,6 +22,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     const [countdown, beginCnt] = useCountdown(parseFloat(initCount) * 1000);
     const [duration, beginDur] = useCountdown(parseFloat(initDur) * 1000);
     const [isRecording, setRecord, clearRecord] = useBoolean(false);
+    const [canSend, setSend, clearSend] = useBoolean(true);
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
@@ -80,7 +81,19 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
          
     }, [beginDur, clearRecord, duration, isRecording, res]);
 
-    return { data: data.current, format, label, sensorsPH, isRecording, countdown: countdown / 1000, remaining: duration / 1000, isPre: !isRecording && countdown !== 0 };
+    const onSend = useCallback(async () => {
+        clearSend();
+        const start = Math.min(...Object.values(data.current).map(x => x[0]?.timestamp || Infinity));
+        const end = Math.max(...Object.values(data.current).map(x => x[x.length - 1]?.timestamp || 0));
+
+        const formattedData = Object.entries(data.current).map(([k, v]) => ({ sensor: k as SensorName, dataPoints: v }));
+
+        await api.submitSample(submissionId, label, start, end, formattedData);
+    }, [api, clearSend, label, submissionId]);
+
+    return { onSend, data: data.current, format, label, sensorsPH, isRecording, countdown: countdown / 1000,
+        remaining: duration / 1000, isPre: !isRecording && countdown !== 0, canSend
+    };
 };
 
 export default useRecordingPage;

@@ -841,11 +841,9 @@ paths:
                   example: Throw
                 start:
                   type: integer
-                  format: number
                   example: 1609945761
                 end:
                   type: integer
-                  format: number
                   example: 1609945852
                 sensorDataPoints:
                   type: array
@@ -864,7 +862,6 @@ paths:
                           properties:
                             timestamp:
                               type: integer
-                              format: number
                               description: timestamp of the data point
                               example: 1609945761
                             data:
@@ -872,7 +869,7 @@ paths:
                               description: the values of the data point
                               example: [24, 12, 123]
                               items:
-                                type: integer
+                                type: number
                             
       responses:
         '200':

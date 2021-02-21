@@ -5,18 +5,16 @@ import 'styling/index.scss';
 
 import API from 'lib/API';
 import { APIProvider } from 'lib/hooks/API';
+import App from 'App';
 
-const entry = process.env.REACT_APP_ENTRYPOINT === 'mobile' ? './entrypoints/mobile/index.tsx' : './entrypoints/desktop/index.tsx';
-import(`${entry}`).then(({ default: App }) => {
-    ReactDOM.render(
-        <React.StrictMode>
-            <APIProvider value={new API()}>
-                <App />
-            </APIProvider>
-        </React.StrictMode>,
-        document.getElementById('root')
-    );
-});
+ReactDOM.render(
+    <React.StrictMode>
+        <APIProvider value={new API()}>
+            <App />
+        </APIProvider>
+    </React.StrictMode>,
+    document.getElementById('root')
+);
 
 
 // If you want to start measuring performance in your app, pass a function

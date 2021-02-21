@@ -1,0 +1,28 @@
+@import 'styling/mixins.scss';
+.main {
+    display: grid;
+    grid-template-columns: 1fr var(--medium-aside);
+    gap: var(--sp2x);
+
+    > aside {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: var(--sp2x);
+        justify-content: space-around;
+        .labBut {
+            @include action-button;
+        }
+
+        .modBut {
+            @include action-button;
+        }
+    }
+}
+
+.samples {
+
+}
+
+.options {
+    grid: span 2;
+}

@@ -2,6 +2,9 @@ import CovertTextInput from 'components/CovertTextButtonInput';
 import { TextInput } from 'components/TextField';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import React from 'react';
+import styles from './index.module.scss';
+import Wrapper from 'components/Wrapper';
+const { main } = styles;
 
 export type Label = {
     name: string,
@@ -22,7 +25,7 @@ export type WorkspaceLabelsPageViewProps = {
 
 const WorkspaceLabelsPageView = ({
     labelsPH, createName, onCreateName, onDeleteLabel, onCreate
-}: WorkspaceLabelsPageViewProps) => <>
+}: WorkspaceLabelsPageViewProps) => <Wrapper className={main}>
     <table>
         <thead>
             <tr>
@@ -63,6 +66,6 @@ const WorkspaceLabelsPageView = ({
         </tfoot>
     </table>
     
-</>;
+</Wrapper>;
 
 export default WorkspaceLabelsPageView;

@@ -1,6 +1,9 @@
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { Link } from 'raviger';
 import React from 'react';
+import styles from './index.module.scss';
+import Wrapper from 'components/Wrapper';
+const { main } = styles;
 
 export type Model = {
     name: string,
@@ -17,7 +20,7 @@ export type WorkspaceModelsPageViewProps = {
 
 const WorkspaceModelsPageView = ({
     modelsPH,
-}: WorkspaceModelsPageViewProps) => <>
+}: WorkspaceModelsPageViewProps) => <Wrapper className={main}>
     <table>
         <thead>
             <tr>
@@ -48,6 +51,6 @@ const WorkspaceModelsPageView = ({
         </tbody>
     </table>
     
-</>;
+</Wrapper>;
 
 export default WorkspaceModelsPageView;

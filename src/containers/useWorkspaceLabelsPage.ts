@@ -1,8 +1,10 @@
 import { WorkspaceLabelsPageViewProps } from 'components/WorkspaceLabelsPageView';
 import { useAPI, useAuth, useCounter, usePromise } from 'lib/hooks';
+import { useHeader } from 'lib/hooks/Header';
 import { useCallback, useState } from 'react';
 
 const useWorkspaceLabelsPage = (workspaceId: string): WorkspaceLabelsPageViewProps => {
+    useHeader({ workspaceId, dangle: 'Labels' });
     useAuth();
     const api = useAPI();
     const [validity, flip] = useCounter();

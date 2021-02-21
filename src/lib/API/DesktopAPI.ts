@@ -114,6 +114,7 @@ interface IModelDetails {
 
 export interface DesktopAPI {
     login(username: Username, password: Password): Promise<boolean>;
+    logout(): void;
     signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>;
@@ -139,7 +140,6 @@ export interface DesktopAPI {
     getModelDetails(w: WorkspaceID, m: ModelID): Promise<IModelDetails>;
     renameModel(w: WorkspaceID, m: ModelID, name: string): Promise<void>;
     deleteModel(w: WorkspaceID, m: ModelID): Promise<void>;
-
 }
 
 export default class SameOriginDesktopAPI implements DesktopAPI {
@@ -161,6 +161,12 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         } catch(e) {
             return false;
         }
+    }
+
+    logout() {
+        this.accessToken = undefined;
+        this.refreshToken = undefined;
+        window.location.reload();
     }
     
     async signup(username: Username, password: Password, email: Email): Promise<void> {

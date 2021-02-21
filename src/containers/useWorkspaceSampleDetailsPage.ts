@@ -1,8 +1,10 @@
 import { WorkspaceSampleDetailsPageViewProps } from 'components/WorkspaceSampleDetailsPageView';
 import { useAPI, useAuth, useBoolean, usePromise } from 'lib/hooks';
+import { useHeader } from 'lib/hooks/Header';
 import { sensorFormats } from 'lib/sensors';
 
 const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): WorkspaceSampleDetailsPageViewProps => {
+    useHeader({ workspaceId, sampleId, dangle: 'Details' });
     useAuth();
     const api = useAPI();
     const [verification, , , flip] = useBoolean();

@@ -1,7 +1,9 @@
 import { WorkspaceModelDetailsPageViewProps } from 'components/WorkspaceModelDetailsPageView';
 import { useAPI, useAuth, usePromise } from 'lib/hooks';
+import { useHeader } from 'lib/hooks/Header';
 
 const useWorkspaceModelDetailsPage = (workspaceId: string, modelId: string): WorkspaceModelDetailsPageViewProps => {
+    useHeader({ workspaceId, modelId, dangle: 'Details' });
     useAuth();
     const api = useAPI();
 

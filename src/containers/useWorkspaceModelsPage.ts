@@ -1,8 +1,10 @@
 import { WorkspaceModelsPageViewProps } from 'components/WorkspaceModelsPageView';
 import { useAPI, useAuth, useCounter, usePromise } from 'lib/hooks';
+import { useHeader } from 'lib/hooks/Header';
 import { classifyRoute, modelDetailsRoute } from 'routes';
 
 const useWorkspaceModelsPage = (workspaceId: string): WorkspaceModelsPageViewProps => {
+    useHeader({ workspaceId, dangle: 'Models' });
     useAuth();
     const api = useAPI();
     const [validity, flip] = useCounter();

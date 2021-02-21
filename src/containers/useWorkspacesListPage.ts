@@ -5,8 +5,10 @@ import { workspaceRoute } from 'routes';
 import useWorkspaceCreationState from './useWorkspaceCreation';
 import { WorkspaceListPageProps } from 'components/WorkspacesListPageView';
 import { SensorOptions } from 'lib/API/DesktopAPI';
+import { useHeader } from 'lib/hooks/Header';
 
 const useWorkspacesListPage = (): WorkspaceListPageProps => {
+    useHeader({ dangle: 'Workspaces' });
     useAuth();
     const [validity, , , flipValidation] = useBoolean(false);
     const api = useAPI();

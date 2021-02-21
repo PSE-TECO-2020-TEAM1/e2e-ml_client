@@ -5,6 +5,7 @@ import { useAPI, useBoolean, useMountEffect } from 'lib/hooks';
 
 import { rootRoute } from 'routes';
 import { LoginPageViewProps } from 'components/LoginPageView';
+import { useLoginHeader } from 'lib/hooks/Header';
 
 const useLoginPage = (): LoginPageViewProps => {
     const [user, setUser] = useState<string>('');
@@ -12,6 +13,7 @@ const useLoginPage = (): LoginPageViewProps => {
     const [invalid, setInvalid, clearInvalid] = useBoolean();
 
     const api = useAPI();
+    // useLoginHeader();
     const [{ ref }] = useQueryParams();
 
     useMountEffect(() => {

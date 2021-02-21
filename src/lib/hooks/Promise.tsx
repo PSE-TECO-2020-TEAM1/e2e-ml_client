@@ -29,6 +29,7 @@ const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>), inputs: any[])
             setState([State.Resolved, d, undefined]);
         }).catch(e => {
             if (cancelled) return;
+            console.error(e);
             setState([State.Rejected, undefined, e]);
         });
 

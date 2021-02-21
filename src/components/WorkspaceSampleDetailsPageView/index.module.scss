@@ -1,0 +1,24 @@
+.main {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    gap: var(--grid-gap);
+
+    > select {
+        width: 50ch;
+    }
+}
+
+.graph {
+    width: auto;
+    grid-row: 2;
+    grid-column: span 2;
+    justify-self: stretch;
+}
+
+.metadata {
+    width: 50ch;
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,53 @@
+@import 'styling/mixins.scss';
+
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--grid-gap);
+
+    > nav {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        grid-column: span 3;
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp);
+        > li {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            min-height: 32px;
+            gap: var(--grid-gap);
+
+            input[type=checkbox] {
+                justify-self: center;
+            }
+        }
+    }
+
+    > button {
+        @include action-button;
+        grid-column: span 3;
+    }
+}
+
+.namee {
+    grid-column: span 3;
+    width: 75%;
+    margin: auto;
+}
+
+.labSen {
+    grid-column: 1;
+}
+
+.labSam {
+    grid-column: 2 / span 2;
+    justify-self: right;
+}
+
+.invRate {
+    grid-column: 2 / span 2;
+    justify-self: right;
+}

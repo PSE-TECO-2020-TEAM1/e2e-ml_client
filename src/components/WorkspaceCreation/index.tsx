@@ -1,6 +1,8 @@
 import TextField, { TextInput } from 'components/TextField';
 import { SensorName } from 'lib/sensors';
 import React from 'react';
+import styles from './index.module.scss';
+const { main, labSam, labSen, namee, invRate } = styles;
 
 export type AttrCollection = { selected: boolean, rate: number, rateValid: boolean };
 // can't make the following a Record<SensorName ...> record without convoluting the file a lot (100+ lines just for that) 
@@ -16,11 +18,11 @@ export type WorkspaceCreationProps = {
 };
 
 const WorkspaceCreation = ({ onCreate, name, onName, onSensorSelect, onRateSelect, valid, sensorAttrs } : WorkspaceCreationProps) => {
-    return <>
-        <TextField onType={onName} label="Name" value={name} />
-        <label>Choose Sensors:</label>
-        <label>Choose sampling rates:</label>
-        <ul>
+    return <div className={main}>
+        <TextField onType={onName} className={namee} label="Name" value={name} />
+        <label className={labSen}>Choose Sensors:</label>
+        <label className={labSam}>Choose sampling rates:</label>
+        <nav>
             {/* Object.keys doesn't preserve type: https://github.com/microsoft/TypeScript/pull/12253 */}
             {/* see above too */}
             {(Object.keys(sensorAttrs) as Array<SensorName>).map((sensorName) => <li key={`${sensorName}-sensorName`}>
@@ -29,12 +31,12 @@ const WorkspaceCreation = ({ onCreate, name, onName, onSensorSelect, onRateSelec
                 
                 {sensorAttrs[sensorName].selected ? <>
                     <TextInput type="number" value={sensorAttrs[sensorName].rate} onType={e => onRateSelect(sensorName, e)}/>
-                    {!sensorAttrs[sensorName].rateValid ? 'invalid sample rate' : null}
+                    {!sensorAttrs[sensorName].rateValid ? <div className={invRate}>invalid sample rate</div> : null}
                 </> : null}
             </li>)}
-        </ul>
+        </nav>
         <button disabled={!valid} onClick={onCreate} >create</button>
-    </>;
+    </div>;
 };
 
 export default WorkspaceCreation;

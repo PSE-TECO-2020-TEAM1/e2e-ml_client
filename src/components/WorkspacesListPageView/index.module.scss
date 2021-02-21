@@ -7,7 +7,7 @@
     gap: var(--sp2x);
 
     > section {
-        background-color: var(--c-bg2);
+        // background-color: var(--c-);
         grid-column: 1;
         grid-row: 2;
         display: grid;
@@ -23,7 +23,7 @@
     }
 
     > aside {
-        background-color: var(--c-bg2);
+        // border: solid 2px var(--c-pink);
         grid-column: 3;
         grid-row: 2;
         padding: var(--sp2x);

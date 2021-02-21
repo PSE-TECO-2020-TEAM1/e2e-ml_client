@@ -1,5 +1,8 @@
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import React from 'react';
+import styles from './index.module.scss';
+import Wrapper from 'components/Wrapper';
+const { main } = styles;
 
 export type ModelDetails = {
     name: string,
@@ -25,8 +28,7 @@ export type WorkspaceModelDetailsPageViewProps = {
 
 const WorkspaceModelDetailsPageView = ({
     modelDetailsPH,
-}: WorkspaceModelDetailsPageViewProps) => <>
-    <header><Promised promise={modelDetailsPH} pending={'loading...'} >{({ name }) => name}</Promised></header>
+}: WorkspaceModelDetailsPageViewProps) => <Wrapper className={main}>
     <section>
         <header>Performance Metrics</header>
         <table>
@@ -54,7 +56,7 @@ const WorkspaceModelDetailsPageView = ({
             </tbody>
         </table>
     </section>
-    <section>
+    <aside>
         <header>Model Parameters</header>
         <ul>
             <li>
@@ -92,7 +94,7 @@ const WorkspaceModelDetailsPageView = ({
                 </ul>
             </li>
         </ul>
-    </section>
-</>;
+    </aside>
+</Wrapper>;
 
 export default WorkspaceModelDetailsPageView;

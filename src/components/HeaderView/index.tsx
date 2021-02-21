@@ -1,6 +1,7 @@
-import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { Link } from 'raviger';
 import React from 'react';
+import styles from './index.module.scss';
+const { container } = styles;
 
 type Crumb = { name: string, href: string } | string;
 
@@ -13,7 +14,7 @@ export type HeaderViewProps = {
     signup?: string
 }
 
-const HeaderView = ({ crumbs, goBack, username, logout, login, signup }: HeaderViewProps) => <header>
+const HeaderView = ({ crumbs, goBack, username, logout, login, signup }: HeaderViewProps) => <header className={container}>
     <div>{goBack ? <button onClick={goBack}>back</button> : null}</div>
     <div>
         {crumbs ? crumbs.map((crumb, i) => <div key={typeof crumb === 'string' ? crumb : crumb.name}>

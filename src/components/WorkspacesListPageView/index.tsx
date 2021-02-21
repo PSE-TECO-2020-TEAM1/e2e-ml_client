@@ -7,7 +7,7 @@ import styles from './index.module.scss';
 import Loading from 'components/Loading';
 import { Link } from 'raviger';
 import WorkspaceCreation, { WorkspaceCreationProps } from 'components/WorkspaceCreation';
-const { main, workspaceButton } = styles;
+const { main, workspace } = styles;
 
 export type WorkspaceListPageProps = {
     workspaceCreationProps: WorkspaceCreationProps,
@@ -19,14 +19,13 @@ const WorkspacesListPage = ({ workspacesPH, workspaceCreationProps }: WorkspaceL
         <Wrapper className={main}>
             <section>
                 <Promised promise={workspacesPH} pending={<Loading />} >{w =>
-                    w.map(({ text, href }) => <div key={text}>
-                        <Link href={href}>{text}</Link>
-                    </div>)
+                    w.map(({ text, href }) =>
+                        <Link className={workspace} key={text} href={href}>{text}</Link>)
                 }</Promised>
             </section>
-            <section>
+            <aside>
                 <WorkspaceCreation {...workspaceCreationProps}/>
-            </section>
+            </aside>
         </Wrapper>
     );
 };

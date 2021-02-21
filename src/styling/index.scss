@@ -7,4 +7,18 @@ a {
 
 body {
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    // background-color: var(--c-bg);
+}
+
+body, #root {
+    min-height: 100%;
+}
+
+#root {
+    min-height: 70vh;
+}
+
+html {
+    height: 100%;
+    color: var(--c-fg);
 }

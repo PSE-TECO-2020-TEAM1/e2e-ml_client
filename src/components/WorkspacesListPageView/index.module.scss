@@ -1,8 +1,31 @@
+@import "styling/mixins.scss";
+
 .main {
     display: grid;
-    grid-template-columns: 1fr 1fr var(--wrapper-medium);
+    grid-template-columns: 1fr auto var(--medium-aside);
+    grid-template-rows: auto 1fr auto;
+    gap: var(--sp2x);
 
-    aside {
-        
+    > section {
+        background-color: var(--c-bg2);
+        grid-column: 1;
+        grid-row: 2;
+        display: grid;
+        grid-template-columns: 25ch 25ch 25ch;
+        grid-auto-rows: 10ch;
+        gap: inherit;
+        justify-content: space-around;
+        align-content: space-around;
+
+        .workspace {
+            @include workspace-button;
+        }
+    }
+
+    > aside {
+        background-color: var(--c-bg2);
+        grid-column: 3;
+        grid-row: 2;
+        padding: var(--sp2x);
     }
 }

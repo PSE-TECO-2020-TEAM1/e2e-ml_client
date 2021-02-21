@@ -1,16 +1,15 @@
+import Graph from 'components/Graph';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { SensorName } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
 import React from 'react';
-import Highcharts from 'highcharts/highstock';
-import HighchartsReact from 'highcharts-react-official';
 
 type DataRecord = Record<SensorName, {
     timestamp: UnixTimestamp,
     data: number[]
 }[]>;
 
-type DataFormat = Record<SensorName, string[]>;
+type DataFormat = Record<SensorName, readonly string[]>;
 
 export type RecordingPageViewProps = {
     data: DataRecord,
@@ -45,8 +44,6 @@ const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remainin
             }
         }
 
-        console.log(data, format, d);
-
         content = <>
             <span>{remaining}</span>
             <span>seconds remaining</span>
@@ -67,34 +64,6 @@ const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remainin
             <span>to restart refresh page</span>
         </> : null}
     </>;
-};
-
-type GraphProps = {
-    data: {name: string, data: [number, number][]}[],
-}
-
-const Graph = ({ data }: GraphProps) => {
-    const options = {
-        chart: { type: 'line', animation: false },
-        xAxis: { type: 'datetime'// , range: 10 * 1000
-        },
-        plotOptions: {
-            series: {
-                animation: false,
-                label: {
-                    enabled: true
-                }
-            }
-        },
-        rangeSelector: { enabled: false },
-        credits: { enabled: false },
-        scrollbar: { enabled: false },
-        navigator: { enabled: false },
-        legend: { enabled: true },
-        series: data.filter(({ data }) => data.length > 0),
-    };
-
-    return <HighchartsReact constructorType={'stockChart'} options={options} highcharts={Highcharts} />;
 };
 
 export default RecordingPageView;

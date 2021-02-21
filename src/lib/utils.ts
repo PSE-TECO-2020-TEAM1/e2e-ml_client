@@ -6,3 +6,11 @@ export const objectMap = <T,Y>(obj: { [k: string]: T }, fn: (v: T, k: string, i:
     );
 
 export type UnixTimestamp = number;
+
+export const debounce = (fn: (...args: any[]) => any, wait: number) => {
+    let timeout: number;
+    return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = window.setTimeout(() => fn(...args), wait);
+    };
+};

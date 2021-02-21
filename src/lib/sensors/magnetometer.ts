@@ -1,10 +1,11 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
 
+export const format = ['Magnetometer X', 'Magnetometer Y', 'Magnetometer Z'];
+
 export const config: SensorConfiguration = {
     name: 'Magnetometer',
     maxSamplingRate: 100,
     defaultSamplingRate: 50,
-    format: ['Magnetometer X', 'Magnetometer Y', 'Magnetometer Z']
 } as const;
 
 export const implementation: SensorImplementation = ((() => { // FIXME implement sensor collection
@@ -14,14 +15,14 @@ export const implementation: SensorImplementation = ((() => { // FIXME implement
     };
 
     let accel: any = null;
-    const start = async () => {
+    const start = async (rate: number) => {
         try {
             const res = await navigator.permissions.query({ name: 'magnetometer' });
             if (res.state === 'denied') {
                 console.log('denied');
                 return;    
             };
-            accel = new Magnetometer({ referenceFrame: 'device' });
+            accel = new Magnetometer({ referenceFrame: 'device', frequency: rate });
             accel.addEventListener('error', () => {
                 console.log('Cannot connect to the sensor.');
             });

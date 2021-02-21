@@ -24,6 +24,8 @@ import RecordingConfigurationPageView from 'components/RecordingConfigurationPag
 import useRecordingConfigurationPage from 'containers/useRecordingConfigurationPage';
 import RecordingPageView from 'components/RecordingPageView';
 import useRecordingPage from 'containers/useRecordingPage';
+import WorkspaceSampleDetailsPageView from 'components/WorkspaceSampleDetailsPageView';
+import useWorkspaceSampleDetailsPage from 'containers/useWorkspaceSampleDetailsPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -36,6 +38,7 @@ const WorkspaceLabelsPage = ({ workspaceId }: QueryParams) => <WorkspaceLabelsPa
 const WorkspaceModelsPage = ({ workspaceId }: QueryParams) => <WorkspaceModelsPageView {...useWorkspaceModelsPage(workspaceId)} />;
 const WorkspaceModelDetailsPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelDetailsPageView {...useWorkspaceModelDetailsPage(workspaceId, modelId)} />;
 const WorkspaceModelClassifyPage = ({ workspaceId, modelId }: QueryParams) => <WorkspaceModelClassifyPageView {...useWorkspaceModelClassifyPage(workspaceId, modelId)} />;
+const WorkspaceSampleDetailsPage = ({ workspaceId, sampleId }: QueryParams) => <WorkspaceSampleDetailsPageView {...useWorkspaceSampleDetailsPage(workspaceId, sampleId)} />;
 
 const LabelSelectionPage = ({ submissionId }: QueryParams) => <LabelSelectionPageView {...useLabelSelectionPage(submissionId)} />;
 const RecordingConfigurationPage = ({ submissionId }: QueryParams) => <RecordingConfigurationPageView {...useRecordingConfigurationPage(submissionId)} />;
@@ -52,7 +55,7 @@ const routing = {
     '/w/:workspaceId/model/:modelId': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelDetailsPage workspaceId={workspaceId} modelId={modelId} />,
     '/w/:workspaceId/model/:modelId/classify': ({ workspaceId, modelId } : QueryParams) => <WorkspaceModelClassifyPage workspaceId={workspaceId} modelId={modelId} />,
 
-    '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) => <div>/w/{workspaceId}/sample/{sampleId}</div>,
+    '/w/:workspaceId/sample/:sampleId': ({ workspaceId, sampleId } : QueryParams) =>  <WorkspaceSampleDetailsPage workspaceId={workspaceId} sampleId={sampleId} />,
     
     '/collect/:submissionId': ({ submissionId }: QueryParams) => <LabelSelectionPage submissionId={submissionId} />,
     '/collect/:submissionId/configure': ({ submissionId }: QueryParams) => <RecordingConfigurationPage submissionId={submissionId} />,

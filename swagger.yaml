@@ -376,11 +376,11 @@ paths:
                 #                         type: integer
                 type: array
                 description: all IDs of samples in the workspace
-                example: [5ff47c3aa7063ee33caa5331, 5ff47c3aa7063ee33caa5332]
+                example: [5ff47800d27db878a150c51c, 5ff47c3aa7063ee33caa5332]
                 items:
                   type: string
                   description: sample ID
-                  example: 5ff47c3aa7063ee33caa5331
+                  example: 5ff47800d27db878a150c51c
                   # - type: string
                   #   description: hash of the samples in the workspace
         '401':
@@ -435,10 +435,11 @@ paths:
                     items:
                       type: object
                       properties:
-                        sensorId:
+                        sensor:
                           type: string
-                          description: ID of the sensor of the data point
-                          example: 5ff47c3aa7063ee33caa5335
+                          enum: [Accelerometer, Gyroscope, Magnetometer]
+                          example: Accelerometer
+                          description: name of the sensor
                         dataPoints:
                           type: array
                           description: all data points of one sensor
@@ -456,6 +457,29 @@ paths:
                                 example: [24, 12, 123]
                                 items:
                                   type: integer
+                          example:
+                            - timestamp: 1609945761
+                              data: [240, 12, 1323]
+                            - timestamp: 1619945761
+                              data: [24, 132, 123]
+                            - timestamp: 1629945761
+                              data: [3324, 12, 1243]
+                            - timestamp: 1639945761
+                              data: [424, 124, 123]
+                            - timestamp: 1649945761
+                              data: [24, 142, 123]
+                            - timestamp: 1659945761
+                              data: [274, 142, 7123]
+                            - timestamp: 1669945761
+                              data: [24, 124, 7123]
+                            - timestamp: 1679945761
+                              data: [24, 312, 8123]
+                            - timestamp: 1689945761
+                              data: [324, 152, 1623]
+                            - timestamp: 1699945761
+                              data: [254, 162, 1723]
+                            - timestamp: 1709945761
+                              data: [244, 912, 1823]
         '401':
             description: Unauthorized
     delete:
@@ -794,11 +818,11 @@ paths:
                         name:
                           type: string
                           enum: [Accelerometer, Gyroscope, Magnetometer]
-                          example: Gyroscope
+                          example: Accelerometer
                           description: name of the sensor
                         samplingRate:
                           type: integer
-                          example: 50
+                          example: 25
                           description: sampling rate of the sensor
                   labels:
                     type: array

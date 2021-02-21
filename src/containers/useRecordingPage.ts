@@ -2,8 +2,8 @@ import { RecordingPageViewProps } from 'components/RecordingPageView';
 import assert from 'lib/assert';
 import { useAPI, useBoolean, useCountdown, usePromise } from 'lib/hooks';
 import { mapPack, State } from 'lib/hooks/Promise';
-import { sensorConfigurations, sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
-import { objectMap, UnixTimestamp } from 'lib/utils';
+import { sensorFormats as format, sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
+import { UnixTimestamp } from 'lib/utils';
 import { useQueryParams } from 'raviger';
 import { useCallback, useEffect, useRef } from 'react';
 import { countdownQueryParam, durationQueryParam, labelQueryParam } from 'routes';
@@ -13,16 +13,13 @@ type Data = Record<SensorName, {
     data: number[]
 }[]>;
 
-type DataFormat = Record<SensorName, string[]>;
-const format: DataFormat = objectMap(sensorConfigurations, obj => obj.format) as DataFormat;
-
 const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     const api = useAPI();
     const [{ [durationQueryParam]: initDur, [countdownQueryParam]: initCount, [labelQueryParam]: label }] = useQueryParams();
     const [countdown, beginCnt] = useCountdown(parseFloat(initCount) * 1000);
     const [duration, beginDur] = useCountdown(parseFloat(initDur) * 1000);
     const [isRecording, setRecord, clearRecord] = useBoolean(false);
-    const [canSend, setSend, clearSend] = useBoolean(true);
+    const [canSend, , clearSend] = useBoolean(true);
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
@@ -54,13 +51,13 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
         beginDur();
 
         const { sensors } = res;
-        for (const { name } of sensors) {
+        for (const { name, samplingRate } of sensors) {
             sensorImplementations[name].onRead(({ data: sampleData, timestamp }) => {
                 // mutate!
                 data.current[name].push({ timestamp, data: sampleData });
                 forceUpdate();
             });
-            sensorImplementations[name].start();
+            sensorImplementations[name].start(samplingRate);
         }
          
     }, [beginDur, countdown, duration, forceUpdate, isRecording, res, setRecord]);

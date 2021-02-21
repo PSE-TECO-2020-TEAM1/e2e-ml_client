@@ -70,12 +70,12 @@ interface IDatapoint {
 }
 
 export interface ISensorDatapoints {
-    sensorId: SensorID,
-    datapoints: IDatapoint[]
+    sensor: SensorName,
+    dataPoints: IDatapoint[]
 }
 
 interface ISample {
-    label: ILabel,
+    label: string,
     start: UnixTimestamp,
     end: UnixTimestamp,
     data: ISensorDatapoints[]
@@ -234,12 +234,18 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.delete(`/api/workspaces/${w}/labels/${l}`);
     }
     
-    getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample> {
-        throw new Error('Method not implemented.');
+    async getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample> {
+        const { label, start, end, sensorDataPoints } = await this.get<{
+            label: string,
+            start: number,
+            end: number,
+            sensorDataPoints: ISensorDatapoints[]
+        }>(`/api/workspaces/${w}/samples/${s}`);
+        return { label, start, end, data: sensorDataPoints };
     }
 
-    setSampleLabel(w: string, s: string, l: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    async setSampleLabel(w: string, s: string, labelId: LabelID): Promise<void> {
+        return await this.put(`/api/workspaces/${w}/samples/${s}/relabel?labelId=${labelId}`, undefined);
     }
     setSampleTimeframe(w: string, s: string, frame: Timeframe): Promise<void> {
         throw new Error('Method not implemented.');

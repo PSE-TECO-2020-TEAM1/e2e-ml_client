@@ -24,7 +24,10 @@ const TextField: (props: TextFieldProps) => React.ReactElement = ({onType, ...re
 export default TextField;
 
 export interface TextInputProps extends InputProps {
-    onType?(str: string): void
+    onType?(str: string): void,
+    min?: number,
+    max?: number
+    step?: number
 }
 
 export const TextInput: (props: TextInputProps) => React.ReactElement = ({onType, ...rest}) => {

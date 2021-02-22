@@ -2,6 +2,8 @@ import { SamplingRate, SensorName } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
 import { del, get, post, put } from './utils';
 
+import testparams from './params.json';
+
 type Username = string;
 type Password = string;
 type Email = string;
@@ -13,27 +15,52 @@ type SensorID = string;
 // type DataFormat = string[];
 export type Data = number[];
 
-interface HyperparameterOptions {
-    name: string,
-    format: string
+export enum HyperparameterType {
+    Constant,
+    Integer,
+    Double,
+    Select
 }
+
+type Hyperparameter = {
+    type: HyperparameterType.Integer,
+    lower: number,
+    upper: number,
+    default: number,
+} | {
+    type: HyperparameterType.Double,
+    lower: number,
+    upper: number,
+    default: number,
+} | {
+    type: HyperparameterType.Select,
+    choices: string[],
+    default: string,
+} | {
+    type: HyperparameterType.Constant,
+    value: string,
+};
 
 interface ClassifierOptions {
-    name: string,
-    hyperparameters: HyperparameterOptions[]
+    hyperparameters: Record<string, Hyperparameter>,
+    conditions: string[]
 }
 
-interface TrainingParameters {
-    classifier: ClassifierOptions[]
-}
-
-interface ModelOptions {
-    name: string,
+export interface TrainingParameters {
     features: string[],
-    imputation: string,
-    normalizer: string,
-    classifier: ClassifierOptions
+    imputers: string[],
+    normalizers: string[],
+    classifiers: string[],
+    classifierOptions: Record<string, ClassifierOptions> 
 }
+
+// interface ModelOptions {
+//     name: string,
+//     features: string[],
+//     imputation: string,
+//     normalizer: string,
+//     classifier: ClassifierOptions
+// }
 
 export interface SensorOptions {
     sensorName: SensorName,
@@ -118,7 +145,7 @@ export interface DesktopAPI {
     signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>;
-    train(options: ModelOptions): Promise<boolean>;
+    // train(options: ModelOptions): Promise<boolean>;
     getTrainingProgress(): Promise<number>;
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
@@ -178,12 +205,97 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return !!this.accessToken;
     }
     
-    getAvailableTrainingParameters(): Promise<TrainingParameters> {
-        throw new Error('Method not implemented.');
+    async getAvailableTrainingParameters(): Promise<TrainingParameters> {
+        type JSONIngest = {
+            classifier_selections: {
+                classifier: string,
+                hyperparameters: Record<string, {
+                    type: 'UniformIntegerHyperparameter',
+                    lower: number,
+                    upper: number,
+                    default_value: number,
+                } | {
+                    type: 'UniformFloatHyperparameter',
+                    lower: number,
+                    upper: number,
+                    default_value: number,
+                } | {
+                    type: 'CategoricalHyperparameter',
+                    choices: string[],
+                    default_value: string,
+                } | {
+                    type: 'Constant',
+                    value: string,
+                }>,
+                conditions: string[]
+            }[]
+            features: string[],
+            imputers: string[],
+            normalizers: string[],
+        }
+
+        // return await this.get<JSONIngest>('/api/parameters'); // FIXME, substitute test params
+        const params =  testparams as unknown as JSONIngest;
+
+        const { features, imputers, normalizers, classifier_selections } = params;
+
+        const options = classifier_selections.reduce<Record<string, ClassifierOptions>>((agg, cur) => {
+            const hyperparameters: Record<string, Hyperparameter> = {};
+            for (const [k, v] of Object.entries(cur.hyperparameters)) {
+                switch(v.type) {
+                case 'UniformIntegerHyperparameter':
+                    hyperparameters[k] = {
+                        type: HyperparameterType.Integer,
+                        lower: v.lower,
+                        upper: v.upper,
+                        default: v.default_value
+                    };
+                    break;
+                case 'UniformFloatHyperparameter':
+                    hyperparameters[k] = {
+                        type: HyperparameterType.Double,
+                        lower: v.lower,
+                        upper: v.upper,
+                        default: v.default_value
+                    };
+                    break;
+                case 'CategoricalHyperparameter':
+                    hyperparameters[k] = {
+                        type: HyperparameterType.Select,
+                        choices: v.choices,
+                        default: v.default_value
+                    };
+                    break;
+                case 'Constant':
+                    hyperparameters[k] = {
+                        type: HyperparameterType.Constant,
+                        value: v.value
+                    };
+                    break;
+                }
+            }
+
+            agg[cur.classifier] = {
+                conditions: cur.conditions,
+                hyperparameters
+            };
+
+            return agg;
+        }, {});
+
+        return {
+            features,
+            imputers,
+            normalizers,
+            classifiers: classifier_selections.map(v => v.classifier),
+            classifierOptions: options
+        };
     }
-    train(options: ModelOptions): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
+
+
+    // train(options: ModelOptions): Promise<boolean> {
+    //     throw new Error('Method not implemented.');
+    // }
     getTrainingProgress(): Promise<number> {
         throw new Error('Method not implemented.');
     }

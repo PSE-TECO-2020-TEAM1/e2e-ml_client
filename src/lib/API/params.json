@@ -1,0 +1,261 @@
+{
+    "features": [
+        "MINIMUM",
+        "MAXIMUM",
+        "VARIANCE",
+        "ABS_ENERGY",
+        "AUTOREGRESSIVE_CORRELATION",
+        "MEAN",
+        "IQR",
+        "PEARSON_CORRELATION",
+        "SKEWNESS",
+        "KURTOSIS",
+        "FOURIER_TRANSFORM"
+    ],
+    "imputers": [
+        "MEAN_IMPUTATION",
+        "ZERO_INTERPOLATION",
+        "LINEAR_INTERPOLATION",
+        "QUADRATIC_INTERPOLATION",
+        "CUBIC_INTERPOLATION",
+        "MOVING_AVERAGE_IMPUTATION",
+        "LAST_OBSERVATION_CARRIED_FORWARD_IMPUTATION"
+    ],
+    "normalizers": [
+        "MIN_MAX_SCALER",
+        "NORMALIZER",
+        "QUANTILE_TRANSFORMER",
+        "ROBUST_SCALER",
+        "STANDARD_SCALER"
+    ],
+    "classifier_selections": [
+        {
+            "classifier": "KNEIGHBORS_CLASSIFIER",
+            "hyperparameters": {
+                "n_neighbors": {
+                    "lower": 1,
+                    "upper": 100,
+                    "default_value": 1,
+                    "type": "UniformIntegerHyperparameter"
+                },
+                "p": {
+                    "choices": [
+                        "1",
+                        "2"
+                    ],
+                    "default_value": "2",
+                    "type": "CategoricalHyperparameter"
+                },
+                "weights": {
+                    "choices": [
+                        "uniform",
+                        "distance"
+                    ],
+                    "default_value": "uniform",
+                    "type": "CategoricalHyperparameter"
+                }
+            },
+            "conditions": []
+        },
+        {
+            "classifier": "MLP_CLASSIFIER",
+            "hyperparameters": {
+                "activation": {
+                    "choices": [
+                        "tanh",
+                        "relu"
+                    ],
+                    "default_value": "relu",
+                    "type": "CategoricalHyperparameter"
+                },
+                "alpha": {
+                    "lower": 1e-07,
+                    "upper": 0.1,
+                    "default_value": 0.0001,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "batch_size": {
+                    "value": "auto",
+                    "type": "Constant"
+                },
+                "beta_1": {
+                    "value": 0.9,
+                    "type": "Constant"
+                },
+                "beta_2": {
+                    "value": 0.999,
+                    "type": "Constant"
+                },
+                "early_stopping": {
+                    "choices": [
+                        "valid",
+                        "train"
+                    ],
+                    "default_value": "valid",
+                    "type": "CategoricalHyperparameter"
+                },
+                "epsilon": {
+                    "value": 1e-08,
+                    "type": "Constant"
+                },
+                "hidden_layer_depth": {
+                    "lower": 1,
+                    "upper": 3,
+                    "default_value": 1,
+                    "type": "UniformIntegerHyperparameter"
+                },
+                "learning_rate_init": {
+                    "lower": 0.0001,
+                    "upper": 0.5,
+                    "default_value": 0.001,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "n_iter_no_change": {
+                    "value": 32,
+                    "type": "Constant"
+                },
+                "num_nodes_per_layer": {
+                    "lower": 16,
+                    "upper": 264,
+                    "default_value": 32,
+                    "type": "UniformIntegerHyperparameter"
+                },
+                "shuffle": {
+                    "value": "True",
+                    "type": "Constant"
+                },
+                "solver": {
+                    "value": "adam",
+                    "type": "Constant"
+                },
+                "tol": {
+                    "value": 0.0001,
+                    "type": "Constant"
+                },
+                "validation_fraction": {
+                    "value": 0.1,
+                    "type": "Constant"
+                }
+            },
+            "conditions": [
+                "validation_fraction | early_stopping in {'valid'}"
+            ]
+        },
+        {
+            "classifier": "RANDOM_FOREST_CLASSIFIER",
+            "hyperparameters": {
+                "bootstrap": {
+                    "choices": [
+                        "True",
+                        "False"
+                    ],
+                    "default_value": "True",
+                    "type": "CategoricalHyperparameter"
+                },
+                "criterion": {
+                    "choices": [
+                        "gini",
+                        "entropy"
+                    ],
+                    "default_value": "gini",
+                    "type": "CategoricalHyperparameter"
+                },
+                "max_depth": {
+                    "value": "None",
+                    "type": "Constant"
+                },
+                "max_features": {
+                    "lower": 0.0,
+                    "upper": 1.0,
+                    "default_value": 0.5,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "max_leaf_nodes": {
+                    "value": "None",
+                    "type": "Constant"
+                },
+                "min_impurity_decrease": {
+                    "value": 0.0,
+                    "type": "Constant"
+                },
+                "min_samples_leaf": {
+                    "lower": 1,
+                    "upper": 20,
+                    "default_value": 1,
+                    "type": "UniformIntegerHyperparameter"
+                },
+                "min_samples_split": {
+                    "lower": 2,
+                    "upper": 20,
+                    "default_value": 2,
+                    "type": "UniformIntegerHyperparameter"
+                },
+                "min_weight_fraction_leaf": {
+                    "value": 0.0,
+                    "type": "Constant"
+                }
+            },
+            "conditions": []
+        },
+        {
+            "classifier": "SVC_CLASSIFIER",
+            "hyperparameters": {
+                "C": {
+                    "lower": 0.03125,
+                    "upper": 32768.0,
+                    "default_value": 1.0,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "gamma": {
+                    "lower": 3.0517578125e-05,
+                    "upper": 8.0,
+                    "default_value": 0.1,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "kernel": {
+                    "choices": [
+                        "rbf",
+                        "poly",
+                        "sigmoid"
+                    ],
+                    "default_value": "rbf",
+                    "type": "CategoricalHyperparameter"
+                },
+                "max_iter": {
+                    "value": -1,
+                    "type": "Constant"
+                },
+                "shrinking": {
+                    "choices": [
+                        "True",
+                        "False"
+                    ],
+                    "default_value": "True",
+                    "type": "CategoricalHyperparameter"
+                },
+                "tol": {
+                    "lower": 1e-05,
+                    "upper": 0.1,
+                    "default_value": 0.001,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "coef0": {
+                    "lower": -1.0,
+                    "upper": 1.0,
+                    "default_value": 0.0,
+                    "type": "UniformFloatHyperparameter"
+                },
+                "degree": {
+                    "lower": 2,
+                    "upper": 5,
+                    "default_value": 3,
+                    "type": "UniformIntegerHyperparameter"
+                }
+            },
+            "conditions": [
+                "coef0 | kernel in {'poly', 'sigmoid'}",
+                "degree | kernel == 'poly'"
+            ]
+        }
+    ]
+}

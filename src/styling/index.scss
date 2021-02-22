@@ -1,6 +1,10 @@
 @import-sanitize;
 @import "./variables.scss";
 
+* {
+    box-sizing: border-box
+} 
+
 a {
     text-decoration: unset;
 }

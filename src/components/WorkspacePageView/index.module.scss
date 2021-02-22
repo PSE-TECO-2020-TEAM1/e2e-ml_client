@@ -6,15 +6,18 @@
 
     > aside {
         display: grid;
-        grid-template-columns: auto auto;
+        grid-template-columns: 1fr 1fr;
         gap: var(--sp2x);
         justify-content: space-around;
+        position: relative;
         .labBut {
             @include action-button;
+            width: 100%;
         }
 
         .modBut {
             @include action-button;
+            width: 100%;
         }
     }
 }
@@ -24,5 +27,6 @@
 }
 
 .options {
-    grid: span 2;
+    grid-column: span 2;
+    // padding: var(--sp2x);
 }

@@ -2,6 +2,7 @@ import { WorkspacePageViewProps } from 'components/WorkspacePageView';
 import { useAuth } from 'lib/hooks';
 import { useHeader } from 'lib/hooks/Header';
 import { labelsRoute, modelsRoute } from 'routes';
+import useModelOptions from './useModelOptions';
 import useSampleList from './useSampleList';
 
 const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
@@ -10,7 +11,8 @@ const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
     const modelsHref = modelsRoute(workspaceId);
     const labelsHref = labelsRoute(workspaceId);
     const sampleProps = useSampleList(workspaceId);
-    return { sampleProps, modelOptionsProps: {}, labelsHref, modelsHref };
+    const modelOptionsProps = useModelOptions(workspaceId);
+    return { sampleProps, modelOptionsProps, labelsHref, modelsHref };
 };
 
 export default useWorkspacePage;

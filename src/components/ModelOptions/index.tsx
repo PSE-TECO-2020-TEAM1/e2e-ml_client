@@ -120,7 +120,7 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain }: ModelOptionsPr
                         return <>
                             <div className={conditions}>
                                 <em>Conditions: </em>
-                                {opt.conditions.map(c => <span>{c}</span>)}
+                                {opt.conditions.map(c => <><span>{c}</span><br/></>)}
                             </div>
                             <div className={hyperparameters}>
                                 {Object.entries(opt.hyperparameters).map(([k, v]) => {

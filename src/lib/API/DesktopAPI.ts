@@ -97,7 +97,7 @@ interface IDatapoint {
 }
 
 export interface ISensorDatapoints {
-    sensor: SensorName,
+    sensorName: SensorName,
     dataPoints: IDatapoint[]
 }
 
@@ -173,16 +173,24 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     private accessToken: string | undefined = undefined;
     private refreshToken: string | undefined = undefined;
     
-    private get = <T,>(url: string): Promise<T> => get(this.accessToken)<T>(url);
-    private delete = <T,>(url: string) => del(this.accessToken)<T>(url);
-    private put = <T,Y>(url: string, data: T) => put(this.accessToken)<T,Y>(url, data);
-    private post = <T,Y>(url: string, data: T) => post(this.accessToken)<T,Y>(url, data);
+    private get<T,>(url: string): Promise<T> {
+        return get(this.accessToken)<T>(url);
+    };
+    private delete<T,>(url: string) {
+        return del(this.accessToken)<T>(url);
+    }
+    private put<T,Y>(url: string, data: T) {
+        return put(this.accessToken)<T,Y>(url, data);
+    }
+    private post<T,Y>(url: string, data: T) {
+        return post(this.accessToken)<T,Y>(url, data);
+    }
     
     async login(username: Username, password: Password): Promise<boolean> {
         try {
             ({
-                access_token: this.accessToken,
-                refresh_token: this.refreshToken
+                accessToken: this.accessToken,
+                refreshToken: this.refreshToken
             } = await post()('/auth/login', { username, passwordHash: password })); // we are using tls, so skip hashing on the client
             return this.isAuthenticated();
         } catch(e) {
@@ -301,6 +309,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     async getWorkspaces(): Promise<IWorkspace[]> {
+        console.log(this.accessToken);
         return await this.get<IWorkspace[]>('/api/workspaces');
     }
     
@@ -313,7 +322,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {
-        return await this.get<SampleID[]>(`/api/workspaces/${w}/samples?onlyIDs=true`);
+        return (await this.get<{sampleId: string}[]>(`/api/workspaces/${w}/samples?showDataPoints=false`)).map(v => v.sampleId);
     }
     
     async deleteSample(w: WorkspaceID, sample: string): Promise<void> {
@@ -321,7 +330,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     async getDataCollectionID(w: WorkspaceID): Promise<string> {
-        return await this.get<string>(`/api/workspaces/${w}/submissionId`);
+        return await this.get<string>(`/api/workspaces/${w}/generateSubmissionId`);
     }
     
     async getPredictionID(w: WorkspaceID, m: ModelID): Promise<string> {

@@ -12,7 +12,10 @@ const useSampleList = (workspaceId: string): SampleListProps => {
     const api = useAPI();
     const samplesPH = usePromise(async () =>
         (await api.getSampleIds(workspaceId))
-            .map(id => ({ id, href: sampleRoute(workspaceId, id) }))
+            .map(id => {
+                console.log('sample id', id);
+                return ({ id, href: sampleRoute(workspaceId, id) });
+            })
     , [workspaceId, validity]);
     const onSampleDelete = async (id: string) => {
         await api.deleteSample(workspaceId, id);

@@ -81,10 +81,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  access_token:
+                  accessToken:
                     type: string
                     example: abb4861f0affcd32cebb65daab9c8795
-                  refresh_token:
+                  refreshToken:
                     type: string
                     example: abb4861f0affcd32cebb65daab9c8795
   

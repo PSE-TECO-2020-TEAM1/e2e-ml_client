@@ -83,7 +83,8 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
         const start = Math.min(...Object.values(data.current).map(x => x[0]?.timestamp || Infinity));
         const end = Math.max(...Object.values(data.current).map(x => x[x.length - 1]?.timestamp || 0));
 
-        const formattedData = Object.entries(data.current).map(([k, v]) => ({ sensor: k as SensorName, dataPoints: v }));
+        const formattedData = Object.entries(data.current).map(([k, v]) => ({ sensor: k as SensorName, dataPoints: v }))
+            .filter(v => v.dataPoints.length !== 0);
 
         await api.submitSample(submissionId, label, start, end, formattedData);
     }, [api, clearSend, label, submissionId]);

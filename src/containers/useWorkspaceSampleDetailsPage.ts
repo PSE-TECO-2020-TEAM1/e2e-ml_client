@@ -26,9 +26,9 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
 
         console.log(data);
 
-        for (const { sensor, dataPoints } of data) {
-            for (let index = 0; index < sensorFormats[sensor].length; index++) {
-                const element = sensorFormats[sensor][index];
+        for (const { sensorName, dataPoints } of data) {
+            for (let index = 0; index < sensorFormats[sensorName].length; index++) {
+                const element = sensorFormats[sensorName][index];
                 d.push({ name: element, data: dataPoints.map(ns => ([ns.timestamp, ns.data[index]])) });
             }
         }

@@ -58,7 +58,7 @@ class SameOriginMobileAPI implements MobileAPI {
         return await post('/api/submitSample', toSend);
     }
     async getSubmissionConfiguration(id: string): Promise<ISubmissionConfiguration> {
-        return get<ISubmissionConfiguration>('/api/submissionConfig');
+        return get<ISubmissionConfiguration>(`/api/submissionConfig?submissionId=${id}`);
     }
     getPredictionConfiguration(id: string): Promise<IPredictionConfiguration> {
         throw new Error('Method not implemented.');

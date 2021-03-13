@@ -14,3 +14,25 @@ export const debounce = (fn: (...args: any[]) => any, wait: number) => {
         timeout = window.setTimeout(() => fn(...args), wait);
     };
 };
+
+export const fakeSeededRandom = (seed: number) => {
+    var x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+};
+
+export const goldenAngleColor = (number: number) => {
+    const hue = number * 137.508; // use golden angle approximation
+    return hslToHex(hue, 50, 75);
+};
+
+// https://stackoverflow.com/questions/36721830/convert-hsl-to-rgb-and-hex
+export const hslToHex = (h: number, s: number, l: number) => {
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = (n: number) => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+};

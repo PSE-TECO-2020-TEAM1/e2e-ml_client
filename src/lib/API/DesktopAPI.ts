@@ -110,7 +110,8 @@ interface ISample {
     label: string,
     start: UnixTimestamp,
     end: UnixTimestamp,
-    data: ISensorDatapoints[]
+    data: ISensorDatapoints[],
+    timeframes: Timeframe[]
 }
 
 interface IModel {
@@ -163,7 +164,7 @@ export interface DesktopAPI {
     deleteLabel(w: WorkspaceID, l: LabelID): Promise<void>;
     getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample>;
     setSampleLabel(w: WorkspaceID, s: SampleID, l: LabelID): Promise<void>;
-    setSampleTimeframe(w: WorkspaceID, s: SampleID, frame: Timeframe): Promise<void>;
+    setSampleTimeframe(w: WorkspaceID, s: SampleID, frames: Timeframe[]): Promise<void>;
     getModels(w: WorkspaceID): Promise<IModel[]>;
     getModelDetails(w: WorkspaceID, m: ModelID): Promise<IModelDetails>;
     renameModel(w: WorkspaceID, m: ModelID, name: string): Promise<void>;
@@ -368,21 +369,24 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     async getSampleDetails(w: WorkspaceID, s: SampleID): Promise<ISample> {
-        const { label, start, end, sensorDataPoints } = await this.get<{
+        const { label, start, end, sensorDataPoints, timeFrames } = await this.get<{
             label: string,
             start: number,
             end: number,
-            sensorDataPoints: ISensorDatapoints[]
+            sensorDataPoints: ISensorDatapoints[],
+            timeFrames: Timeframe[]
         }>(`/api/workspaces/${w}/samples/${s}`);
-        return { label, start, end, data: sensorDataPoints };
+        return { label, start, end, data: sensorDataPoints, timeframes: timeFrames };
     }
 
     async setSampleLabel(w: string, s: string, labelId: LabelID): Promise<void> {
         return await this.put(`/api/workspaces/${w}/samples/${s}/relabel?labelId=${labelId}`, undefined);
     }
-    setSampleTimeframe(w: string, s: string, frame: Timeframe): Promise<void> {
-        throw new Error('Method not implemented.');
+
+    async setSampleTimeframe(w: string, s: string, frames: Timeframe[]): Promise<void> {
+        return await this.put<{ start: number, end: number }[], void>(`/api/workspaces/${w}/samples/${s}/timeframes`, frames);
     }
+
     async getModels(w: string): Promise<IModel[]> {
         const list = await this.get<{ id: string, name: string }[]>(`/api/workspaces/${w}/models`);
         return list.map(({ id, name }) => ({ id, name }));

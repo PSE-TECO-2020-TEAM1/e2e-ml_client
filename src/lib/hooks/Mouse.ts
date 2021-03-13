@@ -1,27 +1,15 @@
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
-import useBoolean from './Boolean';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
-export const useMouse = <T extends HTMLElement>(target: React.RefObject<T>) => {
-    const [isDown, setDown, clearDown] = useBoolean(false);
-    const [isEntered, setEnter, clearEnter] = useBoolean(false);
-
+export const useOnClick = <T extends HTMLElement>(target: React.RefObject<T>, f: (e: MouseEvent) => void) => {
     useLayoutEffect(() => {
         const elem = target.current;
 
-        elem?.addEventListener('mousedown', setDown);
-        elem?.addEventListener('mouseup', clearDown);
-        elem?.addEventListener('mouseenter', setEnter);
-        elem?.addEventListener('mouseleave', clearEnter);
+        elem?.addEventListener('click', f);
 
         return () => {
-            elem?.removeEventListener('mousedown', setDown);
-            elem?.removeEventListener('mouseup', clearDown);
-            elem?.removeEventListener('mouseenter', setEnter);
-            elem?.removeEventListener('mouseleave', clearEnter);
+            elem?.removeEventListener('click', f);
         };
-    }, [clearDown, clearEnter, setDown, setEnter, target]);
-
-    return { isDown, isEntered };
+    }, [f, target]);
 };
 
 export const useMouseMove = <T extends HTMLElement>(containerRef: React.RefObject<T>) => {

@@ -12,12 +12,21 @@ export type WorkspaceSampleDetailsPageViewProps = {
         label: string,
         start: UnixTimestamp,
         end: UnixTimestamp,
-        points: { name: string; data: [number, number][]; }[]
+        points: { name: string; data: [number, number][]; }[],
+        ranges: {
+            from: UnixTimestamp,
+            to: UnixTimestamp,
+            color: string,
+            del: () => void
+        }[],
     }>,
+    onGraphClick: (pos: UnixTimestamp) => void,
     onLabel: (label: string) => void | Promise<void>,
+    timeframeAction: () => void,
+    timeframeActionName: string,
 }
 
-const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel }: WorkspaceSampleDetailsPageViewProps) => {
+const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel, onGraphClick, timeframeAction, timeframeActionName }: WorkspaceSampleDetailsPageViewProps) => {
     const onLabelEvent = useCallback(e => onLabel(e.target.value), [onLabel]);
     return <Wrapper className={main}>
         <Promised
@@ -28,7 +37,7 @@ const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel }: Workspa
                     <Promised
                         promise={labelsPH}
                         pending={null}
-                    >{labels => labels.map(({ id, name }) => <option value={id}>{name}</option>)}</Promised>
+                    >{labels => labels.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}</Promised>
                 </select>}
         </Promised>
         <Promised
@@ -43,9 +52,21 @@ const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel }: Workspa
         <Promised
             promise={samplePH}
             pending={'loading sample graph...'}
-        >{({ points }) =>
+        >{({ points, ranges }) =>
                 <div className={graph}>
-                    <Graph data={points} animation editable />
+                    <Graph data={points} ranges={ranges} animation onClick={onGraphClick} />
+                </div>}
+        </Promised>
+        <Promised
+            promise={samplePH}
+            pending={'loading sample graph...'}
+        >{({ ranges }) =>
+                <div>
+                    <em>Timeframes: </em>
+                    <nav>
+                        {ranges.map(({ from, to, color, del }) => <span key={from + color} style={ { background: color } }>Start: {from}, End: ${to}<button onClick={del}>DEL</button></span>)}
+                    </nav>
+                    <button onClick={timeframeAction}>{timeframeActionName}</button>
                 </div>}
         </Promised>
     </Wrapper>;

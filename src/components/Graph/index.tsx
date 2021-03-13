@@ -1,69 +1,40 @@
-import React, { useCallback, useEffect, useReducer, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import Highcharts, { Chart } from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { UnixTimestamp } from 'lib/utils';
-import { useMouse, useMouseMove } from 'lib/hooks/Mouse';
+import assert from 'lib/assert';
+import { useOnClick } from 'lib/hooks/Mouse';
 
 type GraphProps = {
     data: {name: string, data: [number, number][]}[],
     animation?: boolean,
-    editable?: boolean,
     ranges?: {
         from: UnixTimestamp,
         to: UnixTimestamp,
+        color: string
     }[],
-    onRangeDrag?: (range: number, newStart: number, newEnd: number) => void
-    onRangeRightResize?: (range: number, newEnd: number) => void
-    onRangeLeftResize?: (range: number, newStart: number) => void
-    onNewRange?: (range: number, newStart: number, newEnd: number) => void
+    onClick?: (pos: UnixTimestamp) => void
 }
 
-const Graph = ({ data, animation = false, editable = false, ranges = [] }: GraphProps) => {
+const Graph = ({ data, animation = false, ranges = [], onClick }: GraphProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const chart = useRef<Chart>();
-    const { isDown, isEntered } = useMouse(containerRef);
-    const position = useMouseMove(containerRef);
-    const [ rangeOver, dispatch ] = useReducer((state: boolean[], [i, hover]: [i: number, hover: boolean]) => {
-        const n = [...state];
-        n[i] = hover;
-        return n;
-    }, ranges.map(() => false)); 
 
-    const plotBands = ranges.map(({ from, to }, i) => {
+    const plotBands = ranges.map(({ from, to, color }, i) => {
         return {
-            color: '#FCFFC5',
+            color,
             from,
             to,
-            events: {
-                mouseover: () => dispatch([i, true]),
-                mouseout: () => dispatch([i, false]),
-            }
         };
     });
 
-    const start = useRef<number | boolean>(false);
-    useEffect(() => {
-        if (!editable) return; 
-        if(!(position.current !== null && typeof chart.current !== 'undefined')) return;
-        const e = chart.current.pointer.normalize(position.current);
-        const x = chart.current?.xAxis[0].toValue(e.chartX);
-        console.log(isEntered, isDown, rangeOver, x, start.current);
-
-        // drag start
-        if (isEntered && isDown) {
-            start.current = x;
-            return;
-        } else if (start.current !== false) {
-            if (isEntered && !isDown) {
-                console.log('area', start.current, x);
-            }
-            start.current = false;
-            return;
-        } else {
-            start.current = false;
-        }
-
-    }, [editable, isDown, isEntered, position, rangeOver]);
+    useOnClick(containerRef, (e: MouseEvent) => {
+        if (typeof onClick === 'undefined') return;
+        assert(typeof chart.current !== 'undefined');
+        const re = chart.current.pointer.normalize(e);
+        const x = chart.current?.xAxis[0].toValue(re.chartX);
+        onClick(x);
+    });
 
     const options = {
         chart: { type: 'line', animation: animation },

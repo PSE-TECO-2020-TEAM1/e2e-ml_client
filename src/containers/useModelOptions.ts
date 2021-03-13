@@ -5,30 +5,37 @@ import { useReducer, useState } from 'react';
 
 type State = {
     normalizer?: string,
-    imputer?: string,
+    imputation?: string,
     features: string[],
     classifier?: string,
-    hyperparameters: Record<string, number | string>
+    hyperparameters: Record<string, number | string>,
+    windowSize?: number,
+    slidingStep?: number,
 };
 enum ActionType {
-    AddFeature,
-    RemoveFeature,
-    Hyperparameter
+    Hyperparameter,
+    Defaults
 }
 type Action =
     { normalizer: string }
-    | { imputer: string }
+    | { imputation: string }
+    | { slidingStep: number }
+    | { windowSize: number }
     | { features: string[] }
-    | { classifier: string, hyperparameters: Record<string, number | string> }
+    | { classifier: string, hyperparameters: Record<string, number | string>, windowSize: number, slidingStep: number }
     | { type: ActionType.Hyperparameter, parameter: string, value: number | string }
     
 
 const reducer = (s: State, a: Action): State => {
+    console.log(a);
+    if ('type' in a && a.type === ActionType.Hyperparameter) return { ...s, hyperparameters: { ...s.hyperparameters, [a.parameter]: a.value } };
+    
+    if ('classifier' in a) return { ...s, classifier: a.classifier, hyperparameters: a.hyperparameters, windowSize: a.windowSize, slidingStep: a.slidingStep };
     if ('normalizer' in a) return { ...s, normalizer: a.normalizer };
-    if ('imputer' in a) return { ...s, imputer: a.imputer };
-    if ('classifier' in a) return { ...s, classifier: a.classifier, hyperparameters: a.hyperparameters };
+    if ('imputation' in a) return { ...s, imputation: a.imputation };
     if ('features' in a) return { ...s, features: a.features };
-    if (a.type === ActionType.Hyperparameter) return { ...s, hyperparameters: { ...s.hyperparameters, [a.parameter]: a.value } };
+    if ('windowSize' in a) return { ...s, windowSize: a.windowSize };
+    if ('slidingStep' in a) return { ...s, slidingStep: a.slidingStep };
 
     throw new Error('invalid action');
 };
@@ -59,9 +66,16 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     const paramsPH = usePromise(async () => {
         const params = await api.getAvailableTrainingParameters();
         const selectNormalizer = (n: string) => dispatch({ normalizer: n });
-        const selectImputer = (n: string) => dispatch({ imputer: n });
+        const setWindowSize = (n: number) => dispatch({ windowSize: n });
+        const setSlidingStep = (n: number) => dispatch({ slidingStep: n });
+        const selectImputer = (n: string) => dispatch({ imputation: n });
         const selectFeatures = (n: string[]) => dispatch({ features: n });
-        const selectClassifier = (n: string) => dispatch({ classifier: n, hyperparameters: mapParamsToClassifierHyperparameterState(params, n) });
+        const selectClassifier = (n: string) => dispatch({
+            classifier: n,
+            hyperparameters: mapParamsToClassifierHyperparameterState(params, n),
+            windowSize: params.windowSize,
+            slidingStep: params.slidingStep
+        });
         const setHyperparameter = (h: string, v: number | string) => dispatch({ type: ActionType.Hyperparameter, parameter: h, value: v });
         
         return { params, actions: {
@@ -70,10 +84,32 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
             selectFeatures,
             selectClassifier,
             setHyperparameter,
+            setWindowSize,
+            setSlidingStep
         } };
     }, []);
 
-    const onTrain = () => {}; // FIXME implement
+    const onTrain = async () => {
+        const { slidingStep, windowSize, imputation, normalizer, hyperparameters, features, classifier} = state;
+        if (typeof slidingStep === 'undefined'
+            || typeof windowSize === 'undefined'
+            || typeof imputation === 'undefined'
+            || typeof normalizer === 'undefined'
+            || typeof classifier === 'undefined') {
+            return;
+        }
+
+        await api.train(workspaceId, {
+            modelName: name,
+            slidingStep,
+            imputation,
+            normalizer,
+            features,
+            hyperparameters,
+            classifier,
+            windowSize
+        });
+    };
 
     return { state, paramsPH, name, onName, onTrain };
 };

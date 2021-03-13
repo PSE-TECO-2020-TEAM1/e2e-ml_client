@@ -51,12 +51,14 @@ export interface TrainingParameters {
     imputers: string[],
     normalizers: string[],
     classifiers: string[],
-    classifierOptions: Record<string, ClassifierOptions> 
+    classifierOptions: Record<string, ClassifierOptions>,
+    windowSize: number,
+    slidingStep: number,
 }
 
 interface ModelOptions {
     modelName: string,
-    inputation: string,
+    imputation: string,
     features: string[],
     normalizer: string,
     classifier: string,
@@ -144,7 +146,7 @@ export interface DesktopAPI {
     signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>;
-    train(options: ModelOptions): Promise<void>;
+    train(w: WorkspaceID, options: ModelOptions): Promise<void>;
     getTrainingProgress(w: WorkspaceID): Promise<number>;
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
@@ -246,7 +248,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         // const params = await this.get<JSONIngest>('/api/parameters'); // FIXME, substitute test params
         const params =  testparams as unknown as JSONIngest;
 
-        const { features, imputers, normalizers, classifier_selections } = params;
+        const { features, imputers, normalizers, classifier_selections, windowSize, slidingStep } = params;
 
         const options = classifier_selections.reduce<Record<string, ClassifierOptions>>((agg, cur) => {
             const hyperparameters: Record<string, Hyperparameter> = {};
@@ -297,12 +299,14 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
             imputers,
             normalizers,
             classifiers: classifier_selections.map(v => v.classifier),
-            classifierOptions: options
+            classifierOptions: options,
+            windowSize,
+            slidingStep
         };
     }
 
-    async train(opt: ModelOptions): Promise<void> {
-        return await this.post<ModelOptions>('/api/workspaces/create', opt);
+    async train(w: WorkspaceID, opt: ModelOptions): Promise<void> {
+        return await this.post<ModelOptions, void>(`/api/workspaces/${w}/train`, opt);
     }
 
     async getTrainingProgress(w: WorkspaceID): Promise<number> {

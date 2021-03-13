@@ -8,10 +8,10 @@ const useWorkspaceModelDetailsPage = (workspaceId: string, modelId: string): Wor
     const api = useAPI();
 
     const modelDetailsPH = usePromise(async() => {
-        const { name, labelPerformance, classifier, ...rest } = await api.getModelDetails(workspaceId, modelId);
+        const { name, labelPerformance, hyperparameters, ...rest } = await api.getModelDetails(workspaceId, modelId);
         
-        const pars = { ...rest, classifier: classifier.name, 
-            hyperparameters: classifier.hyperparameters.map(({ name, value }) => ({ name, value: value.toString() }))
+        const pars = { ...rest, 
+            hyperparameters: hyperparameters.map(({ name, value }) => ({ name, value: value.toString() }))
         };
 
         // this shouldn't be necessary as each label entry should provide the same set of values

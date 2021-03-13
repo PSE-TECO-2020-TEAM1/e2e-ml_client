@@ -15,6 +15,8 @@ export type ModelOptionsProps = {
         actions: {
             selectNormalizer: (n: string) => void;
             selectImputer: (n: string) => void;
+            setWindowSize: (n: number) => void;
+            setSlidingStep: (n: number) => void;
             selectFeatures: (n: string[]) => void;
             selectClassifier: (n: string) => void;
             setHyperparameter: (h: string, v: number | string) => void;
@@ -22,10 +24,12 @@ export type ModelOptionsProps = {
     }>,
     state: {
         normalizer?: string,
-        imputer?: string,
+        imputation?: string,
         features: string[],
         classifier?: string,
-        hyperparameters: Record<string, number | string>
+        hyperparameters: Record<string, number | string>,
+        slidingStep?: number,
+        windowsSize?: number
     };
     name: string,
     onName: (n: string) => void
@@ -35,7 +39,6 @@ export type ModelOptionsProps = {
 const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
 
 const ModelOptions = ({ paramsPH, state, name, onName, onTrain }: ModelOptionsProps) => {
-    console.log(paramsPH, state);
     return <section className={main}>
         <TextField onType={onName} label="Name" value={name} />
         <Accordion allowMultipleExpanded allowZeroExpanded>
@@ -47,7 +50,7 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain }: ModelOptionsPr
                 </AccordionItemHeading>
                 <AccordionItemPanel><div className={panel}>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { imputers }, actions: { selectImputer } }) =>
-                        <RadioGroup className={radioGroup} name="imputer" selectedValue={state.imputer} onChange={selectImputer}>
+                        <RadioGroup className={radioGroup} name="imputation" selectedValue={state.imputation} onChange={selectImputer}>
                             {imputers.map(imp => <label key={imp}>
                                 <Radio value={imp}/> {format(imp)}
                             </label>)}
@@ -112,7 +115,7 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain }: ModelOptionsPr
                     </AccordionItemButton>
                 </AccordionItemHeading>
                 <AccordionItemPanel><div className={panel}>
-                    <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifierOptions } , actions: { setHyperparameter } }) => {
+                    <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifierOptions } , actions: { setHyperparameter, setSlidingStep, setWindowSize } }) => {
                         if (typeof state.classifier === 'undefined') return null;
                         const opt = classifierOptions[state.classifier];
                         console.log(opt);
@@ -123,6 +126,14 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain }: ModelOptionsPr
                                 {opt.conditions.map(c => <><span>{c}</span><br/></>)}
                             </div>
                             <div className={hyperparameters}>
+                                <div className={hyper}>
+                                    <span>Window Size</span>
+                                    <TextInput type="number" step={1} value={state.windowsSize} onType={s => setWindowSize(parseFloat(s))}/>
+                                </div>
+                                <div className={hyper}>
+                                    <span>Sliding Step</span>
+                                    <TextInput type="number" step={1} value={state.slidingStep} onType={s => setSlidingStep(parseFloat(s))}/>
+                                </div>
                                 {Object.entries(opt.hyperparameters).map(([k, v]) => {
                                     switch (v.type) {
                                     case HyperparameterType.Constant: return <div className={hyper}>

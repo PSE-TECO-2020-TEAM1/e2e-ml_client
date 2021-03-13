@@ -1,4 +1,6 @@
 {
+    "windowSize": 5,
+    "slidingStep": 2,
     "features": [
         "MINIMUM",
         "MAXIMUM",

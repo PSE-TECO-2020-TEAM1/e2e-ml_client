@@ -5,7 +5,6 @@ import { useAPI, useMountEffect } from 'lib/hooks';
 
 import { loginRoute, rootRoute } from 'routes';
 import Wrapper from 'components/Wrapper';
-import { Button } from '@material-ui/core';
 
 import TextField from 'components/TextField';
 import styles from 'components/LoginPageView/index.module.scss';
@@ -58,8 +57,8 @@ const SignupPage = () => {
                 ? 'Invalid email format'
                 : 'Can\'t sign up using given credentials'
             }</label>
-            <Button
-                disabled={wrongEmail}
+            <button
+                // disabled={wrongEmail}
                 onClick={async () => {
                     try {
                         await api.signup(user, pass, email);
@@ -70,7 +69,7 @@ const SignupPage = () => {
                 }}
             >
                 Sign up
-            </Button>
+            </button>
         </Wrapper>
     );
 };

@@ -1,39 +1,27 @@
-import React, { useCallback } from 'react';
-import { Input as MUIInput, InputProps, StandardTextFieldProps, TextField as MUITextField } from '@material-ui/core';
-// import { borderedTextFieldStylesHook } from '@mui-treasury/styles/textField/bordered';
-
-export interface TextFieldProps extends StandardTextFieldProps {
-    onType?(str: string): void
+import React, { HTMLProps, useCallback } from 'react';
+export interface TextFieldProps extends HTMLProps<HTMLInputElement> {
+    onType?(str: string): void,
+    error?: boolean
+    label?: string,
 }
 
 const TextField: (props: TextFieldProps) => React.ReactElement = ({onType, ...rest}) => {
-    // const inputBaseStyles = borderedTextFieldStylesHook.useInputBase();
-    // const inputLabelStyles = borderedTextFieldStylesHook.useInputLabel();
-
-    return <MUITextField
-        fullWidth
+    return <input
         onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
             if(typeof onType === 'function') onType(e.target.value);
         }, [onType])}
-        // InputLabelProps={{ shrink: true, classes: inputLabelStyles }}
-        // InputProps={{ classes: inputBaseStyles, disableUnderline: true }}
         {...rest}
     />;
 };
 
 export default TextField;
 
-export interface TextInputProps extends InputProps {
+export interface TextInputProps extends HTMLProps<HTMLInputElement> {
     onType?(str: string): void,
-    min?: number,
-    max?: number
-    step?: number
 }
 
 export const TextInput: (props: TextInputProps) => React.ReactElement = ({onType, ...rest}) => {
-
-    return <MUIInput
-        fullWidth
+    return <input
         onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
             if(typeof onType === 'function') onType(e.target.value);
         }, [onType])}

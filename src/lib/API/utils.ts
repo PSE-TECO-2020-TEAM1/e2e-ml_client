@@ -11,8 +11,10 @@ const getH = (accessToken: string = '') => async <T,>(url: string, method: strin
     const body = await res.text();
     
     if (res.status === 200 && body === '') return JSON.parse('{}');
-    console.log('body', body);
-    return JSON.parse(body);
+
+    const ttt = JSON.parse(body);
+    console.log(accessToken, url, method, ttt);
+    return ttt;
 };
 
 const postH = (accessToken: string = '') => async <Input,Output>(url: string, data: Input, method: string = 'POST'): Promise<Output> => {
@@ -26,11 +28,18 @@ const postH = (accessToken: string = '') => async <Input,Output>(url: string, da
         headers,
         body: JSON.stringify(data)
     });
-    
+
     const body = await res.text();
     
     if (res.status === 200 && body === '') return JSON.parse('{}');
-    return JSON.parse(body);
+    if (res.status !== 200) {
+        console.log(accessToken, url, data, method, body);
+        throw new Error(body);
+    }
+    
+    const ttt = JSON.parse(body);
+    console.log(accessToken, url, data, method, ttt);
+    return ttt;
 };
 
 export const get = (accessToken?: string) => <T,>(url: string) => getH(accessToken)<T>(url, 'GET');

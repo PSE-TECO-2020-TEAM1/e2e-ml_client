@@ -1,6 +1,6 @@
 import { WorkspaceSampleDetailsPageViewProps } from 'components/WorkspaceSampleDetailsPageView';
 import assert from 'lib/assert';
-import { useAPI, useAuth, useBoolean, usePromise } from 'lib/hooks';
+import { useAPI, useAuth, useBoolean, useCounter, usePromise } from 'lib/hooks';
 import { useHeader } from 'lib/hooks/Header';
 import { sensorFormats } from 'lib/sensors';
 import { goldenAngleColor, UnixTimestamp } from 'lib/utils';
@@ -11,8 +11,7 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
     useAuth();
     const api = useAPI();
     const [verification, , , flip] = useBoolean();
-    const [addOrNot, , clearClick, toggleClick] = useBoolean();
-    const [isAdding, setAdd, clearAdd] = useBoolean();
+    const [timeframeState, setFrameState] = useState<0 | 1 | 2>(); // 0 not listening, 1 listening for 1st, 2 listening for 2nd 
     const temp = useRef<number>();
     const [timeframes, setTimeframes] = useState<{ start: number, end: number }[]>([]);
 
@@ -32,8 +31,6 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
 
         const d: {name: string, data: [number, number][]}[] = [];
 
-        console.log(data);
-
         for (const { sensorName, dataPoints } of data) {
             for (let index = 0; index < sensorFormats[sensorName].length; index++) {
                 const element = sensorFormats[sensorName][index];
@@ -41,10 +38,11 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
             }
         }
 
-        const ranges = timeframes.map(({ start: st, end: ed }) => ({ from: st, to: ed,
-            color: st === start && ed === end ? 'transparent' : goldenAngleColor(Math.floor(st)),
+        const ranges = timeframes.map((timeframe) => ({ from: timeframe.start, to: timeframe.end,
+            color: timeframe.start === start && timeframe.end === end ? 'transparent' : goldenAngleColor(Math.floor(timeframe.start)),
             del: async () => {
-                await api.setSampleTimeframe(workspaceId, sampleId, timeframes.filter(t => !(t.start === st && t.end === end)));
+                await api.setSampleTimeframe(workspaceId, sampleId, timeframes.filter(t => t !== timeframe));
+                console.log('flip');
                 flip();
             }
         }));
@@ -53,36 +51,31 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
     }, [verification]);
 
     const onGraphClick = async (pos: UnixTimestamp) => {
-        if (!isAdding) return;
-        console.log(pos, addOrNot);
-        if (addOrNot === true) { // we add now
+        console.log(pos, timeframeState);
+        if (timeframeState === 0) return;
+        if (timeframeState === 2) { // we add now
             assert(typeof temp.current === 'number');
-            const t = temp.current;
-            temp.current = NaN;
-            console.log('aaddddd');
-            await api.setSampleTimeframe(workspaceId, sampleId, [...timeframes, { start: t, end: pos }]);
-            flip();
+            await api.setSampleTimeframe(workspaceId, sampleId, [...timeframes, { start: temp.current, end: pos }]);
             
-            toggleClick();
+            setFrameState(0);
+            flip();
             return;
         }
 
+        setFrameState(2);
         temp.current = pos;
-        clearAdd();
-        toggleClick();
     };
 
     const timeframeAction = () => {
-        if (isAdding) {
-            clearClick();
-            clearAdd();
+        if (timeframeState !== 0) {
+            setFrameState(0);
             return;
         }
 
-        setAdd();
+        setFrameState(1);
     };
 
-    const timeframeActionName = isAdding ? 'Cancel' : 'Add timeframe';
+    const timeframeActionName = timeframeState ? 'Cancel' : 'Add timeframe';
 
     return { labelsPH, onLabel, samplePH, onGraphClick, timeframeAction, timeframeActionName };
 };

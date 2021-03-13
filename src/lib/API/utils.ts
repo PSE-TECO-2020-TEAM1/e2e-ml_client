@@ -1,3 +1,13 @@
+const handleStatusCode = (status: number, body: string): ({} | undefined) => {
+    if (status === 200 && body === '') return ({});
+    if (status === 200 && body === 'OK') return ({});
+    if (status !== 200) {
+        throw new Error(body);
+    }
+
+    return undefined;
+};
+
 const getH = (accessToken: string = '') => async <T,>(url: string, method: string = 'GET'): Promise<T> => {
     const headers: HeadersInit = new Headers();
     // accessToken = accessToken || 'waiting-for-enes-to-fix-swagger'; // FIXME: waiting for enes to fix swagger
@@ -9,12 +19,8 @@ const getH = (accessToken: string = '') => async <T,>(url: string, method: strin
     });
     
     const body = await res.text();
-    
-    if (res.status === 200 && body === '') return JSON.parse('{}');
 
-    const ttt = JSON.parse(body);
-    console.log(accessToken, url, method, ttt);
-    return ttt;
+    return handleStatusCode(res.status, body) || JSON.parse(body);
 };
 
 const postH = (accessToken: string = '') => async <Input,Output>(url: string, data: Input, method: string = 'POST'): Promise<Output> => {
@@ -31,15 +37,7 @@ const postH = (accessToken: string = '') => async <Input,Output>(url: string, da
 
     const body = await res.text();
     
-    if (res.status === 200 && body === '') return JSON.parse('{}');
-    if (res.status !== 200) {
-        console.log(accessToken, url, data, method, body);
-        throw new Error(body);
-    }
-    
-    const ttt = JSON.parse(body);
-    console.log(accessToken, url, data, method, ttt);
-    return ttt;
+    return handleStatusCode(res.status, body) || JSON.parse(body);
 };
 
 export const get = (accessToken?: string) => <T,>(url: string) => getH(accessToken)<T>(url, 'GET');

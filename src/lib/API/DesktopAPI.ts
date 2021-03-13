@@ -54,13 +54,16 @@ export interface TrainingParameters {
     classifierOptions: Record<string, ClassifierOptions> 
 }
 
-// interface ModelOptions {
-//     name: string,
-//     features: string[],
-//     imputation: string,
-//     normalizer: string,
-//     classifier: ClassifierOptions
-// }
+interface ModelOptions {
+    modelName: string,
+    inputation: string,
+    features: string[],
+    normalizer: string,
+    classifier: string,
+    windowSize: number,
+    slidingStep: number,
+    hyperparameters: any // FIXME wot
+}
 
 export interface SensorOptions {
     sensorName: SensorName,
@@ -125,18 +128,14 @@ interface IHyperparameter {
     value: any
 }
 
-interface IClassifier {
-    name: string,
-    hyperparameters: IHyperparameter[]
-}
-
 interface IModelDetails {
     name: string,
     labelPerformance: ILabelPerformance[],
     imputation: string,
     normalizer: string,
     features: string[],
-    classifier: IClassifier
+    classifier: string,
+    hyperparameters: IHyperparameter[],
 }
 
 export interface DesktopAPI {
@@ -145,8 +144,8 @@ export interface DesktopAPI {
     signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>;
-    // train(options: ModelOptions): Promise<boolean>;
-    getTrainingProgress(): Promise<number>;
+    train(options: ModelOptions): Promise<void>;
+    getTrainingProgress(w: WorkspaceID): Promise<number>;
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
     getWorkspaceSensors(): Promise<ISensor[]>;
@@ -240,9 +239,11 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
             features: string[],
             imputers: string[],
             normalizers: string[],
+            windowSize: number,
+            slidingStep: number,
         }
 
-        // return await this.get<JSONIngest>('/api/parameters'); // FIXME, substitute test params
+        // const params = await this.get<JSONIngest>('/api/parameters'); // FIXME, substitute test params
         const params =  testparams as unknown as JSONIngest;
 
         const { features, imputers, normalizers, classifier_selections } = params;
@@ -300,12 +301,13 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         };
     }
 
+    async train(opt: ModelOptions): Promise<void> {
+        return await this.post<ModelOptions>('/api/workspaces/create', opt);
+    }
 
-    // train(options: ModelOptions): Promise<boolean> {
-    //     throw new Error('Method not implemented.');
-    // }
-    getTrainingProgress(): Promise<number> {
-        throw new Error('Method not implemented.');
+    async getTrainingProgress(w: WorkspaceID): Promise<number> {
+        const { progress } = await this.get<{ progress: number }>(`/api/workspaces/${w}/trainingProgress`);
+        return progress;
     }
     
     async getWorkspaces(): Promise<IWorkspace[]> {
@@ -378,24 +380,34 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         throw new Error('Method not implemented.');
     }
     async getModels(w: string): Promise<IModel[]> {
-        const list = await this.get<{ modelId: string, name: string }[]>(`/api/workspaces/${w}/models`);
-        return list.map(({ modelId: id, name }) => ({ id, name }));
+        const list = await this.get<{ id: string, name: string }[]>(`/api/workspaces/${w}/models`);
+        return list.map(({ id, name }) => ({ id, name }));
     }
     
     async getModelDetails(w: string, m: string): Promise<IModelDetails> {
-        const { label_performance_metrics: labelPerformance, ...rest } = await this.get<{
+        const {
+            sortedFeatures: features,
+            normalization: normalizer,
+            labelPerformanceMetrics: labelPerformance,
+            ...rest
+        } = await this.get<{
             name: string,
-            label_performance_metrics: {
+            labelPerformanceMetrics: {
                 label: string,
-                performance_metrics: IMetric[]
+                metrics: IMetric[]
             }[],
             imputation: string,
-            normalizer: string,
-            features: string[],
-            classifier: IClassifier
+            normalization: string,
+            sortedFeatures: string[],
+            classifier: string,
+            hyperparameters: IHyperparameter[],
+            windowSize: number,
+            slidingStep: number
         }>(`/api/workspaces/${w}/models/${m}`);
 
-        return { ...rest, labelPerformance: labelPerformance.map(({ label, performance_metrics: metrics }) => ({ label, metrics })) };
+        return { ...rest, normalizer, features,
+            labelPerformance: labelPerformance.map(({ label, metrics }) => ({ label, metrics }))
+        };
     }
 
     async renameModel(w: string, m: string, name: string): Promise<void> {

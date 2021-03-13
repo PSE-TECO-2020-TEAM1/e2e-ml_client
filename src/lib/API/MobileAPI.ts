@@ -35,17 +35,35 @@ interface SensorDatapoints {
     dataPoints: Datapoint[]
 }
 
+interface PredictionResult {
+    predictions: string[], // labels
+}
+
 export interface MobileAPI {
     submitSample(id: SubmissionID, label: LabelID, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void>;
     getSubmissionConfiguration(id: SubmissionID): Promise<ISubmissionConfiguration>;
     // discardSubmission(id: SubmissionID): Promise<void>;
     getPredictionConfiguration(id: PredictionID): Promise<IPredictionConfiguration>;
+    getPrediction(id: PredictionID): Promise<PredictionResult>;
+    predict(id: PredictionID, data: SensorDatapoints[]): Promise<void>;
 }
 
 const post = postRaw();
 const get = getRaw();
 
 class SameOriginMobileAPI implements MobileAPI {
+    async predict(id: string, data: SensorDatapoints[]): Promise<void> {
+        const toSend = {
+            predictionId: id,
+            sensorDataPoints: data
+        };
+        return await post('/api/submitData', toSend);
+    }
+
+    getPrediction(id: string): Promise<PredictionResult> {
+        return get<PredictionResult>(`/api/predictionResults?predictionId=${id}`);
+    }
+
     async submitSample(id: string, label: string, start: number, end: number, data: SensorDatapoints[]): Promise<void> {
         const toSend = {
             submissionId: id,
@@ -60,8 +78,9 @@ class SameOriginMobileAPI implements MobileAPI {
     async getSubmissionConfiguration(id: string): Promise<ISubmissionConfiguration> {
         return get<ISubmissionConfiguration>(`/api/submissionConfig?submissionId=${id}`);
     }
+    
     getPredictionConfiguration(id: string): Promise<IPredictionConfiguration> {
-        throw new Error('Method not implemented.');
+        return get<IPredictionConfiguration>(`/api/predictionConfig?predictionId=${id}`);
     }
     
 }

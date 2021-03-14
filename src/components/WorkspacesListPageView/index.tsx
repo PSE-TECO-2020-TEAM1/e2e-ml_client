@@ -1,13 +1,11 @@
 import React from 'react';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 
-import Wrapper from 'components/Wrapper';
-
-import styles from './index.module.scss';
 import Loading from 'components/Loading';
 import { Link } from 'raviger';
 import WorkspaceCreation, { WorkspaceCreationProps } from 'components/WorkspaceCreation';
-const { main, workspace } = styles;
+import { Pane, Dialog, Button, majorScale, Text } from 'evergreen-ui';
+import { useBoolean } from 'lib/hooks';
 
 export type WorkspaceListPageProps = {
     workspaceCreationProps: WorkspaceCreationProps,
@@ -15,18 +13,28 @@ export type WorkspaceListPageProps = {
 }
 
 const WorkspacesListPage = ({ workspacesPH, workspaceCreationProps }: WorkspaceListPageProps) => {
+    const [isShown, setShown, clearShown] = useBoolean();
     return (
-        <Wrapper className={main}>
-            <section>
+        <Pane display="flex" flexDirection="column" alignItems="center" position="relative" gap={majorScale(2)}>
+            <Dialog
+                isShown={isShown}
+                title="Create a new workspace"
+                onCloseComplete={clearShown}
+                confirmLabel="Custom Label"
+                hasFooter={false}
+            >
+                <WorkspaceCreation {...workspaceCreationProps} onClose={clearShown}/>
+            </Dialog>
+            <Pane display="grid" gap={majorScale(2)} gridTemplateColumns="1fr 1fr 1fr 1fr">
                 <Promised promise={workspacesPH} pending={<Loading />} >{w =>
-                    w.map(({ text, href }) =>
-                        <Link className={workspace} key={text} href={href}>{text}</Link>)
+                    w.length === 0 ? <Text>No workspaces yet.</Text> : w.map(({ text, href }) =>
+                        <Button height={majorScale(7)} display="inline-block" minWidth={majorScale(20)} textAlign="center" appearance="minimal" is={Link} key={text} href={href}>{text}</Button>)
                 }</Promised>
-            </section>
-            <aside>
-                <WorkspaceCreation {...workspaceCreationProps}/>
-            </aside>
-        </Wrapper>
+            </Pane>
+            <Button marginTop={majorScale(2)} height={majorScale(7)} appearance="primary"
+                onClick={setShown}
+            >Create new workspace</Button>
+        </Pane>
     );
 };
 

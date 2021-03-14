@@ -1,7 +1,7 @@
+import { Heading, Pane, Text, Button, useTheme, majorScale } from 'evergreen-ui';
 import { Link } from 'raviger';
-import React from 'react';
-import styles from './index.module.scss';
-const { container, bread, usernameC, signupC, loginC, seperator, float } = styles;
+import React, { Fragment } from 'react';
+import { headerPadding } from 'styling';
 
 type Crumb = { name: string, href: string } | string;
 
@@ -13,18 +13,27 @@ export type HeaderViewProps = {
     signup?: string
 }
 
-const HeaderView = ({ crumbs, username, logout, login, signup }: HeaderViewProps) => <header className={container}>
-    <div className={bread}>
-        {crumbs ? crumbs.map((crumb, i) => <div key={typeof crumb === 'string' ? crumb : crumb.name}>
-            {i !== 0 ? <span className={seperator}>/</span> : null}
-            <span>{typeof crumb === 'string' ? crumb : <Link href={crumb.href}>{crumb.name}</Link>}</span>
-        </div>) : null}
-    </div>
-    <div className={float}/>
-    <div className={usernameC}>{username || null}</div>
-    <div>{logout ? <button onClick={logout}>Log out</button> : null}</div>
-    <div className={loginC}>{login ? <Link href={login}>Log in</Link> : null}</div>
-    <div className={signupC}>{signup ? <Link href={signup}>Sign up</Link> : null}</div>
-</header>;
+const HeaderView = ({ crumbs, username, logout, login, signup }: HeaderViewProps) => {
+    const theme = useTheme();
+
+    return <Pane display="flex" padding={headerPadding} background={theme.palette.orange.lightest} position="relative" marginBottom={majorScale(6)} >
+        <Heading size={700} flex="1" alignItems="center" display="flex">
+            <span>
+                {crumbs ? crumbs.map((crumb, i) => 
+                    <Fragment key={typeof crumb === 'string' ? crumb : crumb.name}>
+                        {i !== 0 ? ' / ' : null}
+                        {typeof crumb === 'string' ? crumb : <Link href={crumb.href}>{crumb.name}</Link>}
+                    </Fragment>
+                ): null}
+            </span>
+        </Heading>
+        <Pane display="flex">
+            <Text>{username || null}</Text>
+            {logout ? <Button onClick={logout}>Log out</Button> : null}
+            {login ? <Button><Link href={login}>Log in</Link></Button> : null}
+            {signup ? <Button><Link href={signup}>Sign up</Link></Button> : null}
+        </Pane>
+    </Pane>;
+};
 
 export default HeaderView;

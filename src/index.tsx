@@ -8,11 +8,11 @@ import { APIProvider } from 'lib/hooks/API';
 import App from 'App';
 
 ReactDOM.render(
-    <React.StrictMode>
+    <React.Fragment>
         <APIProvider value={new API()}>
             <App />
         </APIProvider>
-    </React.StrictMode>,
+    </React.Fragment>,
     document.getElementById('root')
 );
 

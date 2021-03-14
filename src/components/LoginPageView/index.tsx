@@ -1,10 +1,6 @@
 import React from 'react';
-
-import Wrapper from 'components/Wrapper';
-import TextField from 'components/TextField';
-
-import styles from './index.module.scss';
-const { main, incorrect, active, header } = styles;
+import { Heading, TextInput, Button, majorScale, Pane } from 'evergreen-ui';
+import { ETV } from 'lib/utils';
 
 export type LoginPageViewProps = {
     user: string,
@@ -12,16 +8,14 @@ export type LoginPageViewProps = {
     pass: string,
     onPass: (s: string) => void,
     onButton: () => void,
-    invalid: boolean
 };
 
-const LoginPageView = ({ user, onUser, pass, onPass, onButton, invalid }: LoginPageViewProps) => 
-    <Wrapper size="small" className={main}>
-        <label className={header}>Please enter your credentials.</label>
-        <TextField error={invalid} label="Username" value={user} onType={onUser} />
-        <TextField error={invalid} label="Password" type="password" value={pass} onType={onPass} />
-        <label className={`${incorrect} ${invalid ? active : ''}`}>Invalid credentials entered.</label>
-        <button onClick={onButton}>Log In</button>
-    </Wrapper>;
+const LoginPageView = ({ user, onUser, pass, onPass, onButton }: LoginPageViewProps) => 
+    <Pane display="flex" flexDirection="column" gap={majorScale(2)} alignItems="center">
+        <Heading size={500} >Please enter your credentials</Heading>
+        <TextInput name="username" placeholder="Username" value={user} onChange={(e: ETV<string>) => onUser(e.target.value)} />
+        <TextInput name="password" placeholder="Password" type="password" value={pass} onChange={(e: ETV<string>) => onPass(e.target.value)} />
+        <Button onClick={onButton}>Log In</Button>
+    </Pane>;
 
 export default LoginPageView;

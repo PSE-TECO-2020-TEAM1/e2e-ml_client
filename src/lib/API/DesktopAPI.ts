@@ -142,7 +142,7 @@ interface IModelDetails {
 }
 
 export interface DesktopAPI {
-    login(username: Username, password: Password): Promise<boolean>;
+    login(username: Username, password: Password): Promise<void>;
     logout(): void;
     signup(username: Username, password: Password, email: Email): Promise<void>;
     isAuthenticated(): boolean,
@@ -188,16 +188,11 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return post(this.accessToken)<T,Y>(url, data);
     }
     
-    async login(username: Username, password: Password): Promise<boolean> {
-        try {
-            ({
-                accessToken: this.accessToken,
-                refreshToken: this.refreshToken
-            } = await post()('/auth/login', { username, passwordHash: password })); // we are using tls, so skip hashing on the client
-            return this.isAuthenticated();
-        } catch(e) {
-            return false;
-        }
+    async login(username: Username, password: Password): Promise<void> {
+        ({
+            accessToken: this.accessToken,
+            refreshToken: this.refreshToken
+        } = await post()('/auth/login', { username, passwordHash: password })); // we are using tls, so skip hashing on the client
     }
 
     logout() {

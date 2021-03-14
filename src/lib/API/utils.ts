@@ -10,7 +10,6 @@ const handleStatusCode = (status: number, body: string): ({} | undefined) => {
 
 const getH = (accessToken: string = '') => async <T,>(url: string, method: string = 'GET'): Promise<T> => {
     const headers: HeadersInit = new Headers();
-    // accessToken = accessToken || 'waiting-for-enes-to-fix-swagger'; // FIXME: waiting for enes to fix swagger
     if (accessToken !== '') headers.set('Authorization', `Bearer ${accessToken}`);
     
     const res = await fetch(url, {
@@ -26,7 +25,6 @@ const getH = (accessToken: string = '') => async <T,>(url: string, method: strin
 const postH = (accessToken: string = '') => async <Input,Output>(url: string, data: Input, method: string = 'POST'): Promise<Output> => {
     const headers: HeadersInit = new Headers();
     headers.set('Content-Type', 'application/json');
-    // accessToken = accessToken || 'waiting-for-enes-to-fix-swagger'; // FIXME: waiting for enes to fix swagger
     if (accessToken !== '') headers.set('Authorization', `Bearer ${accessToken}`);
     
     const res = await fetch(url, {

@@ -5,6 +5,7 @@ import LoginPageView from 'components/LoginPageView';
 import SignupPageView from 'components/SignupPageView';
 
 import useLoginPage from 'containers/useLoginPage';
+import useSignupPage from 'containers/useSignupPage';
 import useWorkspacesListPage from 'containers/useWorkspacesListPage';
 import WorkspacePageView from 'components/WorkspacePageView';
 import useWorkspacePage from 'containers/useWorkspacePage';
@@ -31,7 +32,7 @@ type QueryParams = { [k: string]: any; }
 
 const WorkspacesListPage = () => <WorkspacesListPageView {...useWorkspacesListPage()} />;
 const LoginPage = () => <LoginPageView {...useLoginPage()} />;
-const SignupPage = () => <SignupPageView />;
+const SignupPage = () => <SignupPageView {...useSignupPage()} />;
 const WorkspacePage = ({ workspaceId }: QueryParams) => <WorkspacePageView {...useWorkspacePage(workspaceId)} />;
 const WorkspaceCollectDataPage = ({ workspaceId }: QueryParams) => <WorkspaceCollectDataPageView {...useWorkspaceCollectDataPage(workspaceId)} />;
 const WorkspaceLabelsPage = ({ workspaceId }: QueryParams) => <WorkspaceLabelsPageView {...useWorkspaceLabelsPage(workspaceId)} />;

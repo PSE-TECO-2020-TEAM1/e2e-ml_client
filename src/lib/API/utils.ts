@@ -30,6 +30,8 @@ const getH = (accessToken: string = '') => async <T,>(url: string, method: strin
     
     const body = await res.text();
 
+    console.log(accessToken);
+
     return handleStatusCode(res.status, body) || JSON.parse(body);
 };
 

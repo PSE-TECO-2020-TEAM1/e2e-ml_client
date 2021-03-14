@@ -150,15 +150,14 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifierOptions } , actions: { setHyperparameter, setSlidingStep, setWindowSize } }) => {
                         if (typeof state.classifier === 'undefined') return null;
                         const opt = classifierOptions[state.classifier];
-                        console.log(opt);
 
                         return <Pane display="flex" flexDirection="column" gap={majorScale(1)}>
                             <Pane>
                                 <Label>Conditions: </Label>
                                 {opt.conditions.map(c => <Text display="block">{c}</Text>)}
                             </Pane>
-                            <TextInputField {...nMB} label="Window Size" onChange={(e: ETV<string>) => setWindowSize(parseFloat(e.target.value))} type="number" step={1} value={state.windowsSize}/>
-                            <TextInputField {...nMB} label="Sliding Step" onChange={(e: ETV<string>) => setSlidingStep(parseFloat(e.target.value))} type="number" step={1} value={state.slidingStep} />
+                            <TextInputField {...nMB} label="Window Size" onChange={(e: ETV<string>) => setWindowSize(parseInt(e.target.value))} type="number" step={1} value={state.windowsSize}/>
+                            <TextInputField {...nMB} label="Sliding Step" onChange={(e: ETV<string>) => setSlidingStep(parseInt(e.target.value))} type="number" step={1} value={state.slidingStep} />
                             <Pane display="flex" flexDirection="column" gap={majorScale(1)}>
                                 {Object.entries(opt.hyperparameters).map(([k, v]) => {
                                     switch (v.type) {
@@ -166,10 +165,10 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                                         <Text><Label>{format(k)}</Label>: {v.value}</Text>
                                     </Pane>;
                                     case HyperparameterType.Integer: return <div>
-                                        <TextInputField {...nMB} label={format(k)} onChange={(e: ETV<string>) => setHyperparameter(k, e.target.value)} type="number" step={1} min={v.lower} max={v.upper} value={state.hyperparameters[k]}/>
+                                        <TextInputField {...nMB} label={format(k)} onChange={(e: ETV<string>) => setHyperparameter(k, parseInt(e.target.value))} type="number" step={1} min={v.lower} max={v.upper} value={state.hyperparameters[k]}/>
                                     </div>;
                                     case HyperparameterType.Double: return <div>
-                                        <TextInputField {...nMB} label={format(k)} onChange={(e: ETV<string>) => setHyperparameter(k, e.target.value)} type="number" min={v.lower} max={v.upper} value={state.hyperparameters[k]}/>
+                                        <TextInputField {...nMB} label={format(k)} onChange={(e: ETV<string>) => setHyperparameter(k, parseFloat(e.target.value))} type="number" min={v.lower} max={v.upper} value={state.hyperparameters[k]}/>
                                     </div>;
                                     case HyperparameterType.Select: return <div>
                                         <RadioGroup

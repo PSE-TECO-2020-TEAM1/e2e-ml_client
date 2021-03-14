@@ -13,7 +13,7 @@ const useSampleList = (workspaceId: string): SampleListProps => {
     const samplesPH = usePromise(async () =>
         (await api.getSampleIds(workspaceId))
             .map(id => {
-                console.log('sample id', id);
+                // console.log('sample id', id);
                 return ({ id, href: sampleRoute(workspaceId, id) });
             })
     , [workspaceId, validity]);

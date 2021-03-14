@@ -212,7 +212,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     
     async getAvailableTrainingParameters(): Promise<TrainingParameters> {
         type JSONIngest = {
-            classifier_selections: {
+            classifierSelections: {
                 classifier: string,
                 hyperparameters: Record<string, {
                     type: 'UniformIntegerHyperparameter',
@@ -241,12 +241,12 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
             slidingStep: number,
         }
 
-        // const params = await this.get<JSONIngest>('/api/parameters'); // FIXME, substitute test params
-        const params =  testparams as unknown as JSONIngest;
+        const params = await this.get<JSONIngest>('/api/parameters');
+        // const params =  testparams as unknown as JSONIngest; // FIXME, substitute test params
 
-        const { features, imputers, normalizers, classifier_selections, windowSize, slidingStep } = params;
+        const { features, imputers, normalizers, classifierSelections, windowSize, slidingStep } = params;
 
-        const options = classifier_selections.reduce<Record<string, ClassifierOptions>>((agg, cur) => {
+        const options = classifierSelections.reduce<Record<string, ClassifierOptions>>((agg, cur) => {
             const hyperparameters: Record<string, Hyperparameter> = {};
             for (const [k, v] of Object.entries(cur.hyperparameters)) {
                 switch(v.type) {
@@ -294,7 +294,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
             features,
             imputers,
             normalizers,
-            classifiers: classifier_selections.map(v => v.classifier),
+            classifiers: classifierSelections.map(v => v.classifier),
             classifierOptions: options,
             windowSize,
             slidingStep
@@ -383,7 +383,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
 
     async getModels(w: string): Promise<IModel[]> {
-        const list = await this.get<{ id: string, name: string }[]>(`/api/workspaces/${w}/models`);
+        const { models: list } = await this.get<{ models: { id: string, name: string }[]}>(`/api/workspaces/${w}/models`);
         return list.map(({ id, name }) => ({ id, name }));
     }
     

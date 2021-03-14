@@ -28,7 +28,6 @@ type Action =
     
 
 const reducer = (s: State, a: Action): State => {
-    console.log(a);
     if ('type' in a && a.type === ActionType.Hyperparameter) return { ...s, hyperparameters: { ...s.hyperparameters, [a.parameter]: a.value } };
     
     if ('classifier' in a) return { ...s, classifier: a.classifier, hyperparameters: a.hyperparameters, windowSize: a.windowSize, slidingStep: a.slidingStep };
@@ -51,10 +50,10 @@ const mapParamsToClassifierHyperparameterState = (params: TrainingParameters, cl
     const obj: Record<string, number | string> = {};
     for (const [k, v] of Object.entries(hp)) {
         switch (v.type) {
-        case HyperparameterType.Constant: break; // no state for constant values
+        case HyperparameterType.Constant: obj[k] = v.value; break; // backend guys need constants too apparently
         case HyperparameterType.Integer: obj[k] = v.default; break;
         case HyperparameterType.Double: obj[k] = v.default; break;
-        case HyperparameterType.Select: obj[k] = v.default; break;
+        case HyperparameterType.Select: obj[k] = v.default.toString(); break;
         }
     };
     return obj;
@@ -106,6 +105,8 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         const { slidingStep, windowSize, imputation, normalizer, hyperparameters, features, classifier} = state;
         if (!isValid()) return;
         assert(slidingStep !== undefined && imputation !== undefined && normalizer !== undefined && classifier !== undefined && windowSize !== undefined );
+
+        console.log(state);
 
         await api.train(workspaceId, {
             modelName: name,

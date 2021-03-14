@@ -30,7 +30,7 @@
         "ROBUST_SCALER",
         "STANDARD_SCALER"
     ],
-    "classifier_selections": [
+    "classifierSelections": [
         {
             "classifier": "KNEIGHBORS_CLASSIFIER",
             "hyperparameters": {

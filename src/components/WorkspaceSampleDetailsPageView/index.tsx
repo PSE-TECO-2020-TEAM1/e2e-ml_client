@@ -34,6 +34,7 @@ const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel, onGraphCl
                     pending={'loading label...'}
                 >{({ label }) =>
                         <Promised
+                            key={label}
                             promise={labelsPH}
                             pending={null}
                         >{labels =>

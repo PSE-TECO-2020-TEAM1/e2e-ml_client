@@ -16,7 +16,7 @@ export type HeaderViewProps = {
 const HeaderView = ({ crumbs, username, logout, login, signup }: HeaderViewProps) => {
     const theme = useTheme();
 
-    return <Pane display="flex" padding={headerPadding} background={theme.palette.orange.lightest} position="relative" marginBottom={majorScale(6)} >
+    return <Pane display="flex" padding={headerPadding} background={theme.palette.blue.light} position="relative" marginBottom={majorScale(6)} >
         <Heading size={700} flex="1" alignItems="center" display="flex">
             <span>
                 {crumbs ? crumbs.map((crumb, i) => 

@@ -1,7 +1,7 @@
 import assert from 'lib/assert';
 import { memo } from 'lib/utils';
 import React, { useContext, useEffect, useState } from 'react';
-import { modelsRoute, sampleRoute, workspaceRoute } from 'routes';
+import { sampleRoute, workspaceRoute } from 'routes';
 import { usePromise } from '.';
 import useAPI from './API';
 import { State as PromiseState } from './Promise';
@@ -54,7 +54,7 @@ export const useHeader = ({ workspaceId, modelId, sampleId, dangle }: HeaderOpti
         }
         if (model) {
             assert(typeof workspaceId !== 'undefined');
-            arr.push({ name: model, href: modelsRoute(workspaceId) }); 
+            // arr.push({ name: model, href: modelsRoute(workspaceId) }); // FIXME
         }
         if (sampleId) {
             assert(typeof workspaceId !== 'undefined');

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import WorkspaceLabelsPageView, {
     Label,
-} from 'components/WorkspaceLabelsPageView';
+} from 'components/WorkspaceLabels';
 import { act } from 'react-dom/test-utils';
 import pretty from 'pretty';
 import { PromisePack, State } from 'lib/hooks/Promise';

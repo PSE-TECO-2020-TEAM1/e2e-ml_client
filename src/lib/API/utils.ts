@@ -1,8 +1,11 @@
+import { notifyError } from 'lib/utils';
+
 const handleStatusCode = (status: number, body: string): ({} | undefined) => {
     if (status === 200 && body === '') return ({});
     if (status === 200 && body === 'OK') return ({});
     if (status !== 200) {
-        throw new Error(body);
+        // throw new Error(body);
+        notifyError(body);
     }
 
     return undefined;

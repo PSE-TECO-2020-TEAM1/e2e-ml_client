@@ -1,3 +1,5 @@
+import { toaster } from 'evergreen-ui';
+
 export const objectMap = <T,Y>(obj: { [k: string]: T }, fn: (v: T, k: string, i: number) => Y): { [k: string]: Y } =>
     Object.fromEntries(
         Object.entries(obj).map(
@@ -43,4 +45,8 @@ export const memo = <T,>(cache: Record<string, T>, fn : (...x: any[]) => Promise
     if (cache[x]) return cache[x];
     cache[x] = await fn(...arg);
     return cache[x];
+};
+
+export const notifyError = (s: string) => {
+    toaster.danger(s, { id: s });
 };

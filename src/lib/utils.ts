@@ -50,3 +50,5 @@ export const memo = <T,>(cache: Record<string, T>, fn : (...x: any[]) => Promise
 export const notifyError = (s: string) => {
     toaster.danger(s, { id: s });
 };
+
+export const formatDate = (date: number) => (new Date(date)).toLocaleString();

@@ -1,11 +1,11 @@
-import Wrapper from 'components/Wrapper';
+import { Pane } from 'evergreen-ui';
 import React from 'react';
 
 const FourOhFourPage = () => {
-    return (<Wrapper>
+    return (<Pane>
         <div>😑</div>
         <div>This page has never ever existed before.</div>
-    </Wrapper>);
+    </Pane>);
 };
 
 export default FourOhFourPage;

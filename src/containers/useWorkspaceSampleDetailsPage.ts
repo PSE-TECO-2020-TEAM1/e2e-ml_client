@@ -11,7 +11,7 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
     useAuth();
     const api = useAPI();
     const [verification, , , flip] = useBoolean();
-    const [timeframeState, setFrameState] = useState<0 | 1 | 2>(); // 0 not listening, 1 listening for 1st, 2 listening for 2nd 
+    const [timeframeState, setFrameState] = useState<0 | 1 | 2>(0); // 0 not listening, 1 listening for 1st, 2 listening for 2nd 
     const temp = useRef<number>();
     const [timeframes, setTimeframes] = useState<{ start: number, end: number }[]>([]);
 
@@ -20,8 +20,8 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
         return labels.map(({ labelId: id, name }) => ({ id, name }));
     }, []);
 
-    const onLabel = async (labelId: string) => {
-        await api.setSampleLabel(workspaceId, sampleId, labelId);
+    const onLabel = async (labelName: string) => {
+        await api.setSampleLabel(workspaceId, sampleId, labelName);
         flip();
     };
 

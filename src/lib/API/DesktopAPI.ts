@@ -374,8 +374,8 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return { label, start, end, data: sensorDataPoints, timeframes: timeFrames };
     }
 
-    async setSampleLabel(w: string, s: string, labelId: LabelID): Promise<void> {
-        return await this.put(`/api/workspaces/${w}/samples/${s}/relabel?labelId=${labelId}`, undefined);
+    async setSampleLabel(w: string, s: string, label: string): Promise<void> {
+        return await this.put(`/api/workspaces/${w}/samples/${s}/relabel?label=${label}`, undefined);
     }
 
     async setSampleTimeframe(w: string, s: string, frames: Timeframe[]): Promise<void> {

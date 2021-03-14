@@ -38,3 +38,9 @@ export const hslToHex = (h: number, s: number, l: number) => {
 };
 
 export type ETV<T> = { target: { value: T } };
+
+export const memo = <T,>(cache: Record<string, T>, fn : (...x: any[]) => Promise<T>) => async (x: string, ...arg: any[]) => {
+    if (cache[x]) return cache[x];
+    cache[x] = await fn(...arg);
+    return cache[x];
+};

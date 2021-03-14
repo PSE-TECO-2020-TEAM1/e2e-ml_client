@@ -1,9 +1,12 @@
 import assert from 'lib/assert';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { memo } from 'lib/utils';
+import React, { useContext, useEffect, useState } from 'react';
 import { modelsRoute, sampleRoute, workspaceRoute } from 'routes';
 import { usePromise } from '.';
 import useAPI from './API';
 import { State as PromiseState } from './Promise';
+import HeaderView from 'components/HeaderView';
+import useHeaderView from 'containers/useHeaderView';
 
 type NamedHref = { name: string, href: string };
 type State = 
@@ -13,15 +16,16 @@ type State =
     | {};
 
 export const HeaderContext = React.createContext<[State, React.Dispatch<React.SetStateAction<State>>]>([{}, () => {console.log('bad shit happened');}]);
-export const HeaderProvider = HeaderContext.Provider;
+
+const Header = () => <HeaderView {...useHeaderView()}/>;
+export const HeaderProvider = ({ children }: { children: React.ReactNode }) =>
+    <HeaderContext.Provider value={useState<State>({})}>
+        <Header />
+        {children}
+    </HeaderContext.Provider>;
 
 const wMemo = {};
 const mMemo = {};
-const memo = <T>(cache: Record<string, T>, fn : (...x: any[]) => Promise<T>) => async (x: string, ...arg: any[]) => {
-    if (cache[x]) return cache[x];
-    cache[x] = await fn(...arg);
-    return cache[x];
-};
 
 type HeaderOptions = {
     workspaceId?: string
@@ -72,8 +76,4 @@ export const useLoginHeader = () => {
 export const useSignupHeader = () => {
     const [, dispatch] = useContext(HeaderContext);
     dispatch({ signup: true });
-};
-
-export const useHeaderDispatcher: () => [State, React.Dispatch<React.SetStateAction<State>>] = () => {
-    return useState<State>({});
 };

@@ -15,8 +15,9 @@ export type WorkspacePageViewProps = {
 
 const WorkspacePageView = ({ sampleProps, modelOptionsProps, labelsProps, modelsProps }: WorkspacePageViewProps) => {
     const [isShown, setShown, clearShown] = useBoolean();
-    return <Pane display="grid" gridTemplateColumns="640px 640px" justifyContent="space-evenly" gap={majorScale(4)}>
+    return <Pane display="grid" gridTemplateColumns={`${majorScale(80)}px ${majorScale(80)}px`} justifyContent="space-evenly" gap={majorScale(4)}>
         <SideSheet
+            width={majorScale(40)}
             isShown={isShown}
             onCloseComplete={clearShown}
         >

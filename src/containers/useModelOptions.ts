@@ -1,5 +1,6 @@
 import { ModelOptionsProps } from 'components/ModelOptions';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
+import assert from 'lib/assert';
 import { useAPI, usePromise } from 'lib/hooks';
 import { useReducer, useState } from 'react';
 
@@ -89,15 +90,22 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         } };
     }, []);
 
-    const onTrain = async () => {
-        const { slidingStep, windowSize, imputation, normalizer, hyperparameters, features, classifier} = state;
+    const isValid = () => {
+        const { slidingStep, windowSize, imputation, normalizer, classifier} = state;
         if (typeof slidingStep === 'undefined'
             || typeof windowSize === 'undefined'
             || typeof imputation === 'undefined'
             || typeof normalizer === 'undefined'
             || typeof classifier === 'undefined') {
-            return;
+            return false;
         }
+        return true;
+    };
+
+    const onTrain = async () => {
+        const { slidingStep, windowSize, imputation, normalizer, hyperparameters, features, classifier} = state;
+        if (!isValid()) return;
+        assert(slidingStep !== undefined && imputation !== undefined && normalizer !== undefined && classifier !== undefined && windowSize !== undefined );
 
         await api.train(workspaceId, {
             modelName: name,
@@ -111,7 +119,7 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         });
     };
 
-    return { state, paramsPH, name, onName, onTrain };
+    return { state, paramsPH, name, onName, onTrain, isValid: isValid() };
 };
 
 export default useModelOptions;

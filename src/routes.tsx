@@ -23,6 +23,7 @@ import RecordingPageView from 'components/RecordingPageView';
 import useRecordingPage from 'containers/useRecordingPage';
 import WorkspaceSampleDetailsPageView from 'components/WorkspaceSampleDetailsPageView';
 import useWorkspaceSampleDetailsPage from 'containers/useWorkspaceSampleDetailsPage';
+import { BASE_URL } from 'config';
 
 type QueryParams = { [k: string]: any; }
 
@@ -70,8 +71,8 @@ export const collectRoute = (workspaceId: string) => `/w/${workspaceId}/collect`
 export const modelDetailsRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}`;
 export const classifyRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}/classify`;
 
-export const createCollectionLink = (submissionId: string) => `/collect/${submissionId}`;
-export const createClassificationLink = (predictionId: string) => `/classify/${predictionId}`;
+export const createCollectionLink = (submissionId: string) => `${BASE_URL}/collect/${submissionId}`;
+export const createClassificationLink = (predictionId: string) => `${BASE_URL}/classify/${predictionId}`;
 
 export const labelQueryParam = 'label';
 export const durationQueryParam = 'duration';

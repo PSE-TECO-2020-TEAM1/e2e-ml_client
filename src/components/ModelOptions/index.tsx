@@ -1,13 +1,9 @@
-import TextField, { TextInput } from 'components/TextField';
+import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, Checkbox, Label, Text } from 'evergreen-ui';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
+import { ETV } from 'lib/utils';
 import React from 'react';
 import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from 'react-accessible-accordion';
-import { RadioGroup, Radio } from 'react-radio-group';
-import CheckboxGroup from 'react-checkbox-group';
-
-import styles from './index.module.scss';
-const { main, hyperparameters, conditions, accHeading, panel, radioGroup, hyper, train } = styles;
 
 export type ModelOptionsProps = {
     paramsPH: PromisePack<{
@@ -33,141 +29,169 @@ export type ModelOptionsProps = {
     };
     name: string,
     onName: (n: string) => void
-    onTrain: () => void
+    onTrain: () => void,
+    isValid: boolean
 };
 
-const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
+const handleCheckbox = (x: string, l: string[], b: boolean) => {
+    const ret = l.filter(q => q !== x);
+    if (b) ret.push(x);
+    return ret;
+};
 
-const ModelOptions = ({ paramsPH, state, name, onName, onTrain }: ModelOptionsProps) => {
-    return <section className={main}>
-        <TextField onType={onName} label="Name" value={name} />
+const nMB = { marginBottom: 0 };
+
+const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
+const mapRGroup = (x: string) => ({ value: x, label: format(x) });
+const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: ModelOptionsProps) => {
+    return <Pane padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
+        <TextInputField {...nMB} onChange={(e: ETV<string>) => onName(e.target.value)} label="Name" value={name} />
         <Accordion allowMultipleExpanded allowZeroExpanded>
             <AccordionItem>
-                <AccordionItemHeading className={accHeading}>
+                <AccordionItemHeading>
                     <AccordionItemButton>
-                        Imputation
+                        <Pane borderBottom="muted" padding={majorScale(2)}>
+                            <Heading>Imputation</Heading>
+                        </Pane>
                     </AccordionItemButton>
                 </AccordionItemHeading>
-                <AccordionItemPanel><div className={panel}>
+                <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { imputers }, actions: { selectImputer } }) =>
-                        <RadioGroup className={radioGroup} name="imputation" selectedValue={state.imputation} onChange={selectImputer}>
-                            {imputers.map(imp => <label key={imp}>
-                                <Radio value={imp}/> {format(imp)}
-                            </label>)}
-                        </RadioGroup>
+                        // <RadioGroup name="imputation" selectedValue={state.imputation} onChange={selectImputer}>
+                        //     {imputers.map(imp => <label key={imp}>
+                        //         <Radio value={imp}/> {format(imp)}
+                        //     </label>)}
+                        // </RadioGroup>
+                        <RadioGroup
+                            value={state.imputation}
+                            options={imputers.map(mapRGroup)}
+                            onChange={(e: ETV<string>) => selectImputer(e.target.value)}
+                        />
                     }</Promised>
                 </div></AccordionItemPanel>
             </AccordionItem>
             <AccordionItem>
-                <AccordionItemHeading className={accHeading}>
+                <AccordionItemHeading>
                     <AccordionItemButton>
-                        Features
+                        <Pane borderBottom="muted" padding={majorScale(2)}>
+                            <Heading>Features</Heading>
+                        </Pane>
                     </AccordionItemButton>
                 </AccordionItemHeading>
-                <AccordionItemPanel><div className={panel}>
+                <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { features }, actions: { selectFeatures } }) =>
-                        <CheckboxGroup name="features" value={state.features} onChange={selectFeatures}>
-                            {(Checkbox) => <>
-                                {features.map(f => <label key={f}>
-                                    <Checkbox value={f} /> {format(f)}
-                                </label>)}
-                            </>}
-                        </CheckboxGroup>
+                        <Pane>
+                            {features.map(f =>
+                                <Checkbox
+                                    checked={state.features.includes(f)}
+                                    label={format(f)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFeatures(handleCheckbox(f, state.features, e.target.checked))}
+                                ></Checkbox>
+                            )}
+                        </Pane>
                     }</Promised>
                 </div></AccordionItemPanel>
             </AccordionItem>
             <AccordionItem>
-                <AccordionItemHeading className={accHeading}>
+                <AccordionItemHeading>
                     <AccordionItemButton>
-                        Normalizer
+                        <Pane borderBottom="muted" padding={majorScale(2)}>
+                            <Heading>Normalizer</Heading>
+                        </Pane>
                     </AccordionItemButton>
                 </AccordionItemHeading>
-                <AccordionItemPanel><div className={panel}>
+                <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { normalizers }, actions: { selectNormalizer } }) =>
-                        <RadioGroup className={radioGroup} name="normalizer" selectedValue={state.normalizer} onChange={selectNormalizer}>
-                            {normalizers.map(nor => <label key={nor}>
-                                <Radio value={nor}/> {format(nor)}
-                            </label>)}
-                        </RadioGroup>
+                        // <RadioGroup name="normalizer" selectedValue={state.normalizer} onChange={selectNormalizer}>
+                        //     {normalizers.map(nor => <label key={nor}>
+                        //         <Radio value={nor}/> {format(nor)}
+                        //     </label>)}
+                        // </RadioGroup>
+                        <RadioGroup
+                            value={state.normalizer}
+                            options={normalizers.map(mapRGroup)}
+                            onChange={(e: ETV<string>) => selectNormalizer(e.target.value)}
+                        />
                     }</Promised>
                 </div></AccordionItemPanel>
             </AccordionItem>
             <AccordionItem>
-                <AccordionItemHeading className={accHeading}>
+                <AccordionItemHeading>
                     <AccordionItemButton>
-                        Classifier
+                        <Pane borderBottom="muted" padding={majorScale(2)}>
+                            <Heading>Classifier</Heading>
+                        </Pane>
                     </AccordionItemButton>
                 </AccordionItemHeading>
-                <AccordionItemPanel><div className={panel}>
+                <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifiers }, actions: { selectClassifier } }) =>
-                        <RadioGroup className={radioGroup} name="classifier" selectedValue={state.classifier} onChange={selectClassifier}>
-                            {classifiers.map(cl => <label key={cl}>
-                                <Radio value={cl}/> {format(cl)}
-                            </label>)}
-                        </RadioGroup>
+                        // <RadioGroup name="classifier" selectedValue={state.classifier} onChange={selectClassifier}>
+                        //     {classifiers.map(cl => <label key={cl}>
+                        //         <Radio value={cl}/> {format(cl)}
+                        //     </label>)}
+                        // </RadioGroup>
+                        <RadioGroup
+                            value={state.classifier}
+                            options={classifiers.map(mapRGroup)}
+                            onChange={(e: ETV<string>) => selectClassifier(e.target.value)}
+                        />
                     }</Promised>
                 </div></AccordionItemPanel>
             </AccordionItem>
             <AccordionItem>
-                <AccordionItemHeading className={accHeading}>
+                <AccordionItemHeading>
                     <AccordionItemButton>
-                        Hyperparameters
+                        <Pane padding={majorScale(2)}>
+                            <Heading>Hyperparameters</Heading>
+                        </Pane>
                     </AccordionItemButton>
                 </AccordionItemHeading>
-                <AccordionItemPanel><div className={panel}>
+                <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifierOptions } , actions: { setHyperparameter, setSlidingStep, setWindowSize } }) => {
                         if (typeof state.classifier === 'undefined') return null;
                         const opt = classifierOptions[state.classifier];
                         console.log(opt);
 
-                        return <>
-                            <div className={conditions}>
-                                <em>Conditions: </em>
-                                {opt.conditions.map(c => <><span>{c}</span><br/></>)}
-                            </div>
-                            <div className={hyperparameters}>
-                                <div className={hyper}>
-                                    <span>Window Size</span>
-                                    <TextInput type="number" step={1} value={state.windowsSize} onType={s => setWindowSize(parseFloat(s))}/>
-                                </div>
-                                <div className={hyper}>
-                                    <span>Sliding Step</span>
-                                    <TextInput type="number" step={1} value={state.slidingStep} onType={s => setSlidingStep(parseFloat(s))}/>
-                                </div>
+                        return <Pane display="flex" flexDirection="column" gap={majorScale(1)}>
+                            <Pane>
+                                <Label>Conditions: </Label>
+                                {opt.conditions.map(c => <Text display="block">{c}</Text>)}
+                            </Pane>
+                            <TextInputField {...nMB} label="Window Size" onChange={(e: ETV<string>) => setWindowSize(parseFloat(e.target.value))} type="number" step={1} value={state.windowsSize}/>
+                            <TextInputField {...nMB} label="Sliding Step" onChange={(e: ETV<string>) => setSlidingStep(parseFloat(e.target.value))} type="number" step={1} value={state.slidingStep} />
+                            <Pane display="flex" flexDirection="column" gap={majorScale(1)}>
                                 {Object.entries(opt.hyperparameters).map(([k, v]) => {
                                     switch (v.type) {
-                                    case HyperparameterType.Constant: return <div className={hyper}>
-                                        <span>{k}: {v.value}</span>
+                                    case HyperparameterType.Constant: return <Pane>
+                                        <Text><Label>{format(k)}</Label>: {v.value}</Text>
+                                    </Pane>;
+                                    case HyperparameterType.Integer: return <div>
+                                        <TextInputField {...nMB} label={format(k)} onChange={(e: ETV<string>) => setHyperparameter(k, e.target.value)} type="number" step={1} min={v.lower} max={v.upper} value={state.hyperparameters[k]}/>
                                     </div>;
-                                    case HyperparameterType.Integer: return <div className={hyper}>
-                                        <span>{k}</span>
-                                        <TextInput type="number" step={1} min={v.lower} max={v.upper} value={state.hyperparameters[k]} onType={s => setHyperparameter(k, s)}/>
+                                    case HyperparameterType.Double: return <div>
+                                        <TextInputField {...nMB} label={format(k)} onChange={(e: ETV<string>) => setHyperparameter(k, e.target.value)} type="number" min={v.lower} max={v.upper} value={state.hyperparameters[k]}/>
                                     </div>;
-                                    case HyperparameterType.Double: return <div className={hyper}>
-                                        <span>{k}</span>
-                                        <TextInput type="number" min={v.lower} max={v.upper} value={state.hyperparameters[k]} onType={s => setHyperparameter(k, s)}/>
-                                    </div>;
-                                    case HyperparameterType.Select: return <div className={hyper}>
-                                        <span>{k}</span>
-                                        <RadioGroup className={radioGroup} name={k} selectedValue={state.hyperparameters[k]} onChange={e => setHyperparameter(k, e)}>
-                                            {v.choices.map(ch => <label key={ch}>
-                                                <Radio value={ch}/> {format(ch)}
-                                            </label>)}
-                                        </RadioGroup>
+                                    case HyperparameterType.Select: return <div>
+                                        <RadioGroup
+                                            label={format(k)}
+                                            value={state.hyperparameters[k].toString()}
+                                            options={v.choices.map(q => ({ value: q.toString(), label: format(q.toString()) }))}
+                                            onChange={(e: ETV<string>) => setHyperparameter(k, e.target.value)}
+                                        />
                                     </div>;
                                     }
 
                                     // unreachable, leave in place to suppress eslint
                                     throw new Error('unexpected hyperparameter type');
                                 })}
-                            </div>
-                        </>;
+                            </Pane>
+                        </Pane>;
                     }}</Promised>
                 </div></AccordionItemPanel>
             </AccordionItem>
         </Accordion>
-        <button className={train} onClick={onTrain}>Train</button>       
-    </section>;
+        <Button disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>       
+    </Pane>;
 };
 
 export default ModelOptions;

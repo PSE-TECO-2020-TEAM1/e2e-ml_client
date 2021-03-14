@@ -1,21 +1,23 @@
 import React from 'react';
 import QRCode from 'qrcode.react';
-import Wrapper from 'components/Wrapper';
-import styles from './index.module.scss';
-const { main, qr, descst, link } = styles;
+import { ClipboardIcon, Heading, IconButton, Link, majorScale, Pane, Tooltip } from 'evergreen-ui';
 
 export type QRViewProps = {
     desc: string,
     href: string
 }
 
-const QRView = ({ desc, href } : QRViewProps) => <Wrapper className={main}>
-    <span className={descst}>{desc}</span>
-    <QRCode className={qr} value={href} size={400} />
-    <div className={link}>
-        <a href={href}>{href}</a>
-        <button onClick={() => navigator.clipboard.writeText(href)}>copy to clipboard</button>
-    </div>
-</Wrapper>;
+const QRView = ({ desc, href } : QRViewProps) => <Pane display="flex" flexDirection="column" alignItems="center" gap={majorScale(2)}>
+    <Heading size={600}>{desc}</Heading>
+    <QRCode value={href} size={400} />
+    <Pane display="flex" alignItems="center" gap={majorScale(2)}>
+        <Link href={href}>{href}</Link>
+        <Tooltip
+            content="copy to clipboard"
+        >
+            <IconButton icon={ClipboardIcon} onClick={() => navigator.clipboard.writeText(href)} />
+        </Tooltip>
+    </Pane>
+</Pane>;
 
 export default QRView;

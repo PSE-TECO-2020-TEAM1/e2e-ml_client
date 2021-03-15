@@ -18,17 +18,18 @@ type State =
 export const HeaderContext = React.createContext<[State, React.Dispatch<React.SetStateAction<State>>]>([{}, () => {console.log('bad things happened');}]);
 
 const Header = () => <HeaderView {...useHeaderView()}/>;
-export const HeaderProvider = ({ children }: { children: React.ReactNode }) =>
-    <HeaderContext.Provider value={useState<State>({})}>
+export const HeaderProvider = ({ children }: { children: React.ReactNode }) => {
+    return <HeaderContext.Provider value={useState<State>({})}>
         <Header />
         {children}
     </HeaderContext.Provider>;
+};
 
 export const useHeader = (c: Crumbs) => {
     const [, dispatch] = useContext(HeaderContext);
-    useMountEffect(() => dispatch(c));
+    useMountEffect(() => dispatch({ breadcrumbs: c }));
 
-    return useCallback((c: Crumbs) => dispatch(c), [dispatch]); 
+    return useCallback((c: Crumbs) => dispatch({ breadcrumbs: c }), [dispatch]); 
 };
 
 export const useLoginHeader = () => {

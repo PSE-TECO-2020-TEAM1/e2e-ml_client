@@ -1,21 +1,49 @@
 import { HeaderViewProps } from 'components/HeaderView';
-import { useAPI } from 'lib/hooks';
+import assert from 'lib/assert';
+import { useAPI, usePromise } from 'lib/hooks';
 import { HeaderContext } from 'lib/hooks/Header';
 import { useCallback, useContext } from 'react';
-import { loginRoute, signupRoute, workspacesListRoute } from 'routes';
+import { loginRoute, modelDetailsRoute, sampleRoute, signupRoute, workspaceRoute, workspacesListRoute } from 'routes';
 
 const useHeaderView = (): HeaderViewProps => {
     const [state] = useContext(HeaderContext);
     const api = useAPI();
+
+    const crumbsPH = usePromise(async () => {
+        if (!('breadcrumbs' in state)) return [];
+
+        const crumbs = [];
+        crumbs.push({ name: 'Workspaces', href: workspacesListRoute });
+        if (typeof state.breadcrumbs.workspaceId !== 'undefined') {
+            const workspaceName = (await api.getWorkspaces()).find(v => v.id === state.breadcrumbs.workspaceId)?.name;
+            if (workspaceName) crumbs.push({ name: workspaceName, href: workspaceRoute(state.breadcrumbs.workspaceId) });
+        }
+
+        if (typeof state.breadcrumbs.modelId !== 'undefined') {
+            assert(typeof state.breadcrumbs.workspaceId !== 'undefined');
+            const modelName = (await api.getModelDetails(state.breadcrumbs.workspaceId, state.breadcrumbs.modelId)).name;
+            if (modelName) crumbs.push({ name: modelName, href: modelDetailsRoute(state.breadcrumbs.workspaceId, state.breadcrumbs.modelId) });
+        }
+
+        if (typeof state.breadcrumbs.sampleId !== 'undefined') {
+            assert(typeof state.breadcrumbs.workspaceId !== 'undefined');
+            crumbs.push({ name: `Sample ${state.breadcrumbs.sampleId}`, href: sampleRoute(state.breadcrumbs.workspaceId, state.breadcrumbs.sampleId) });
+        }
+
+        if (typeof state.breadcrumbs.dangle !== 'undefined') {
+            crumbs.push(state.breadcrumbs.dangle);
+        }
+
+        return crumbs;
+    }, [state]);
 
     const logout = useCallback(() => {
         api.logout();
     }, [api]);
 
     if ('breadcrumbs' in state) {
-        const crumbs = [];
-        crumbs.push({ name: 'Workspaces', href: workspacesListRoute });
-        return { crumbs, logout };
+        console.log('crumbsph', crumbsPH);
+        return { crumbsPH, logout };
     }
 
     if ('login' in state) {

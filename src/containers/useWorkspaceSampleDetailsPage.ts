@@ -7,7 +7,7 @@ import { goldenAngleColor, UnixTimestamp } from 'lib/utils';
 import { useRef, useState } from 'react';
 
 const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): WorkspaceSampleDetailsPageViewProps => {
-    useHeader({ workspaceId, sampleId, dangle: 'Details' });
+    useHeader({ workspaceId, sampleId });
     useAuth();
     const api = useAPI();
     const [verification, , , flip] = useBoolean();

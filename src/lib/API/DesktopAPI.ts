@@ -158,6 +158,7 @@ export interface DesktopAPI {
     getPredictionID(w: WorkspaceID, m: ModelID): Promise<string>;
     getLabels(w: WorkspaceID): Promise<ILabel[]>;
     deleteWorkspace(w: WorkspaceID): Promise<void>;
+    renameWorkspace(w: WorkspaceID, n: string): Promise<void>;
     createLabel(w: WorkspaceID, labelName: string): Promise<void>;
     renameLabel(w: WorkspaceID, l: LabelID, name: string): Promise<void>;
     describeLabel(w: WorkspaceID, l: LabelID, desc: string): Promise<void>;
@@ -343,8 +344,12 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.get<ILabel[]>(`/api/workspaces/${w}/labels`);
     }
     
-    deleteWorkspace(w: WorkspaceID): Promise<void> {
-        throw new Error('Method not implemented.');
+    async deleteWorkspace(w: WorkspaceID): Promise<void> {
+        return await this.delete<void>(`/api/workspaces/${w}`);
+    }
+
+    async renameWorkspace(w: WorkspaceID, n: string): Promise<void> {
+        return await this.put(`/api/workspaces/${w}?workspaceName=${n}`, {}); // doesn't use backend
     }
     
     async createLabel(w: WorkspaceID, labelName: string): Promise<void> {

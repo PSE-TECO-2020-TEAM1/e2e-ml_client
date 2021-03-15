@@ -1,19 +1,32 @@
 import React from 'react';
 import ModelOptions, { ModelOptionsProps } from 'components/ModelOptions';
 import SampleList, { SampleListProps } from 'components/SampleList';
-import { Pane, Button, majorScale, SideSheet, Heading } from 'evergreen-ui';
+import { Pane, Button, majorScale, SideSheet, Heading, TextInput } from 'evergreen-ui';
 import { useBoolean } from 'lib/hooks';
 import WorkspaceModels, { WorkspaceModelsProps } from 'components/WorkspaceModels';
 import WorkspaceLabels, { WorkspaceLabelsProps } from 'components/WorkspaceLabels';
+import { ETV } from 'lib/utils';
 
 export type WorkspacePageViewProps = {
     sampleProps: SampleListProps,
     modelOptionsProps: ModelOptionsProps,
     modelsProps: WorkspaceModelsProps,
     labelsProps: WorkspaceLabelsProps,
+    onRenameClick: () => void,
+    onDeleteClick: () => void,
+    workspaceRename: string,
+    onWorkspaceRenameChange: (n: string) => void,
 }
 
-const WorkspacePageView = ({ sampleProps, modelOptionsProps, labelsProps, modelsProps }: WorkspacePageViewProps) => {
+const Setting = ({ children }: { children: React.ReactNode }) =>
+    <Pane display="flex" justifyContent="space-between">
+        {children}
+    </Pane>;
+
+const WorkspacePageView = ({
+    sampleProps, modelOptionsProps, labelsProps, modelsProps,
+    workspaceRename, onRenameClick, onDeleteClick, onWorkspaceRenameChange
+}: WorkspacePageViewProps) => {
     const [isShown, setShown, clearShown] = useBoolean();
     return <Pane display="grid" gridTemplateColumns={`${majorScale(80)}px ${majorScale(80)}px`} justifyContent="space-evenly" gap={majorScale(4)}>
         <SideSheet
@@ -38,6 +51,18 @@ const WorkspacePageView = ({ sampleProps, modelOptionsProps, labelsProps, models
             <Heading>Workspace Labels</Heading>
             <Pane elevation={1}>
                 <WorkspaceLabels {...labelsProps} />
+            </Pane>
+            <Heading>Danger Zone</Heading>
+            <Pane elevation={1} padding={majorScale(2)} display="flex" gap={majorScale(2)} flexDirection="column">
+                <Setting>
+                    <Heading size={400}>Rename Workspace</Heading>
+                    <TextInput value={workspaceRename} onChange={(e: ETV<string>) => onWorkspaceRenameChange(e.target.value)}/>
+                    <Button onClick={onRenameClick}>Rename</Button>
+                </Setting>
+                <Setting>
+                    <Heading size={400}>Delete Workspace</Heading>
+                    <Button intent="danger" onClick={onDeleteClick}>Delete</Button>
+                </Setting>
             </Pane>
         </Pane>
     </Pane>;

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import HeaderView from 'components/HeaderView';
 import useHeaderView from 'containers/useHeaderView';
 import { useMountEffect } from '.';
@@ -27,6 +27,8 @@ export const HeaderProvider = ({ children }: { children: React.ReactNode }) =>
 export const useHeader = (c: Crumbs) => {
     const [, dispatch] = useContext(HeaderContext);
     useMountEffect(() => dispatch(c));
+
+    return useCallback((c: Crumbs) => dispatch(c), [dispatch]); 
 };
 
 export const useLoginHeader = () => {

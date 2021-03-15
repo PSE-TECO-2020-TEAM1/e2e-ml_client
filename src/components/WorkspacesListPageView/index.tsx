@@ -25,12 +25,16 @@ const WorkspacesListPage = ({ workspacesPH, workspaceCreationProps }: WorkspaceL
             >
                 <WorkspaceCreation {...workspaceCreationProps} onClose={clearShown}/>
             </Dialog>
-            <Pane display="grid" gap={majorScale(2)} gridTemplateColumns="1fr 1fr 1fr 1fr">
-                <Promised promise={workspacesPH} pending={<Loading />} >{w =>
-                    w.length === 0 ? <Text>No workspaces yet.</Text> : w.map(({ text, href }) =>
-                        <Button height={majorScale(7)} display="inline-block" minWidth={majorScale(20)} textAlign="center" appearance="minimal" is={Link} key={text} href={href}>{text}</Button>)
-                }</Promised>
-            </Pane>
+            <Promised promise={workspacesPH} pending={<Loading />} >{w =>
+                w.length === 0
+                    ? <Pane display="flex" justifyContent="center" alignItems="center" minHeight={majorScale(10)}>
+                        <Text>No workspaces yet.</Text>
+                    </Pane>
+                    : <Pane display="grid" gap={majorScale(2)} gridTemplateColumns="1fr 1fr 1fr 1fr">
+                        {w.map(({ text, href }) =>
+                            <Button height={majorScale(7)} display="inline-block" minWidth={majorScale(20)} textAlign="center" appearance="minimal" is={Link} key={text} href={href}>{text}</Button>)}
+                    </Pane>
+            }</Promised>
             <Button marginTop={majorScale(2)} height={majorScale(7)} appearance="primary"
                 onClick={setShown}
             >Create new workspace</Button>

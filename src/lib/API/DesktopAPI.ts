@@ -3,6 +3,7 @@ import { UnixTimestamp } from 'lib/utils';
 import { del, get, post, put } from './utils';
 
 import testparams from './params.json';
+import LoginController from 'lib/LoginController';
 
 type Username = string;
 type Password = string;
@@ -173,32 +174,31 @@ export interface DesktopAPI {
 }
 
 export default class SameOriginDesktopAPI implements DesktopAPI {
-    private accessToken: string | undefined = undefined;
-    private refreshToken: string | undefined = undefined;
+    private lc = new LoginController();
     
     private get<T,>(url: string): Promise<T> {
-        return get(this.accessToken)<T>(url);
+        return get(this.lc.getAccessToken())<T>(url);
     };
     private delete<T,>(url: string) {
-        return del(this.accessToken)<T>(url);
+        return del(this.lc.getAccessToken())<T>(url);
     }
     private put<T,Y>(url: string, data: T) {
-        return put(this.accessToken)<T,Y>(url, data);
+        return put(this.lc.getAccessToken())<T,Y>(url, data);
     }
     private post<T,Y>(url: string, data: T) {
-        return post(this.accessToken)<T,Y>(url, data);
+        return post(this.lc.getAccessToken())<T,Y>(url, data);
     }
     
     async login(username: Username, password: Password): Promise<void> {
-        ({
-            accessToken: this.accessToken,
-            refreshToken: this.refreshToken
-        } = await post()('/auth/login', { username, passwordHash: password })); // we are using tls, so skip hashing on the client
+        const {
+            accessToken,
+            refreshToken
+        } = await post()('/auth/login', { username, passwordHash: password }); // we are using tls, so skip hashing on the client
+        this.lc.login(accessToken, refreshToken);
     }
 
     logout() {
-        this.accessToken = undefined;
-        this.refreshToken = undefined;
+        this.lc.logout();
         window.location.reload();
     }
     
@@ -208,7 +208,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     isAuthenticated(): boolean {
-        return !!this.accessToken;
+        return this.lc.isAuthenticated();
     }
     
     async getAvailableTrainingParameters(): Promise<TrainingParameters> {
@@ -312,7 +312,6 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     async getWorkspaces(): Promise<IWorkspace[]> {
-        console.log(this.accessToken);
         return await this.get<IWorkspace[]>('/api/workspaces');
     }
     

@@ -8,7 +8,7 @@ import { SensorOptions } from 'lib/API/DesktopAPI';
 import { useHeader } from 'lib/hooks/Header';
 
 const useWorkspacesListPage = (): WorkspaceListPageProps => {
-    useHeader({});
+    useHeader({ dangle: 'Workspaces' });
     useAuth();
     const [validity, , , flipValidation] = useBoolean(false);
     const api = useAPI();

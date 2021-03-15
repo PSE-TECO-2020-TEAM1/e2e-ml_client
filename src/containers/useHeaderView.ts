@@ -10,11 +10,12 @@ const useHeaderView = (): HeaderViewProps => {
     const api = useAPI();
 
     const crumbsPH = usePromise(async () => {
+        if ('raw' in state) return [state.raw];
         if (!('breadcrumbs' in state)) return [];
 
         const crumbs = [];
-        crumbs.push({ name: 'Workspaces', href: workspacesListRoute });
         if (typeof state.breadcrumbs.workspaceId !== 'undefined') {
+            crumbs.push({ name: 'Workspaces', href: workspacesListRoute });
             const workspaceName = (await api.getWorkspaces()).find(v => v.id === state.breadcrumbs.workspaceId)?.name;
             if (workspaceName) crumbs.push({ name: workspaceName, href: workspaceRoute(state.breadcrumbs.workspaceId) });
         }
@@ -52,6 +53,10 @@ const useHeaderView = (): HeaderViewProps => {
 
     if ('signup' in state) {
         return { login: loginRoute };
+    }
+
+    if ('raw' in state) {
+        return { crumbsPH };
     }
 
     return {};

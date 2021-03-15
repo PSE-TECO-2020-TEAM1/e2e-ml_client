@@ -129,7 +129,7 @@ interface ILabelPerformance {
 
 interface IHyperparameter {
     name: string,
-    value: any
+    value: string
 }
 
 interface IModelDetails {
@@ -336,7 +336,9 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
     
     async getPredictionID(w: WorkspaceID, m: ModelID): Promise<string> {
-        return await this.get<string>(`/api/workspaces/${w}/models/${m}/predictionId`);
+        return (await this.get<{
+            predictionId: string
+        }>(`/api/workspaces/${w}/models/${m}/generatePredictionId`)).predictionId;
     }
     
     async getLabels(w: WorkspaceID): Promise<ILabel[]> {

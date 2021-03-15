@@ -13,6 +13,7 @@ type State =
     { login: true }
     | { signup: true }
     | { breadcrumbs: Crumbs }
+    | { raw: string }
     | {};
 
 export const HeaderContext = React.createContext<[State, React.Dispatch<React.SetStateAction<State>>]>([{}, () => {console.log('bad things happened');}]);
@@ -30,6 +31,11 @@ export const useHeader = (c: Crumbs) => {
     useMountEffect(() => dispatch({ breadcrumbs: c }));
 
     return useCallback((c: Crumbs) => dispatch({ breadcrumbs: c }), [dispatch]); 
+};
+
+export const useBareHeader = (s: string) => {
+    const [, dispatch] = useContext(HeaderContext);
+    useMountEffect(() => dispatch({ raw: s }));
 };
 
 export const useLoginHeader = () => {

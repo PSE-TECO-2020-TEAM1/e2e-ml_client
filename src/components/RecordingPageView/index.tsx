@@ -1,4 +1,5 @@
 import Graph from 'components/Graph';
+import { Button, Heading, Label, majorScale, Pane, Text } from 'evergreen-ui';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { SensorName } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
@@ -27,43 +28,38 @@ export type RecordingPageViewProps = {
     onSend: () => void
 } 
 
-const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remaining, isRecording, isPre, onSend, canSend }: RecordingPageViewProps) => {
-    let content;
+const renderGraph = (data: DataRecord, format: DataFormat) => {
+    const d: {name: string, data: [number, number][]}[] = [];
 
-    if (isPre) content = <>
-        <span>{countdown}</span>
-        <span>seconds</span>
-    </>;
-    else {
-        const d: {name: string, data: [number, number][]}[] = [];
-
-        for (const [k, v] of Object.entries(data)) {
-            for (let index = 0; index < format[k as SensorName].length; index++) {
-                const element = format[k as SensorName][index];
-                d.push({ name: element, data: v.map(ns => ([ns.timestamp, ns.data[index]])) });
-            }
+    for (const [k, v] of Object.entries(data)) {
+        for (let index = 0; index < format[k as SensorName].length; index++) {
+            const element = format[k as SensorName][index];
+            d.push({ name: element, data: v.map(ns => ([ns.timestamp, ns.data[index]])) });
         }
-
-        content = <>
-            <span>{remaining}</span>
-            <span>seconds remaining</span>
-            <Graph data={d} />
-        </>;
     }
 
-    return <>
-        <header>{isPre ? 'Prepare to Record Data' : 'Recording Data'}</header>
-        <b>{label}</b>
-        {content}
-        <em>Selected Sensors and Sampling Rates:</em>
+    return <Graph data={d} />;
+};
+
+const RecordingPageView = ({ data, format, label, sensorsPH, countdown, remaining, isRecording, isPre, onSend, canSend }: RecordingPageViewProps) => {
+    return <Pane gap={majorScale(2)} display="grid" gridTemplateColumns={'0 minmax(0, 1fr) minmax(0, 1fr) 0'}>
+        <Heading gridColumn="2 / span 2">{isPre ? 'Prepare to Record Data' : isRecording ? 'Recording Data' : 'Recording Done'}</Heading>
+        <Text gridColumn="2">Label: {label}</Text>
+        <Text gridColumn="3">{isPre ? countdown : remaining} seconds remaining</Text>
+        {isPre ? null : 
+            <Pane gridColumn="1 / span 4">
+                {renderGraph(data, format)}
+            </Pane>
+        }
+        <Heading gridColumn="2 / span 2" >Selected Sensors and Sampling Rates:</Heading>
         <Promised promise={sensorsPH} pending={'loading...'}>{sensors =>
-            sensors.map(({ name, rate }) => <span key={name} >{name} ({rate} Hz)</span>)
+            sensors.map(({ name, rate }, i) => <Text gridColumn={(i % 2) + 2} key={name} >{name} ({rate} Hz)</Text>)
         }</Promised>
         {(!isRecording && !isPre) ? <>
-            {canSend ? <button onClick={onSend}>send</button> : null}
-            <span>to restart refresh page</span>
+            {canSend ? <Button appearance="primary" gridColumn="2 / span 2" onClick={onSend}>Send Sample</Button> : null}
+            <Text gridColumn="2 / span 2">In order to record a new sample, refresh the page</Text>
         </> : null}
-    </>;
+    </Pane>;
 };
 
 export default RecordingPageView;

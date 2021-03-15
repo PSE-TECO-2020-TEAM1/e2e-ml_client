@@ -45,17 +45,19 @@ export interface MobileAPI {
     // discardSubmission(id: SubmissionID): Promise<void>;
     getPredictionConfiguration(id: PredictionID): Promise<IPredictionConfiguration>;
     getPrediction(id: PredictionID): Promise<PredictionResult>;
-    predict(id: PredictionID, data: SensorDatapoints[]): Promise<void>;
+    predict(id: PredictionID, data: SensorDatapoints[], start: UnixTimestamp, end: UnixTimestamp): Promise<void>;
 }
 
 const post = postRaw();
 const get = getRaw();
 
 class SameOriginMobileAPI implements MobileAPI {
-    async predict(id: string, data: SensorDatapoints[]): Promise<void> {
+    async predict(id: string, data: SensorDatapoints[], start: UnixTimestamp, end: UnixTimestamp): Promise<void> {
         const toSend = {
             predictionId: id,
-            sensorDataPoints: data
+            sensorDataPoints: data,
+            start,
+            end
         };
         return await post('/api/submitData', toSend);
     }
@@ -67,10 +69,10 @@ class SameOriginMobileAPI implements MobileAPI {
     async submitSample(id: string, label: string, start: number, end: number, data: SensorDatapoints[]): Promise<void> {
         const toSend = {
             submissionId: id,
-            label,
+            sensorDataPoints: data,
             start,
             end,
-            sensorDataPoints: data
+            label,
         };
         console.log('toSend: ', toSend);
         return await post('/api/submitSample', toSend);

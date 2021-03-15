@@ -13,6 +13,7 @@ const useSignupPage = (): SignupPageViewProps => {
     const [email, setEmail] = useState<string>('');
 
     const api = useAPI();
+    useSignupHeader();
 
     useMountEffect(() => {
         if (api.isAuthenticated()) navigate(rootRoute);

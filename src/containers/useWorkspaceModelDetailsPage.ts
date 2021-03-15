@@ -3,7 +3,7 @@ import { useAPI, useAuth, usePromise } from 'lib/hooks';
 import { useHeader } from 'lib/hooks/Header';
 
 const useWorkspaceModelDetailsPage = (workspaceId: string, modelId: string): WorkspaceModelDetailsPageViewProps => {
-    useHeader({ workspaceId, modelId, dangle: 'Details' });
+    useHeader({ workspaceId, modelId });
     useAuth();
     const api = useAPI();
 

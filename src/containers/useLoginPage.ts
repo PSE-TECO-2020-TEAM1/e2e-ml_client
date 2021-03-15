@@ -12,7 +12,7 @@ const useLoginPage = (): LoginPageViewProps => {
     const [pass, setPass] = useState<string>('');
 
     const api = useAPI();
-    // useLoginHeader();
+    useLoginHeader();
     const [{ ref }] = useQueryParams();
 
     useMountEffect(() => {

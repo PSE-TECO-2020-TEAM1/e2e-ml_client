@@ -1,6 +1,5 @@
 import { WorkspaceLabelsProps } from 'components/WorkspaceLabels';
-import { useAPI, useAuth, useCounter, usePromise } from 'lib/hooks';
-import { useHeader } from 'lib/hooks/Header';
+import { useAPI, useCounter, usePromise } from 'lib/hooks';
 import { useCallback, useState } from 'react';
 
 const useWorkspaceLabelsPage = (workspaceId: string): WorkspaceLabelsProps => {

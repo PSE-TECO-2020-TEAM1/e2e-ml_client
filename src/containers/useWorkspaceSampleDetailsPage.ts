@@ -1,6 +1,6 @@
 import { WorkspaceSampleDetailsPageViewProps } from 'components/WorkspaceSampleDetailsPageView';
 import assert from 'lib/assert';
-import { useAPI, useAuth, useBoolean, useCounter, usePromise } from 'lib/hooks';
+import { useAPI, useAuth, useBoolean, usePromise } from 'lib/hooks';
 import { useHeader } from 'lib/hooks/Header';
 import { sensorFormats } from 'lib/sensors';
 import { goldenAngleColor, UnixTimestamp } from 'lib/utils';

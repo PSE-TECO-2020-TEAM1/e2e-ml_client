@@ -1,6 +1,5 @@
 import { WorkspaceModelsProps } from 'components/WorkspaceModels';
-import { useAPI, useAuth, useCounter, usePromise } from 'lib/hooks';
-import { useHeader } from 'lib/hooks/Header';
+import { useAPI, useCounter, usePromise } from 'lib/hooks';
 import { classifyRoute, modelDetailsRoute } from 'routes';
 
 const useWorkspaceModelsPage = (workspaceId: string): WorkspaceModelsProps => {

@@ -1,6 +1,7 @@
 import { RecordingPageViewProps } from 'components/RecordingPageView';
 import assert from 'lib/assert';
 import { useAPI, useBoolean, useCountdown, usePromise } from 'lib/hooks';
+import { useBareHeader } from 'lib/hooks/Header';
 import { mapPack, State } from 'lib/hooks/Promise';
 import { sensorFormats as format, sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
@@ -89,6 +90,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
         await api.submitSample(submissionId, label, start, end, formattedData);
     }, [api, clearSend, label, submissionId]);
 
+    useBareHeader('Record Data');
     return { onSend, data: data.current, format, label, sensorsPH, isRecording, countdown: countdown / 1000,
         remaining: duration / 1000, isPre: !isRecording && countdown !== 0, canSend
     };

@@ -4,16 +4,17 @@ const handleStatusCode = (status: number, body: string): ({} | undefined) => {
     if (status === 200 && body === '') return ({});
     if (status === 200 && body === 'OK') return ({});
     if (status !== 200) {
-        try {
-            JSON.parse(body);
-        } catch (e) {
-            notifyError(body);
-        }
-        const err = JSON.parse(body);
-        if (err.error) notifyError(err.error);
-        else if (typeof err === 'string') notifyError(err);
-        else notifyError(body);
-        // throw new Error(body);
+        // try {
+        //     JSON.parse(body);
+        // } catch (e) {
+        //     notifyError(body);
+        // }
+        // const err = JSON.parse(body);
+        // if (err.error) notifyError(err.error);
+        // else if (typeof err === 'string') notifyError(err);
+        // else notifyError(body);
+        notifyError(body);
+        throw new Error(body);
     }
 
     return undefined;

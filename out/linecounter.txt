@@ -1,0 +1,157 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2021-03-15 22:02:06
+count workspace : /home/omer/client
+total files : 125
+total code lines : 43470
+total comment lines : 260
+total blank lines : 676
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |           .ps1|             25|              0|             11|  0.058|
+   |          .json|          38554|              0|             29|     89|
+   |          .html|             19|             25|              0|  0.044|
+   |           .ico|              0|              0|              0|    0.0|
+   |           .txt|              6|             62|              7|  0.014|
+   |            .js|             19|              9|              2|  0.044|
+   |           .map|              4|              0|              0| 0.0092|
+   |               |             58|              1|             11|   0.13|
+   |          .yaml|           1319|              1|             40|    3.0|
+   |            .md|              7|              0|              0|  0.016|
+   |          .conf|              8|              0|              0|  0.018|
+   |           .tsx|           1862|             58|            225|    4.3|
+   |            .ts|           1519|             74|            330|    3.5|
+   |           .bak|              0|             27|              3|    0.0|
+   |          .scss|             69|              2|             18|   0.16|
+   |           .css|              1|              1|              0| 0.0023|
+   -------------------------------------------------------------------------
+.eslintcache, code is 1, comment is 0, blank is 0.
+.gitignore, code is 19, comment is 1, blank is 5.
+build/asset-manifest.json, code is 19, comment is 0, blank is 1.
+build/favicon.ico, code is 0, comment is 0, blank is 0.
+build/index.html, code is 1, comment is 0, blank is 0.
+build/manifest.json, code is 25, comment is 0, blank is 0.
+build/robots.txt, code is 3, comment is 1, blank is 0.
+build/static/css/main.74059345.chunk.css, code is 1, comment is 1, blank is 0.
+build/static/css/main.74059345.chunk.css.map, code is 1, comment is 0, blank is 0.
+build/static/js/2.2fd0a169.chunk.js, code is 1, comment is 3, blank is 0.
+build/static/js/2.2fd0a169.chunk.js.LICENSE.txt, code is 0, comment is 60, blank is 7.
+build/static/js/2.2fd0a169.chunk.js.map, code is 1, comment is 0, blank is 0.
+build/static/js/main.57bd0ccc.chunk.js, code is 1, comment is 1, blank is 0.
+build/static/js/main.57bd0ccc.chunk.js.map, code is 1, comment is 0, blank is 0.
+build/static/js/runtime-main.c012fedc.js, code is 1, comment is 1, blank is 0.
+build/static/js/runtime-main.c012fedc.js.map, code is 1, comment is 0, blank is 0.
+diffs.md, code is 5, comment is 0, blank is 0.
+Dockerfile, code is 21, comment is 0, blank is 2.
+fw.ps1, code is 25, comment is 0, blank is 11.
+LICENSE, code is 17, comment is 0, blank is 4.
+nginx.conf, code is 8, comment is 0, blank is 0.
+package-lock.json, code is 38130, comment is 0, blank is 8.
+package.json, code is 80, comment is 0, blank is 5.
+public/favicon.ico, code is 0, comment is 0, blank is 0.
+public/index.html, code is 18, comment is 25, blank is 0.
+public/manifest.json, code is 25, comment is 0, blank is 0.
+public/robots.txt, code is 3, comment is 1, blank is 0.
+README.md, code is 2, comment is 0, blank is 0.
+src/__tests__/components/404.tsx, code is 20, comment is 0, blank is 6.
+src/__tests__/components/CoverTextButtonInput.tsx, code is 35, comment is 0, blank is 5.
+src/__tests__/components/LabelSelectionPageView.tsx, code is 30, comment is 0, blank is 5.
+src/__tests__/components/Loading.tsx, code is 19, comment is 0, blank is 5.
+src/__tests__/components/LoginPage.tsx, code is 41, comment is 0, blank is 5.
+src/__tests__/components/QRView.tsx, code is 25, comment is 0, blank is 5.
+src/__tests__/components/RecordingConfigurationPageView.tsx, code is 39, comment is 0, blank is 5.
+src/__tests__/components/RecordingPageView.tsx, code is 64, comment is 0, blank is 6.
+src/__tests__/components/SampleList.tsx, code is 46, comment is 0, blank is 4.
+src/__tests__/components/TextField.tsx, code is 21, comment is 0, blank is 5.
+src/__tests__/components/WorkspaceCollectDataPageView.tsx, code is 27, comment is 0, blank is 5.
+src/__tests__/components/workspaceCreation.tsx, code is 43, comment is 0, blank is 5.
+src/__tests__/components/workspaceLabelsPageView.tsx, code is 43, comment is 2, blank is 5.
+src/__tests__/components/WorkspaceModelClassifyPageView.tsx, code is 28, comment is 0, blank is 5.
+src/__tests__/components/WorkspaceModelDetailsPageView.tsx, code is 50, comment is 0, blank is 5.
+src/__tests__/components/WorkspaceModelsPageView.tsx, code is 35, comment is 0, blank is 4.
+src/__tests__/components/WorkspacePageView.tsx, code is 56, comment is 0, blank is 4.
+src/__tests__/components/Wrapper.tsx, code is 20, comment is 0, blank is 6.
+src/__tests__/lib/hooks/Boolean.ts, code is 15, comment is 0, blank is 5.
+src/App.tsx, code is 17, comment is 0, blank is 6.
+src/components/404/index.tsx, code is 9, comment is 0, blank is 2.
+src/components/Graph/index.tsx, code is 59, comment is 1, blank is 7.
+src/components/HeaderView/index.tsx, code is 38, comment is 0, blank is 5.
+src/components/LabelSelectionPageView/index.tsx, code is 21, comment is 1, blank is 3.
+src/components/Loading/index.tsx, code is 3, comment is 0, blank is 2.
+src/components/LoginPageView/index.tsx, code is 18, comment is 0, blank is 3.
+src/components/ModelOptions/index.tsx, code is 173, comment is 16, blank is 7.
+src/components/PredictionPageView/index.tsx.bak, code is 0, comment is 27, blank is 3.
+src/components/QRView/index.tsx, code is 20, comment is 0, blank is 3.
+src/components/RecordingConfigurationPageView/index.tsx, code is 25, comment is 0, blank is 3.
+src/components/RecordingPageView/index.tsx, code is 57, comment is 0, blank is 8.
+src/components/SampleList/index.tsx, code is 45, comment is 0, blank is 5.
+src/components/SignupPageView/index.tsx, code is 21, comment is 0, blank is 3.
+src/components/TextField/index.tsx, code is 26, comment is 0, blank is 4.
+src/components/WorkspaceCollectDataPageView/index.tsx, code is 15, comment is 0, blank is 3.
+src/components/WorkspaceCreation/index.tsx, code is 36, comment is 2, blank is 4.
+src/components/WorkspaceLabels/index.tsx, code is 65, comment is 0, blank is 4.
+src/components/WorkspaceModelClassifyPageView/index.tsx, code is 15, comment is 0, blank is 3.
+src/components/WorkspaceModelDetailsPageView/index.module.scss, code is 18, comment is 0, blank is 4.
+src/components/WorkspaceModelDetailsPageView/index.tsx, code is 96, comment is 0, blank is 4.
+src/components/WorkspaceModels/index.tsx, code is 54, comment is 28, blank is 5.
+src/components/WorkspacePageView/index.tsx, code is 67, comment is 0, blank is 4.
+src/components/WorkspaceSampleDetailsPageView/index.tsx, code is 110, comment is 1, blank is 3.
+src/components/WorkspacesListPageView/index.tsx, code is 41, comment is 0, blank is 4.
+src/components/Wrapper/index.module.scss, code is 15, comment is 0, blank is 3.
+src/components/Wrapper/index.tsx, code is 15, comment is 0, blank is 4.
+src/config.js, code is 1, comment is 0, blank is 0.
+src/containers/useHeaderView.ts, code is 51, comment is 0, blank is 14.
+src/containers/useLabelSelectionPage.ts, code is 14, comment is 0, blank is 5.
+src/containers/useLoginPage.ts, code is 29, comment is 0, blank is 10.
+src/containers/useModelOptions.ts, code is 111, comment is 1, blank is 15.
+src/containers/useRecordingConfigurationPage.ts, code is 18, comment is 0, blank is 7.
+src/containers/useRecordingPage.ts, code is 68, comment is 10, blank is 22.
+src/containers/useSampleList.ts, code is 28, comment is 1, blank is 6.
+src/containers/useSignupPage.ts, code is 31, comment is 0, blank is 11.
+src/containers/useWorkspaceCollectDataPage.ts, code is 12, comment is 0, blank is 4.
+src/containers/useWorkspaceCreation.ts, code is 40, comment is 2, blank is 10.
+src/containers/useWorkspaceLabels.ts, code is 39, comment is 0, blank is 7.
+src/containers/useWorkspaceModelClassifyPage.ts, code is 12, comment is 0, blank is 4.
+src/containers/useWorkspaceModelDetailsPage.ts, code is 31, comment is 1, blank is 10.
+src/containers/useWorkspaceModels.ts, code is 24, comment is 5, blank is 6.
+src/containers/useWorkspacePage.ts, code is 37, comment is 0, blank is 8.
+src/containers/useWorkspaceSampleDetailsPage.ts, code is 67, comment is 2, blank is 16.
+src/containers/useWorkspacesListPage.ts, code is 23, comment is 3, blank is 7.
+src/index.tsx, code is 14, comment is 5, blank is 4.
+src/lib/API/DesktopAPI.ts, code is 368, comment is 6, blank is 58.
+src/lib/API/index.ts, code is 5, comment is 0, blank is 2.
+src/lib/API/MobileAPI.ts, code is 73, comment is 2, blank is 16.
+src/lib/API/params.json, code is 250, comment is 0, blank is 13.
+src/lib/API/utils.ts, code is 44, comment is 1, blank is 12.
+src/lib/assert.ts, code is 12, comment is 0, blank is 2.
+src/lib/hooks/API.ts, code is 10, comment is 0, blank is 3.
+src/lib/hooks/Auth.ts, code is 16, comment is 0, blank is 5.
+src/lib/hooks/Boolean.ts, code is 11, comment is 0, blank is 2.
+src/lib/hooks/Countdown.ts, code is 25, comment is 30, blank is 18.
+src/lib/hooks/Counter.ts, code is 9, comment is 0, blank is 2.
+src/lib/hooks/Header.tsx, code is 41, comment is 0, blank is 8.
+src/lib/hooks/index.ts, code is 7, comment is 0, blank is 1.
+src/lib/hooks/MountEffect.ts, code is 3, comment is 1, blank is 1.
+src/lib/hooks/Mouse.ts, code is 22, comment is 0, blank is 6.
+src/lib/hooks/Promise.tsx, code is 52, comment is 2, blank is 12.
+src/lib/LoginController.ts, code is 38, comment is 1, blank is 6.
+src/lib/sensors/accelerometer.ts, code is 47, comment is 1, blank is 4.
+src/lib/sensors/gyroscope.ts, code is 47, comment is 1, blank is 4.
+src/lib/sensors/index.ts, code is 37, comment is 1, blank is 7.
+src/lib/sensors/magnetometer.ts, code is 47, comment is 1, blank is 4.
+src/lib/utils.ts, code is 43, comment is 3, blank is 10.
+src/react-app-env.d.ts, code is 0, comment is 1, blank is 0.
+src/reportWebVitals.js, code is 12, comment is 0, blank is 1.
+src/routes.tsx, code is 67, comment is 0, blank is 12.
+src/setupTests.js, code is 1, comment is 4, blank is 0.
+src/styling/index.js, code is 2, comment is 0, blank is 1.
+src/styling/index.scss, code is 19, comment is 0, blank is 5.
+src/styling/variables.scss, code is 17, comment is 2, blank is 6.
+src/types.d.ts, code is 5, comment is 0, blank is 0.
+swagger.yaml, code is 1319, comment is 1, blank is 40.
+tsconfig.json, code is 25, comment is 0, blank is 2.
+===============================================================================

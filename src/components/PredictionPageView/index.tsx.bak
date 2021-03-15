@@ -1,0 +1,30 @@
+// import Graph from 'components/Graph';
+// import { Pane, majorScale, Heading, Text } from 'evergreen-ui';
+// import React from 'react';
+
+// export type PredictionPageViewProps = {
+//     isDone: boolean
+// } 
+
+// const PredictionPageView = ({ isDone, labelsPH, sensorsPH }: PredictionPageViewProps) => {
+//     return <Pane gap={majorScale(2)} display="grid" gridTemplateColumns={'0 minmax(0, 1fr) minmax(0, 1fr) 0'}>
+//         <Heading gridColumn="2 / span 2">{isDone ? 'Identification complete' : 'Identifying actions'}</Heading>
+//         <Text gridColumn="2">Label: {label}</Text>
+//         <Text gridColumn="3">{isPre ? countdown : remaining} seconds remaining</Text>
+//         {isPre ? null : 
+//             <Pane gridColumn="1 / span 4">
+//                 {renderGraph(data, format)}
+//             </Pane>
+//         }
+//         <Heading gridColumn="2 / span 2" >Selected Sensors and Sampling Rates:</Heading>
+//         <Promised promise={sensorsPH} pending={'loading...'}>{sensors =>
+//             sensors.map(({ name, rate }, i) => <Text gridColumn={(i % 2) + 2} key={name} >{name} ({rate} Hz)</Text>)
+//         }</Promised>
+//         {(!isRecording && !isPre) ? <>
+//             {canSend ? <Button appearance="primary" gridColumn="2 / span 2" onClick={onSend}>Send Sample</Button> : null}
+//             <Text gridColumn="2 / span 2">In order to record a new sample, refresh the page</Text>
+//         </> : null}
+//     </Pane>;
+// };
+
+// export default PredictionPageView;

@@ -28,7 +28,8 @@ const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel, onGraphCl
     const onLabelEvent = useCallback(e => onLabel(e.target.value), [onLabel]);
     return <Pane>
         <Pane display="flex" gap={majorScale(2)} justifyContent="space-evenly">
-            <Pane>
+            <Pane display="flex" gap={majorScale(2)} alignItems="baseline">
+                <Heading>Label: </Heading>
                 <Promised
                     promise={samplePH}
                     pending={'loading label...'}

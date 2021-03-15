@@ -1,10 +1,6 @@
 @import-sanitize;
 @import "./variables.scss";
 
-// * {
-//     box-sizing: border-box
-// } 
-
 a {
     text-decoration: unset;
     color: inherit;
@@ -12,7 +8,6 @@ a {
 
 body {
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    // background-color: var(--c-bg);
 }
 
 body, #root {
@@ -25,17 +20,5 @@ body, #root {
 
 html {
     height: 100%;
-    // color: var(--c-fg);
+    word-break: unset;
 }
-
-// button {
-//     position: relative;
-//     display: inline-block;
-//     cursor: pointer;
-//     outline: none;
-//     border: 0;
-//     vertical-align: middle;
-//     text-decoration: none;
-//     font-size: inherit;
-//     font-family: inherit;
-//   }

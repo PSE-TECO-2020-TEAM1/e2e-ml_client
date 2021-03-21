@@ -1,6 +1,6 @@
 import { PredictionPageViewProps } from 'components/PredictionPageView';
 import assert from 'lib/assert';
-import { useAPI, useBoolean, useMountEffect, usePromise } from 'lib/hooks';
+import { useAPI, useBoolean, usePromise } from 'lib/hooks';
 import { useBareHeader } from 'lib/hooks/Header';
 import { useInterval } from 'lib/hooks/Interval';
 import { mapPack, State } from 'lib/hooks/Promise';
@@ -8,9 +8,13 @@ import { sensorImplementations, SensorName, sensorNameArrayRecordGen, sensorForm
 import { mode, UnixTimestamp } from 'lib/utils';
 import { useEffect, useRef, useState } from 'react';
 
-const SEND_INTERVAL = 500;
-const RECEIVE_INTERVAL = 500;
-const UNKNOWN_LABEL = 'Other';
+const SEND_INTERVAL = 250;
+const RECEIVE_INTERVAL = 250;
+const UNKNOWN_LABEL = 'no prediction yet';
+
+const USER_SELECT = 1000;
+
+const GRAPH_OLD_DISCARD = 5000;
 
 type Data = Record<SensorName, {
     timestamp: UnixTimestamp,
@@ -24,16 +28,29 @@ type Predictions = {
     lastLabels: string[],
 };
 
+const lastNWindows = (n: number, windowLen: number, windows: string[]) => {
+    if (windows.length < n) return UNKNOWN_LABEL;
+    return mode(windows.slice(windows.length - n * windowLen));
+};
+
 const createTable = (predictions: Predictions | undefined) => {
     if (typeof predictions === 'undefined') return [];
 
-    const arr = []
-    const time = predictions.end - predictions.start;
-    const singleTime = time / predictions.labels.length;
+    const temp = [];
+    const n = USER_SELECT / SEND_INTERVAL;
+    
+    for (let index = 0; index < predictions.labels.length - n; index++) {
+        const label = mode(predictions.labels.slice(index, index + n));
+        temp.push(label);
+    }
+    
+    const arr = [];
 
-    for (const label of predictions.labels) {
+    const singleTime = SEND_INTERVAL;
+
+    for (const label of temp) {
         if (arr.length === 0) {
-            arr.push({ label, timeframe: [0, singleTime] })
+            arr.push({ label, timeframe: [0, singleTime] });
             continue;
         }
 
@@ -45,17 +62,19 @@ const createTable = (predictions: Predictions | undefined) => {
     }
 
     return arr;
-}
+};
 
 const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
+    console.log('e', predictionId);
     const api = useAPI();
     const [isDone, setDone] = useBoolean();
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
     const data = useRef<Data>(sensorNameArrayRecordGen());
+    const graphData = useRef<Data>(sensorNameArrayRecordGen());
 
-    const [predictions, setPredictions] = useState<Predictions>()
+    const [predictions, setPredictions] = useState<Predictions>();
 
 
     // use forceUpdate to trigger refreshes on updated ref
@@ -71,7 +90,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         for (const { name } of sensors) {
             sensorImplementations[name].stop();
         }
-    }
+    };
 
     const sendPeriod = () => {
         const start = Math.min(...Object.values(data.current).map(x => x[0]?.timestamp || Infinity));
@@ -82,7 +101,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
 
         api.predict(predictionId, start, end, formattedData);
         data.current = sensorNameArrayRecordGen();
-    }
+    };
     
     useEffect(() => {
         // Mounting and initiating sensor collection
@@ -94,6 +113,12 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
             sensorImplementations[name].onRead(({ data: sampleData, timestamp }) => {
                 // mutate!
                 data.current[name].push({ timestamp, data: sampleData });
+
+                const first = graphData.current[name][0];
+                if (typeof first !== 'undefined' && Date.now() - first.timestamp > GRAPH_OLD_DISCARD) {
+                    graphData.current[name].shift();
+                }
+                graphData.current[name].push({ timestamp, data: sampleData });
                 forceUpdate();
             });
             sensorImplementations[name].start(samplingRate);
@@ -104,12 +129,14 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     
     useInterval(() => {
         // send data at this interval
+        if (isDone) return;
         sendPeriod();
     }, SEND_INTERVAL);
     
     useInterval(async () => {
         // receive predictions at this interval
         const pred = await api.getPrediction(predictionId);
+        if (pred.labels.length === 0) return;
         setPredictions(old => {
             if (typeof old === 'undefined') return { ...pred, lastLabels: pred.labels };
             const { labels, start } = old;
@@ -128,18 +155,18 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         stopSensors();
         sendPeriod();
         setDone();
-    }
+    };
 
     const onRestart = () => {
         // FIXME: add getPrediction cause of backend quirks
         window.location.reload(); // TODO: handle this better pls
-    }
+    };
 
     useBareHeader('Identification');
     return {
         isDone,
-        data: data.current,
-        realtime: predictions ? mode(predictions.lastLabels) : UNKNOWN_LABEL,
+        data: graphData.current,
+        realtime: predictions ? lastNWindows(USER_SELECT / SEND_INTERVAL, predictions.lastLabels.length, predictions.labels) : UNKNOWN_LABEL, // look at the last 2 elems here // TODO improve
         table: createTable(predictions),
         format,
         sensorsPH,

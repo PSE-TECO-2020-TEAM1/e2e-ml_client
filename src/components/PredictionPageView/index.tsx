@@ -1,5 +1,5 @@
 import Graph from 'components/Graph';
-import { Pane, majorScale, Heading, Text, Button, Table } from 'evergreen-ui';
+import { Pane, majorScale, Heading, Text, Button, Table, Strong } from 'evergreen-ui';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { SensorName } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
@@ -17,6 +17,8 @@ type TableType = {
     timeframe: number[];
 }[];
 
+const roundTo2 = (num: number) => Math.round(num * 100) / 100;
+
 const renderGraph = (data: DataRecord, format: DataFormat) => {
     const d: {name: string, data: [number, number][]}[] = [];
 
@@ -33,19 +35,16 @@ const renderGraph = (data: DataRecord, format: DataFormat) => {
 const renderTable = (table: TableType) => {
     
     return <Table>
-        <Table.Head>
-            <Table.SearchHeaderCell />
+        {/* <Table.Head>
             <Table.TextHeaderCell>
-            Last Activity
             </Table.TextHeaderCell>
             <Table.TextHeaderCell>
-            ltv
             </Table.TextHeaderCell>
-        </Table.Head>
+        </Table.Head> */}
         <Table.Body height={240}>
             {table.map(row => (
                 <Table.Row key={row.timeframe[0] + '-' + row.timeframe[1] + '-' + row.label}>
-                    <Table.TextCell>{row.timeframe[0]} - {row.timeframe[1]}</Table.TextCell>
+                    <Table.TextCell>{roundTo2(row.timeframe[0])} - {roundTo2(row.timeframe[1])}</Table.TextCell>
                     <Table.TextCell>{row.label}</Table.TextCell>
                 </Table.Row>
             ))}
@@ -70,7 +69,7 @@ export type PredictionPageViewProps = {
 const PredictionPageView = ({ isDone, data, realtime, format, sensorsPH, onRestart, onStop, table }: PredictionPageViewProps) => {
     return <Pane gap={majorScale(2)} display="grid" gridTemplateColumns={'0 minmax(0, 1fr) minmax(0, 1fr) 0'}>
         <Heading gridColumn="2 / span 2">{isDone ? 'Identification complete' : 'Identifying actions'}</Heading>
-        <Text gridColumn="2">Realtime prediction: {realtime}</Text>
+        <Text gridColumn="2 / span 2">Realtime prediction: <Strong>{realtime}</Strong></Text>
         {isDone
             ? <Pane gridColumn="2 / span 2">
                 {renderTable(table)}
@@ -83,7 +82,7 @@ const PredictionPageView = ({ isDone, data, realtime, format, sensorsPH, onResta
         <Promised promise={sensorsPH} pending={'loading...'}>{sensors =>
             sensors.map(({ name, rate }, i) => <Text gridColumn={(i % 2) + 2} key={name} >{name} ({rate} Hz)</Text>)
         }</Promised>
-        <Button appearance="primary" gridColumn="2 / span 2" onClick={isDone ? onRestart : onStop}>{isDone ? 'Stop Classifying' : 'Restart Classifying'}</Button>
+        <Button appearance="primary" gridColumn="2 / span 2" onClick={isDone ? onRestart : onStop}>{!isDone ? 'Stop Classifying' : 'Restart Classifying'}</Button>
     </Pane>;
 };
 

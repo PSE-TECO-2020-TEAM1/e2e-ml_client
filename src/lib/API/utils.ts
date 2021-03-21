@@ -1,20 +1,17 @@
 import { notifyError } from 'lib/utils';
 
-const handleStatusCode = (status: number, body: string): ({} | undefined) => {
+const handleStatusCode = (status: number, body: string): ({} | undefined) => { // # FIXME this is a hack, and a very bad one
     if (status === 200 && body === '') return ({});
     if (status === 200 && body === 'OK') return ({});
     if (status !== 200) {
         try {
-            JSON.parse(body);
+            const err = JSON.parse(body);
+            if (err.error) notifyError(err.error);
+            else if (typeof err === 'string') notifyError(err);
+            else notifyError(body);
         } catch (e) {
             notifyError(body);
         }
-        const err = JSON.parse(body);
-        if (err.error) notifyError(err.error);
-        else if (typeof err === 'string') notifyError(err);
-        else notifyError(body);
-        // notifyError(body);
-        // throw new Error(body);
     }
 
     return undefined;

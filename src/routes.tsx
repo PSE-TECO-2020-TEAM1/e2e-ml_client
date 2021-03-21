@@ -24,6 +24,8 @@ import useRecordingPage from 'containers/useRecordingPage';
 import WorkspaceSampleDetailsPageView from 'components/WorkspaceSampleDetailsPageView';
 import useWorkspaceSampleDetailsPage from 'containers/useWorkspaceSampleDetailsPage';
 import { BASE_URL } from 'config';
+import PredictionPageView from 'components/PredictionPageView';
+import usePredictionPage from 'containers/usePredictionPage';
 
 type QueryParams = { [k: string]: any; }
 
@@ -39,6 +41,7 @@ const WorkspaceSampleDetailsPage = ({ workspaceId, sampleId }: QueryParams) => <
 const LabelSelectionPage = ({ submissionId }: QueryParams) => <LabelSelectionPageView {...useLabelSelectionPage(submissionId)} />;
 const RecordingConfigurationPage = ({ submissionId }: QueryParams) => <RecordingConfigurationPageView {...useRecordingConfigurationPage(submissionId)} />;
 const RecordingPage = ({ submissionId }: QueryParams) => <RecordingPageView {...useRecordingPage(submissionId)} />;
+const PredictionPage = ({ predictionId }: QueryParams) => <PredictionPageView {...usePredictionPage(predictionId)} />;
 
 const routing = {
     '/': () => <WorkspacesListPage />,
@@ -54,6 +57,7 @@ const routing = {
     '/collect/:submissionId': ({ submissionId }: QueryParams) => <LabelSelectionPage submissionId={submissionId} />,
     '/collect/:submissionId/configure': ({ submissionId }: QueryParams) => <RecordingConfigurationPage submissionId={submissionId} />,
     '/collect/:submissionId/record': ({ submissionId }: QueryParams) => <RecordingPage submissionId={submissionId} />,
+    '/classify/:predictionId': ({ predictionId }: QueryParams) => <PredictionPage predictionId={predictionId} />,
 };
 export default routing;
 

@@ -2,7 +2,6 @@ import { SamplingRate, SensorName } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
 import { del, get, post, put } from './utils';
 
-import testparams from './params.json';
 import LoginController from 'lib/LoginController';
 
 type Username = string;
@@ -197,13 +196,13 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         this.lc.login(accessToken, refreshToken);
     }
 
-    // async refresh(userId: string, refreshToken: string): Promise<void> {
-    //     const {
-    //         accessToken,
-    //         refreshToken
-    //     } = await post()('/auth/refresh', { userId, refreshToken }); // we are using tls, so skip hashing on the client
-    //     this.lc.login(accessToken, refreshToken);
-    // }
+    async refresh(userId: string, token: string): Promise<void> {
+        const {
+            newAccessToken,
+            newRefreshToken
+        } = await post()('/auth/refresh', { userId, refreshToken: token });
+        this.lc.login(newAccessToken, newRefreshToken);
+    }
 
     logout() {
         this.lc.logout();
@@ -251,7 +250,6 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         }
 
         const params = await this.get<JSONIngest>('/api/parameters');
-        // const params =  testparams as unknown as JSONIngest; // FIXME, substitute test params
 
         const { features, imputers, normalizers, classifierSelections, windowSize, slidingStep } = params;
 

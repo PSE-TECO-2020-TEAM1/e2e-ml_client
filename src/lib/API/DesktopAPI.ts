@@ -197,6 +197,14 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         this.lc.login(accessToken, refreshToken);
     }
 
+    // async refresh(userId: string, refreshToken: string): Promise<void> {
+    //     const {
+    //         accessToken,
+    //         refreshToken
+    //     } = await post()('/auth/refresh', { userId, refreshToken }); // we are using tls, so skip hashing on the client
+    //     this.lc.login(accessToken, refreshToken);
+    // }
+
     logout() {
         this.lc.logout();
         window.location.reload();

@@ -11,7 +11,7 @@ export type LoginPageViewProps = {
 };
 
 const LoginPageView = ({ user, onUser, pass, onPass, onButton }: LoginPageViewProps) => 
-    <form onSubmit={onButton}>
+    <form onSubmit={e => {e.preventDefault(); onButton();}}>
         <Pane display="flex" flexDirection="column" gap={majorScale(2)} alignItems="center">
             <Heading size={500} >Please enter your credentials</Heading>
             <TextInput name="username" placeholder="Username" value={user} onChange={(e: ETV<string>) => onUser(e.target.value)} />

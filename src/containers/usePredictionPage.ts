@@ -8,8 +8,8 @@ import { sensorImplementations, SensorName, sensorNameArrayRecordGen, sensorForm
 import { mode, UnixTimestamp } from 'lib/utils';
 import { useEffect, useRef, useState } from 'react';
 
-const SEND_INTERVAL = 500;
-const RECEIVE_INTERVAL = 500;
+const SEND_INTERVAL = 200;
+const RECEIVE_INTERVAL = 200;
 const UNKNOWN_LABEL = 'no prediction yet';
 
 const USER_SELECT = 1000;
@@ -27,16 +27,27 @@ type Prediction = {
     end: UnixTimestamp
 }
 
-const lastNWindows = (n: number, predictions: Prediction[]) => {
-    if (predictions.length < n) return UNKNOWN_LABEL;
-    let relevant_labels = [];
-    for (let i = 0; i < n; ++i) {
-        relevant_labels.push(predictions[predictions.length - 1 - i].labels);
+type Predictions = {
+    allLabels: Prediction[],
+    lastMode: string,
+    valid: boolean
+}
+
+const lastNWindows = (n: number, predictions: Predictions) => {
+    if (predictions.allLabels.length < n) return UNKNOWN_LABEL;
+    if (!predictions.valid) {
+        console.log('calculate again');
+        let relevant_labels = [];
+        for (let i = 0; i < n; ++i) {
+            relevant_labels.push(predictions.allLabels[predictions.allLabels.length - 1 - i].labels);
+        }
+        predictions.lastMode = mode(relevant_labels);
+        predictions.valid = true;
     }
-    return mode(relevant_labels);
+    return predictions.lastMode;
 };
 
-const createTable = (predictions: Prediction[] | undefined) => {
+const createTable = (predictions: Predictions | undefined) => {
     // if (typeof predictions === 'undefined') return [];
 
     // const temp = [];
@@ -70,7 +81,6 @@ const createTable = (predictions: Prediction[] | undefined) => {
 };
 
 const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
-    console.log('e', predictionId);
     const api = useAPI();
     const [isDone, setDone] = useBoolean();
     
@@ -79,7 +89,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     const data = useRef<Data>(sensorNameArrayRecordGen());
     const graphData = useRef<Data>(sensorNameArrayRecordGen());
 
-    const [predictions, setPredictions] = useState<Prediction[]>();
+    const [predictions, setPredictions] = useState<Predictions>();
 
 
     // use forceUpdate to trigger refreshes on updated ref
@@ -146,9 +156,10 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
             if (typeof old === 'undefined') {
                 const temp = [];
                 temp.push(pred);
-                return temp;
+                return {allLabels: temp, lastMode: '', valid: false};
             };
-            old.push(pred);
+            old.allLabels.push(pred);
+            old.valid = false;
             return old;
         });
     }, RECEIVE_INTERVAL);

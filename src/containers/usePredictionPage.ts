@@ -31,7 +31,7 @@ const lastNWindows = (n: number, predictions: Prediction[]) => {
     if (predictions.length < n) return UNKNOWN_LABEL;
     let relevant_labels = [];
     for (let i = 0; i < n; ++i) {
-        relevant_labels.push(predictions[predictions.length - 1 - i].labels)
+        relevant_labels.push(predictions[predictions.length - 1 - i].labels);
     }
     return mode(relevant_labels);
 };
@@ -144,11 +144,11 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         if (pred.labels.length === 0) return;
         setPredictions(old => {
             if (typeof old === 'undefined') {
-                const temp = []
-                temp.push(pred)
-                return temp
+                const temp = [];
+                temp.push(pred);
+                return temp;
             };
-            old.push(pred)
+            old.push(pred);
             return old;
         });
     }, RECEIVE_INTERVAL);

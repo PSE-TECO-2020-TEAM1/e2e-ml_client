@@ -8,8 +8,8 @@ import { sensorImplementations, SensorName, sensorNameArrayRecordGen, sensorForm
 import { mode, UnixTimestamp } from 'lib/utils';
 import { useEffect, useRef, useState } from 'react';
 
-const SEND_INTERVAL = 250;
-const RECEIVE_INTERVAL = 250;
+const SEND_INTERVAL = 500;
+const RECEIVE_INTERVAL = 500;
 const UNKNOWN_LABEL = 'no prediction yet';
 
 const USER_SELECT = 1000;
@@ -21,47 +21,52 @@ type Data = Record<SensorName, {
     data: number[]
 }[]>;
 
-type Predictions = {
+type Prediction = {
     labels: string[],
     start: UnixTimestamp,
-    end: UnixTimestamp,
-    lastLabels: string[],
+    end: UnixTimestamp
+}
+
+const lastNWindows = (n: number, predictions: Prediction[]) => {
+    if (predictions.length < n) return UNKNOWN_LABEL;
+    let relevant_labels = [];
+    for (let i = 0; i < n; ++i) {
+        relevant_labels.push(predictions[predictions.length - 1 - i].labels)
+    }
+    return mode(relevant_labels);
 };
 
-const lastNWindows = (n: number, windowLen: number, windows: string[]) => {
-    if (windows.length < n) return UNKNOWN_LABEL;
-    return mode(windows.slice(windows.length - n * windowLen));
-};
+const createTable = (predictions: Prediction[] | undefined) => {
+    // if (typeof predictions === 'undefined') return [];
 
-const createTable = (predictions: Predictions | undefined) => {
-    if (typeof predictions === 'undefined') return [];
-
-    const temp = [];
-    const n = USER_SELECT / SEND_INTERVAL;
+    // const temp = [];
+    // const n = USER_SELECT / SEND_INTERVAL;
     
-    for (let index = 0; index < predictions.labels.length - n; index++) {
-        const label = mode(predictions.labels.slice(index, index + n));
-        temp.push(label);
-    }
+    // for (let index = 0; index < predictions.labels.length - n; index++) {
+    //     const label = mode(predictions.labels.slice(index, index + n));
+    //     temp.push(label);
+    // }
     
-    const arr = [];
+    // const arr = [];
 
-    const singleTime = SEND_INTERVAL;
+    // const singleTime = SEND_INTERVAL;
 
-    for (const label of temp) {
-        if (arr.length === 0) {
-            arr.push({ label, timeframe: [0, singleTime] });
-            continue;
-        }
+    // for (const label of temp) {
+    //     if (arr.length === 0) {
+    //         arr.push({ label, timeframe: [0, singleTime] });
+    //         continue;
+    //     }
 
-        if (arr[arr.length - 1].label === label) { // coalesce
-            arr[arr.length - 1].timeframe[1] += singleTime;
-        } else {
-            arr.push({ label, timeframe: [arr[arr.length - 1].timeframe[1], arr[arr.length - 1].timeframe[1] + singleTime] });
-        }
-    }
+    //     if (arr[arr.length - 1].label === label) { // coalesce
+    //         arr[arr.length - 1].timeframe[1] += singleTime;
+    //     } else {
+    //         arr.push({ label, timeframe: [arr[arr.length - 1].timeframe[1], arr[arr.length - 1].timeframe[1] + singleTime] });
+    //     }
+    // }
 
-    return arr;
+    // return arr
+
+    return [];
 };
 
 const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
@@ -74,7 +79,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     const data = useRef<Data>(sensorNameArrayRecordGen());
     const graphData = useRef<Data>(sensorNameArrayRecordGen());
 
-    const [predictions, setPredictions] = useState<Predictions>();
+    const [predictions, setPredictions] = useState<Prediction[]>();
 
 
     // use forceUpdate to trigger refreshes on updated ref
@@ -138,15 +143,13 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         const pred = await api.getPrediction(predictionId);
         if (pred.labels.length === 0) return;
         setPredictions(old => {
-            if (typeof old === 'undefined') return { ...pred, lastLabels: pred.labels };
-            const { labels, start } = old;
-
-            return {
-                lastLabels: pred.labels,
-                labels: [...labels, ...pred.labels],
-                start: start, // keep the old start value,
-                end: pred.end // new end value
+            if (typeof old === 'undefined') {
+                const temp = []
+                temp.push(pred)
+                return temp
             };
+            old.push(pred)
+            return old;
         });
     }, RECEIVE_INTERVAL);
 
@@ -166,7 +169,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     return {
         isDone,
         data: graphData.current,
-        realtime: predictions ? lastNWindows(USER_SELECT / SEND_INTERVAL, predictions.lastLabels.length, predictions.labels) : UNKNOWN_LABEL, // look at the last 2 elems here // TODO improve
+        realtime: predictions ? lastNWindows(USER_SELECT / SEND_INTERVAL, predictions) : UNKNOWN_LABEL, // look at the last 2 elems here // TODO improve
         table: createTable(predictions),
         format,
         sensorsPH,

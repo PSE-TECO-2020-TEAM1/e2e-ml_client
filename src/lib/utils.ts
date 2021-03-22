@@ -53,16 +53,17 @@ export const notifyError = (s: string) => {
 
 export const formatDate = (date: number) => (new Date(date)).toLocaleString();
 
-export const mode = (array: string[]) => {
+export const mode = (arrays: string[][]) => {
     // https://stackoverflow.com/a/1053876/3873452
     const b: Record<string, number> = {};
     let max = '';
     let maxi = 0;
-    for(let k of array) {
-        if(b[k]) b[k]++; else b[k]=1;
-        
-        if(maxi < b[k]) { max=k; maxi=b[k]; }
+    for (let array of arrays) {
+        for(let k of array) {
+            if(b[k]) b[k]++; else b[k]=1;
+            
+            if(maxi < b[k]) { max=k; maxi=b[k]; }
+        }
     }
-
     return max;
 };

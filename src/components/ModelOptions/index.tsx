@@ -1,4 +1,4 @@
-import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, Checkbox, Label, Text } from 'evergreen-ui';
+import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, Checkbox, Label, Text, InlineAlert } from 'evergreen-ui';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { ETV } from 'lib/utils';
@@ -30,7 +30,8 @@ export type ModelOptionsProps = {
     name: string,
     onName: (n: string) => void
     onTrain: () => void,
-    isValid: boolean
+    isValid: boolean,
+    didSendRequestCorrectly: boolean,
 };
 
 const handleCheckbox = (x: string, l: string[], b: boolean) => {
@@ -43,8 +44,7 @@ const nMB = { marginBottom: 0 };
 
 const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
 const mapRGroup = (x: string) => ({ value: x, label: format(x) });
-const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: ModelOptionsProps) => {
-    console.log(state);
+const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly }: ModelOptionsProps) => {
     return <Pane padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
         <TextInputField {...nMB} onChange={(e: ETV<string>) => onName(e.target.value)} label="Name" value={name} />
         <Accordion allowMultipleExpanded allowZeroExpanded>
@@ -175,7 +175,8 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                 </div></AccordionItemPanel>
             </AccordionItem>
         </Accordion>
-        <Button disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>       
+        <Button disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
+        {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent and accepted!</InlineAlert> : null}
     </Pane>;
 };
 

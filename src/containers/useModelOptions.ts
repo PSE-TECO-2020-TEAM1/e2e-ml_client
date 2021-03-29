@@ -1,7 +1,7 @@
 import { ModelOptionsProps } from 'components/ModelOptions';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
 import assert from 'lib/assert';
-import { useAPI, usePromise } from 'lib/hooks';
+import { useAPI, useBoolean, usePromise } from 'lib/hooks';
 import { useReducer, useState } from 'react';
 
 type State = {
@@ -70,7 +70,8 @@ const mapParamsToClassifierHyperparameterState = (params: TrainingParameters, cl
 const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     const api = useAPI();
     const [state, dispatch] = useReducer(reducer, getInitialState());
-    const [name, onName] = useState('New Model');
+    const [name, onNameChange] = useState('New Model');
+    const [didSendRequestCorrectly, setSentCorrectly, clearSentCorrectly] = useBoolean(false);
     const paramsPH = usePromise(async () => {
         const params = await api.getAvailableTrainingParameters();
         const selectNormalizer = (n: string) => dispatch({ normalizer: n });
@@ -119,10 +120,9 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
 
     const onTrain = async () => {
         const { slidingStep, windowSize, imputation, normalizer, hyperparameters, features, classifier} = state;
+        clearSentCorrectly();
         if (!isValid()) return;
         assert(slidingStep !== undefined && imputation !== undefined && normalizer !== undefined && classifier !== undefined && windowSize !== undefined );
-
-        console.log(state);
 
         await api.train(workspaceId, {
             modelName: name,
@@ -134,9 +134,17 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
             classifier,
             windowSize
         });
+
+        // train didn't return any errors from management, we assume that everything is fine and the request has been placed
+        setSentCorrectly();
     };
 
-    return { state, paramsPH, name, onName, onTrain, isValid: isValid() };
+    const onName = (name: string) => {
+        clearSentCorrectly();
+        onNameChange(name);
+    };
+
+    return { state, paramsPH, name, onName, onTrain, isValid: isValid(), didSendRequestCorrectly };
 };
 
 export default useModelOptions;

@@ -16,7 +16,7 @@ type State =
     | { raw: string }
     | {};
 
-export const HeaderContext = React.createContext<[State, React.Dispatch<React.SetStateAction<State>>]>([{}, () => {console.log('bad things happened');}]);
+export const HeaderContext = React.createContext<[State, React.Dispatch<React.SetStateAction<State>>]>([{}, () => {throw new Error('unexpected invocation');}]);
 
 const Header = () => <HeaderView {...useHeaderView()}/>;
 export const HeaderProvider = ({ children }: { children: React.ReactNode }) => {

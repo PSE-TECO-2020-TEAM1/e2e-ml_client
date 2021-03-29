@@ -43,7 +43,6 @@ const useHeaderView = (): HeaderViewProps => {
     }, [api]);
 
     if ('breadcrumbs' in state) {
-        console.log('crumbsph', crumbsPH);
         return { crumbsPH, logout };
     }
 

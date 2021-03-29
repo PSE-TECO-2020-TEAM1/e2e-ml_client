@@ -36,7 +36,7 @@ type Predictions = {
 const lastNWindows = (n: number, predictions: Predictions) => {
     if (predictions.allLabels.length < n) return UNKNOWN_LABEL;
     if (!predictions.valid) {
-        console.log('calculate again');
+        // console.log('calculate again');
         let relevant_labels = [];
         for (let i = 0; i < n; ++i) {
             relevant_labels.push(predictions.allLabels[predictions.allLabels.length - 1 - i].labels);

@@ -1,3 +1,4 @@
+import Form from 'components/Form';
 import { TextInput, Heading, Checkbox, Pane, majorScale, Button, TextInputField } from 'evergreen-ui';
 import { SensorName } from 'lib/sensors';
 import { ETV } from 'lib/utils';
@@ -18,7 +19,7 @@ export type WorkspaceCreationProps = {
 };
 
 const WorkspaceCreation = ({ onCreate, name, onName, onSensorSelect, onRateSelect, valid, sensorAttrs, onClose = () => {} } : WorkspaceCreationProps) => {
-    return <Pane display="flex" flexDirection="column" gap={majorScale(2)}>
+    return <Pane is={Form} onSubmit={() => [onCreate(), onClose()]} display="flex" flexDirection="column" gap={majorScale(2)}>
         <TextInput width="100%" onChange={(e: ETV<string>) => onName(e.target.value)} placeholder="Name" value={name} />
         <Heading>Choose sensors and sample rates</Heading>
         {/* Object.keys doesn't preserve type: https://github.com/microsoft/TypeScript/pull/12253 */}
@@ -34,7 +35,7 @@ const WorkspaceCreation = ({ onCreate, name, onName, onSensorSelect, onRateSelec
             </> : null}
         </Pane>)}
         <Pane display="flex" flexDirection="row-reverse">
-            <Button disabled={!valid} onClick={() => [onCreate(), onClose()]} >Create</Button> {/* just to invode them both */}
+            <Button disabled={!valid}>Create</Button> {/* just to invode them both */}
         </Pane>
     </Pane>;
 };

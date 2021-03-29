@@ -1,6 +1,7 @@
 import React from 'react';
 import { Heading, Pane, TextInput, Button, majorScale } from 'evergreen-ui';
 import { ETV } from 'lib/utils';
+import Form from 'components/Form';
 
 export type SignupPageViewProps = {
     user: string,
@@ -13,12 +14,12 @@ export type SignupPageViewProps = {
 };
 
 const SignupPageView = ({ user, onUser, pass, onPass, email, onEmail, onButton }: SignupPageViewProps) =>
-    <Pane display="flex" flexDirection="column" gap={majorScale(2)} alignItems="center">
+    <Pane is={Form} onSubmit={onButton} display="flex" flexDirection="column" gap={majorScale(2)} alignItems="center">
         <Heading size={500} >Please enter the following information to sign up</Heading>
         <TextInput name="username" placeholder="Username" value={user} onChange={(e: ETV<string>) => onUser(e.target.value)} />
         <TextInput name="password" placeholder="Password" type="password" value={pass} onChange={(e: ETV<string>) => onPass(e.target.value)} />
         <TextInput name="email" placeholder="Email" value={email} onChange={(e: ETV<string>) => onEmail(e.target.value)} />
-        <Button onClick={onButton}>Sign Up</Button>
+        <Button>Sign Up</Button>
     </Pane>;
 
 export default SignupPageView;

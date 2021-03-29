@@ -1,10 +1,10 @@
 import { WorkspaceLabelsProps } from 'components/WorkspaceLabels';
-import { useAPI, useCounter, usePromise } from 'lib/hooks';
+import { useAPI, useInvalidator, usePromise } from 'lib/hooks';
 import { useCallback, useState } from 'react';
 
 const useWorkspaceLabelsPage = (workspaceId: string): WorkspaceLabelsProps => {
     const api = useAPI();
-    const [validity, flip] = useCounter();
+    const [validity, flip] = useInvalidator();
 
     const [createName, setName] = useState<string>('');
     const onCreateName = useCallback((str: string) => setName(str), []);

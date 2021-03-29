@@ -1,10 +1,10 @@
 import { WorkspaceModelsProps } from 'components/WorkspaceModels';
-import { useAPI, useCounter, usePromise } from 'lib/hooks';
+import { useAPI, useInvalidator, usePromise } from 'lib/hooks';
 import { classifyRoute, modelDetailsRoute } from 'routes';
 
 const useWorkspaceModelsPage = (workspaceId: string): WorkspaceModelsProps => {
     const api = useAPI();
-    const [validity, flip] = useCounter();
+    const [validity, flip] = useInvalidator();
 
     const onDelete = (id: string) => async () => {
         await api.deleteModel(workspaceId, id);

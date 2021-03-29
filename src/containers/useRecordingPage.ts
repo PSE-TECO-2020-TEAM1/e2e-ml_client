@@ -7,7 +7,7 @@ import { sensorFormats as format, sensorImplementations, SensorName, sensorNameA
 import { UnixTimestamp } from 'lib/utils';
 import { useQueryParams } from 'raviger';
 import { useCallback, useEffect, useRef } from 'react';
-import { countdownQueryParam, durationQueryParam, labelQueryParam } from 'routes';
+import { countdownQueryParam, createCollectionLink, durationQueryParam, labelQueryParam } from 'routes';
 
 type Data = Record<SensorName, {
     timestamp: UnixTimestamp,
@@ -17,6 +17,7 @@ type Data = Record<SensorName, {
 const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     const api = useAPI();
     const [{ [durationQueryParam]: initDur, [countdownQueryParam]: initCount, [labelQueryParam]: label }] = useQueryParams();
+
     const [countdown, beginCnt] = useCountdown(parseFloat(initCount) * 1000);
     const [duration, beginDur] = useCountdown(parseFloat(initDur) * 1000);
     const [isRecording, setRecord, clearRecord] = useBoolean(false);
@@ -27,8 +28,6 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     const data = useRef<Data>(sensorNameArrayRecordGen());
     // use forceUpdate to trigger refreshes on updated ref
     const [,,,forceUpdate] = useBoolean();
-
-    // const sensorsPHres = res.sensors.map(({ name, samplingRate }) => ({ name, rate: samplingRate }));
 
     const [state, res, error] = usePromise(() => api.getSubmissionConfiguration(submissionId), [submissionId]);
     const sensorsPH = mapPack([state, res, error], v => v.sensors.map(({ name, samplingRate }) => ({ name, rate: samplingRate })));
@@ -90,9 +89,14 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
         await api.submitSample(submissionId, label, start, end, formattedData);
     }, [api, clearSend, label, submissionId]);
 
+    const onRestart = useCallback(() => {
+        window.location.reload();
+    }, []);
+
     useBareHeader('Record Data');
     return { onSend, data: data.current, format, label, sensorsPH, isRecording, countdown: countdown / 1000,
-        remaining: duration / 1000, isPre: !isRecording && countdown !== 0, canSend
+        remaining: duration / 1000, isPre: !isRecording && countdown !== 0, canSend,
+        reconfigureLink: createCollectionLink(submissionId), onRestart
     };
 };
 

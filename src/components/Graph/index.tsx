@@ -59,7 +59,7 @@ const Graph = ({ data, animation = false, ranges = [], onClick }: GraphProps) =>
     };
 
     return <div ref={containerRef}>
-        <HighchartsReact constructorType={'stockChart'} options={options} highcharts={Highcharts} callback={useCallback((ch: Chart) => chart.current = ch, [])} />;
+        <HighchartsReact constructorType={'stockChart'} options={options} highcharts={Highcharts} callback={useCallback((ch: Chart) => chart.current = ch, [])} />
     </div>;
 };
 

@@ -71,9 +71,8 @@ export const collectRoute = (workspaceId: string) => `/w/${workspaceId}/collect`
 export const modelDetailsRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}`;
 export const classifyRoute = (workspaceId: string, modelId: string) => `/w/${workspaceId}/model/${modelId}/classify`;
 
-export const createCollectionLink = (submissionId: string) => `${BASE_URL}/collect/${submissionId}`;
 export const createClassificationLink = (predictionId: string) => `${BASE_URL}/classify/${predictionId}`;
-
+export const createCollectionLink = (submissionId: string) => `${BASE_URL}/collect/${submissionId}`;
 export const labelQueryParam = 'label';
 export const durationQueryParam = 'duration';
 export const countdownQueryParam = 'countdown';

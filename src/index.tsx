@@ -6,6 +6,11 @@ import 'styling/index.scss';
 import API from 'lib/API';
 import { APIProvider } from 'lib/hooks/API';
 import App from 'App';
+import { log } from 'lib/utils';
+
+window.onunhandledrejection = function(e: PromiseRejectionEvent) {
+    log.error('Catched global rejection: ', e);
+};
 
 ReactDOM.render(
     <React.Fragment>

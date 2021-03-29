@@ -1,4 +1,4 @@
-import { notifyError } from 'lib/utils';
+import { MitigatedException, notifyError } from 'lib/utils';
 
 const handleStatusCode = (status: number, body: string): ({} | undefined) => { // # FIXME this is a hack, and a very bad one
     if (status === 200 && body === '') return ({});
@@ -12,6 +12,8 @@ const handleStatusCode = (status: number, body: string): ({} | undefined) => { /
         } catch (e) {
             notifyError(body);
         }
+
+        throw new MitigatedException(`API responded with ${status}, ${body}`);
     }
 
     return undefined;

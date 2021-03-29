@@ -67,3 +67,22 @@ export const mode = (arrays: string[][]) => {
     }
     return max;
 };
+
+export class MitigatedException extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'MitigatedException';
+    }
+}
+
+export const log = (...rest: any[]) => {
+    if (process.env.NODE_ENV === 'development'){
+        console.log(...rest);
+    }
+};
+
+log.error = (...rest: any[]) => {
+    if (process.env.NODE_ENV === 'development'){
+        console.error(...rest);
+    }
+};

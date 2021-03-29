@@ -136,6 +136,7 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         });
 
         // train didn't return any errors from management, we assume that everything is fine and the request has been placed
+        // console.log('so, we didn\'t fail?');
         setSentCorrectly();
     };
 

@@ -1,4 +1,5 @@
 import assert from 'lib/assert';
+import { log } from 'lib/utils';
 import React, { Fragment, useEffect, useState } from 'react';
 
 export enum State {
@@ -29,7 +30,6 @@ const usePromise = <T,>(promise: Promise<T> | (() => Promise<T>), inputs: any[])
             setState([State.Resolved, d, undefined]);
         }).catch(e => {
             if (cancelled) return;
-            console.error(e);
             setState([State.Rejected, undefined, e]);
         });
 
@@ -56,7 +56,7 @@ export type PromisedProps<T,> = {
 export const Promised = <T,>({ promise: [state, data, error], pending = <Fragment />, rejected, children } : PromisedProps<T>): React.ReactElement | null => {
     if (state === State.Pending) return <Fragment>{ pending }</Fragment>;
     if (state === State.Rejected) {
-        console.error('Mitigated', error);
+        log.error('Mitigated with rejected component', error);
         return <Fragment>{ rejected || pending }</Fragment>;
     }
     assert(state === State.Resolved, 'promise is not resolved');

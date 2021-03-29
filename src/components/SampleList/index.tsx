@@ -35,7 +35,7 @@ const SampleList = ({ collectDataHref, onSampleDelete, samplesPH }: SampleListPr
             <Promised promise={samplesPH} pending={'loading'}>{samples =>
                 samples.map(({ id, href }, i) => 
                     <Table.Row key={id} borderBottom={i + 1 === samples.length ? 'none' : 'muted'}>
-                        <Table.TextHeaderCell flex={0} flexBasis={majorScale(5)}>{i}</Table.TextHeaderCell>
+                        <Table.TextHeaderCell flex={0} flexBasis={majorScale(5)}>{i + 1}</Table.TextHeaderCell>
                         <Table.TextCell><Button width="100%" appearance="minimal" is={Link} href={href}>Sample {id}</Button></Table.TextCell>
                         <Table.Cell flex={0} flexBasis={majorScale(8)}>
                             <DeleteButton id={id} onSampleDelete={onSampleDelete}/>

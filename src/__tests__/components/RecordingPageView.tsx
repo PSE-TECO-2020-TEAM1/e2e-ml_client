@@ -64,7 +64,13 @@ describe('RecordingPage', () => {
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(
-            '"<header>Prepare to Record Data</header><b>label</b><span>10</span><span>seconds</span><em>Selected Sensors and Sampling Rates:</em>loading..."'
+            '"<header>Prepare to Record Data</header><b>label</b><span>10</span><span>seconds</span><em>Selected Sensors and Sampling Rates:</em>loading..."',
+            `
+            "<div class=\\"css-nil ub-gap_16px ub-dspl_grid ub-grd-tmp-col_kotc55 ub-box-szg_border-box\\">
+              <h2 class=\\"ub-mt_0px ub-mb_0px ub-fnt-sze_16px ub-f-wght_500 ub-ln-ht_20px ub-ltr-spc_-0-05px ub-fnt-fam_b77syt ub-color_234361 ub-grd-col_cxudig ub-box-szg_border-box\\">Prepare to Record Data</h2><span class=\\"ub-color_425A70 ub-fnt-fam_b77syt ub-fnt-sze_14px ub-f-wght_400 ub-ln-ht_20px ub-ltr-spc_-0-05px ub-grd-col_11wpgbn ub-box-szg_border-box\\">Label: label</span><span class=\\"ub-color_425A70 ub-fnt-fam_b77syt ub-fnt-sze_14px ub-f-wght_400 ub-ln-ht_20px ub-ltr-spc_-0-05px ub-grd-col_cs5v99 ub-box-szg_border-box\\">10 seconds remaining</span>
+              <h2 class=\\"ub-mt_0px ub-mb_0px ub-fnt-sze_16px ub-f-wght_500 ub-ln-ht_20px ub-ltr-spc_-0-05px ub-fnt-fam_b77syt ub-color_234361 ub-grd-col_cxudig ub-box-szg_border-box\\">Selected Sensors and Sampling Rates:</h2>loading...
+            </div>"
+        `
         ); /* ... gets filled automatically by jest ... */
     });
 });

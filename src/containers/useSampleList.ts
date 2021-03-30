@@ -20,7 +20,7 @@ const useSampleList = (workspaceId: string): SampleListProps => {
         flip();
     };
 
-    return { collectDataHref, samplesPH,  onSampleDelete };
+    return { collectDataHref, samplesPH, onSampleDelete };
 };
 
 export default useSampleList;

@@ -42,7 +42,6 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
             color: timeframe.start === start && timeframe.end === end ? 'transparent' : goldenAngleColor(Math.floor(timeframe.start)),
             del: async () => {
                 await api.setSampleTimeframe(workspaceId, sampleId, timeframes.filter(t => t !== timeframe));
-                console.log('flip');
                 flip();
             }
         }));
@@ -51,7 +50,6 @@ const useWorkspaceSampleDetailsPage = (workspaceId: string, sampleId: string): W
     }, [verification]);
 
     const onGraphClick = async (pos: UnixTimestamp) => {
-        console.log(pos, timeframeState);
         if (timeframeState === 0) return;
         if (timeframeState === 2) { // we add now
             assert(typeof temp.current === 'number');

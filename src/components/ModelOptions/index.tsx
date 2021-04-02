@@ -1,4 +1,4 @@
-import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, Checkbox, Label, Text } from 'evergreen-ui';
+import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, Checkbox, Label, Text, InlineAlert } from 'evergreen-ui';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { ETV } from 'lib/utils';
@@ -30,7 +30,8 @@ export type ModelOptionsProps = {
     name: string,
     onName: (n: string) => void
     onTrain: () => void,
-    isValid: boolean
+    isValid: boolean,
+    didSendRequestCorrectly: boolean,
 };
 
 const handleCheckbox = (x: string, l: string[], b: boolean) => {
@@ -43,7 +44,7 @@ const nMB = { marginBottom: 0 };
 
 const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
 const mapRGroup = (x: string) => ({ value: x, label: format(x) });
-const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: ModelOptionsProps) => {
+const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly }: ModelOptionsProps) => {
     return <Pane padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
         <TextInputField {...nMB} onChange={(e: ETV<string>) => onName(e.target.value)} label="Name" value={name} />
         <Accordion allowMultipleExpanded allowZeroExpanded>
@@ -57,11 +58,6 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                 </AccordionItemHeading>
                 <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { imputers }, actions: { selectImputer } }) =>
-                        // <RadioGroup name="imputation" selectedValue={state.imputation} onChange={selectImputer}>
-                        //     {imputers.map(imp => <label key={imp}>
-                        //         <Radio value={imp}/> {format(imp)}
-                        //     </label>)}
-                        // </RadioGroup>
                         <RadioGroup
                             value={state.imputation}
                             options={imputers.map(mapRGroup)}
@@ -102,11 +98,6 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                 </AccordionItemHeading>
                 <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { normalizers }, actions: { selectNormalizer } }) =>
-                        // <RadioGroup name="normalizer" selectedValue={state.normalizer} onChange={selectNormalizer}>
-                        //     {normalizers.map(nor => <label key={nor}>
-                        //         <Radio value={nor}/> {format(nor)}
-                        //     </label>)}
-                        // </RadioGroup>
                         <RadioGroup
                             value={state.normalizer}
                             options={normalizers.map(mapRGroup)}
@@ -125,11 +116,6 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                 </AccordionItemHeading>
                 <AccordionItemPanel><div>
                     <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifiers }, actions: { selectClassifier } }) =>
-                        // <RadioGroup name="classifier" selectedValue={state.classifier} onChange={selectClassifier}>
-                        //     {classifiers.map(cl => <label key={cl}>
-                        //         <Radio value={cl}/> {format(cl)}
-                        //     </label>)}
-                        // </RadioGroup>
                         <RadioGroup
                             value={state.classifier}
                             options={classifiers.map(mapRGroup)}
@@ -189,7 +175,8 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid }: Model
                 </div></AccordionItemPanel>
             </AccordionItem>
         </Accordion>
-        <Button disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>       
+        <Button disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
+        {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent and accepted!</InlineAlert> : null}
     </Pane>;
 };
 

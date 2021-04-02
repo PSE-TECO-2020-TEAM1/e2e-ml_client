@@ -1,7 +1,7 @@
 import { ModelOptionsProps } from 'components/ModelOptions';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
 import assert from 'lib/assert';
-import { useAPI, usePromise } from 'lib/hooks';
+import { useAPI, useBoolean, usePromise } from 'lib/hooks';
 import { useReducer, useState } from 'react';
 
 type State = {
@@ -15,7 +15,7 @@ type State = {
 };
 enum ActionType {
     Hyperparameter,
-    Defaults
+    Override
 }
 type Action =
     { normalizer: string }
@@ -25,10 +25,18 @@ type Action =
     | { features: string[] }
     | { classifier: string, hyperparameters: Record<string, number | string>, windowSize: number, slidingStep: number }
     | { type: ActionType.Hyperparameter, parameter: string, value: number | string }
+    | { type: ActionType.Override, state: State };
     
 
 const reducer = (s: State, a: Action): State => {
-    if ('type' in a && a.type === ActionType.Hyperparameter) return { ...s, hyperparameters: { ...s.hyperparameters, [a.parameter]: a.value } };
+    if ('type' in a) {
+        switch(a.type) {
+        case ActionType.Hyperparameter:
+            return { ...s, hyperparameters: { ...s.hyperparameters, [a.parameter]: a.value } };
+        case ActionType.Override:
+            return a.state;
+        }
+    }
     
     if ('classifier' in a) return { ...s, classifier: a.classifier, hyperparameters: a.hyperparameters, windowSize: a.windowSize, slidingStep: a.slidingStep };
     if ('normalizer' in a) return { ...s, normalizer: a.normalizer };
@@ -40,7 +48,7 @@ const reducer = (s: State, a: Action): State => {
     throw new Error('invalid action');
 };
 
-const getInitialState = () => ({
+const getInitialState = (): State => ({
     features: [],
     hyperparameters: {}
 });
@@ -62,7 +70,8 @@ const mapParamsToClassifierHyperparameterState = (params: TrainingParameters, cl
 const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     const api = useAPI();
     const [state, dispatch] = useReducer(reducer, getInitialState());
-    const [name, onName] = useState('New Model');
+    const [name, onNameChange] = useState('New Model');
+    const [didSendRequestCorrectly, setSentCorrectly, clearSentCorrectly] = useBoolean(false);
     const paramsPH = usePromise(async () => {
         const params = await api.getAvailableTrainingParameters();
         const selectNormalizer = (n: string) => dispatch({ normalizer: n });
@@ -78,6 +87,14 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         });
         const setHyperparameter = (h: string, v: number | string) => dispatch({ type: ActionType.Hyperparameter, parameter: h, value: v });
         
+        // We need to provide initial state for select type hyperparameters and comboboxes, since they don't have an unset state
+        const newState = getInitialState();
+        newState.classifier = params.classifiers[0];
+        newState.imputation = params.imputers[0];
+        newState.normalizer = params.normalizers[0];
+        newState.hyperparameters = mapParamsToClassifierHyperparameterState(params, newState.classifier);
+        dispatch({ type: ActionType.Override, state: newState });
+
         return { params, actions: {
             selectNormalizer,
             selectImputer,
@@ -103,10 +120,9 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
 
     const onTrain = async () => {
         const { slidingStep, windowSize, imputation, normalizer, hyperparameters, features, classifier} = state;
+        clearSentCorrectly();
         if (!isValid()) return;
         assert(slidingStep !== undefined && imputation !== undefined && normalizer !== undefined && classifier !== undefined && windowSize !== undefined );
-
-        console.log(state);
 
         await api.train(workspaceId, {
             modelName: name,
@@ -118,9 +134,17 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
             classifier,
             windowSize
         });
+
+        // train didn't return any errors from management, we assume that everything is fine and the request has been placed
+        setSentCorrectly();
     };
 
-    return { state, paramsPH, name, onName, onTrain, isValid: isValid() };
+    const onName = (name: string) => {
+        clearSentCorrectly();
+        onNameChange(name);
+    };
+
+    return { state, paramsPH, name, onName, onTrain, isValid: isValid(), didSendRequestCorrectly };
 };
 
 export default useModelOptions;

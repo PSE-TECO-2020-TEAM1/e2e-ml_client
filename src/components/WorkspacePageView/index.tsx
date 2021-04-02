@@ -6,6 +6,7 @@ import { useBoolean } from 'lib/hooks';
 import WorkspaceModels, { WorkspaceModelsProps } from 'components/WorkspaceModels';
 import WorkspaceLabels, { WorkspaceLabelsProps } from 'components/WorkspaceLabels';
 import { ETV } from 'lib/utils';
+import Form from 'components/Form';
 
 export type WorkspacePageViewProps = {
     sampleProps: SampleListProps,
@@ -18,8 +19,8 @@ export type WorkspacePageViewProps = {
     onWorkspaceRenameChange: (n: string) => void,
 }
 
-const Setting = ({ children }: { children: React.ReactNode }) =>
-    <Pane display="flex" justifyContent="space-between">
+const Setting = ({ children, onSubmit }: { children: React.ReactNode, onSubmit: () => void }) =>
+    <Pane is={Form} onSubmit={onSubmit} display="flex" justifyContent="space-between">
         {children}
     </Pane>;
 
@@ -54,14 +55,14 @@ const WorkspacePageView = ({
             </Pane>
             <Heading>Danger Zone</Heading>
             <Pane elevation={1} padding={majorScale(2)} display="flex" gap={majorScale(2)} flexDirection="column">
-                <Setting>
+                <Setting onSubmit={onRenameClick}>
                     <Heading size={400}>Rename Workspace</Heading>
                     <TextInput value={workspaceRename} onChange={(e: ETV<string>) => onWorkspaceRenameChange(e.target.value)}/>
-                    <Button onClick={onRenameClick}>Rename</Button>
+                    <Button>Rename</Button>
                 </Setting>
-                <Setting>
+                <Setting onSubmit={onDeleteClick}>
                     <Heading size={400}>Delete Workspace</Heading>
-                    <Button intent="danger" onClick={onDeleteClick}>Delete</Button>
+                    <Button intent="danger">Delete</Button>
                 </Setting>
             </Pane>
         </Pane>

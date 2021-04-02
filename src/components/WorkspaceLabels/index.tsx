@@ -34,7 +34,7 @@ const WorkspaceLabels = ({
             <Promised promise={labelsPH} pending={'loading'}>{labels =>
                 labels.length > 0 ? labels.map(({name, count, id, desc, onNameChange, onDescChange}, i) =>
                     <Table.Row key={name}>
-                        <Table.TextCell flex={0} flexBasis={majorScale(5)}>{i}</Table.TextCell>
+                        <Table.TextCell flex={0} flexBasis={majorScale(5)}>{i + 1}</Table.TextCell>
                         <Table.EditableCell cursor="text" onChange={onNameChange}>{name}</Table.EditableCell>
                         <Table.EditableCell cursor="text" onChange={onDescChange}>{desc}</Table.EditableCell>
                         <Table.TextCell flex={0} flexBasis={majorScale(10)}>{count}</Table.TextCell>

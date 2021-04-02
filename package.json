@@ -34,9 +34,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "CI=true npm test -- --env=jsdom --coverage",
     "eject": "react-scripts eject",
     "postinstall": "patch-package"
   },
+  
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -79,6 +81,7 @@
     "@types/pretty": "^2.0.0",
     "@types/qrcode.react": "^1.0.1",
     "@types/react-radio-group": "^3.0.2",
+    "jest": "^26.6.0",
     "prettier": "^2.2.1",
     "react-test-renderer": "^17.0.1"
   }

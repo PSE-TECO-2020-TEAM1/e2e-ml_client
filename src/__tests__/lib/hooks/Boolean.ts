@@ -10,7 +10,7 @@ describe('useBoolean tests', () => {
         expect(result.current[0]).toBe(false);
     });
 
-    it('set function sets boolean to true', () => {
+    fit('set function sets boolean to true', () => {
         const { result } = renderHook(() => useBoolean());
 
         act(() => result.current[1]());

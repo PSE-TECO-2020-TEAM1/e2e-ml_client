@@ -140,9 +140,7 @@ interface IHyperparameter {
 interface IModelDetails {
     name: string,
     labelPerformance: ILabelPerformance[],
-    imputation: string,
-    normalizer: string,
-    features: string[],
+    perComponentConfigs: PerComponentConfig[],
     classifier: string,
     hyperparameters: IHyperparameter[],
 }
@@ -407,26 +405,28 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     
     async getModelDetails(w: string, m: string): Promise<IModelDetails> {
         const {
-            sortedFeatures: features,
-            normalization: normalizer,
             labelPerformanceMetrics: labelPerformance,
+            config: {
+                modelName: name,
+                ...configRest
+            },
             ...rest
         } = await this.get<{
-            name: string,
             labelPerformanceMetrics: {
                 label: string,
                 metrics: IMetric[]
             }[],
-            imputation: string,
-            normalization: string,
-            sortedFeatures: string[],
-            classifier: string,
-            hyperparameters: IHyperparameter[],
-            windowSize: number,
-            slidingStep: number
+            config: {
+                modelName: string,
+                windowSize: number,
+                slidingStep: number,
+                classifier: string,
+                perComponentConfigs: PerComponentConfig[]
+                hyperparameters: IHyperparameter[],
+            }
         }>(`/api/workspaces/${w}/models/${m}`);
 
-        return { ...rest, normalizer, features,
+        return { ...rest, ...configRest, name,
             labelPerformance: labelPerformance.map(({ label, metrics }) => ({ label, metrics }))
         };
     }

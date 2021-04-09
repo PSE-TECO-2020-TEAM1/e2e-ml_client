@@ -1,7 +1,8 @@
 import { ModelOptionsProps } from 'components/ModelOptions';
 import { HyperparameterType, TrainingParameters } from 'lib/API/DesktopAPI';
 import assert from 'lib/assert';
-import { useAPI, useBoolean, usePromise } from 'lib/hooks';
+import { useAPI, useAuth, useBoolean, usePromise } from 'lib/hooks';
+import { useHeader } from 'lib/hooks/Header';
 import { useReducer, useState } from 'react';
 
 type State = {
@@ -68,6 +69,8 @@ const mapParamsToClassifierHyperparameterState = (params: TrainingParameters, cl
 };
 
 const useModelOptions = (workspaceId: string): ModelOptionsProps => {
+    useAuth();
+    useHeader({ workspaceId, dangle: 'Create new model' });
     const api = useAPI();
     const [state, dispatch] = useReducer(reducer, getInitialState());
     const [name, onNameChange] = useState('New Model');
@@ -144,7 +147,14 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         onNameChange(name);
     };
 
-    return { state, paramsPH, name, onName, onTrain, isValid: isValid(), didSendRequestCorrectly };
+    const sensorsAndComponents: [string, string][] = [
+        ['Acc', 'x'],
+        ['Acc', 'y'],
+        ['fgdf', 'x'],
+        ['fgdf', 'y']
+    ];
+
+    return { state, paramsPH, name, onName, onTrain, isValid: isValid(), didSendRequestCorrectly, sensorsAndComponents };
 };
 
 export default useModelOptions;

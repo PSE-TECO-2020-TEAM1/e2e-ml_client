@@ -56,15 +56,21 @@ export interface TrainingParameters {
     slidingStep: number,
 }
 
-interface ModelOptions {
-    modelName: string,
+interface PerComponentConfig {
+    sensor: string,
+    component: string,
     imputation: string,
     features: string[],
     normalizer: string,
+}
+
+interface ModelOptions {
+    perComponentConfigs: PerComponentConfig[]
+    modelName: string,
     classifier: string,
     windowSize: number,
     slidingStep: number,
-    hyperparameters: any // FIXME wot
+    hyperparameters: any // wontfix
 }
 
 export interface SensorOptions {

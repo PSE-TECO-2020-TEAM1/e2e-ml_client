@@ -1,6 +1,7 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
 
 export const format = ['Accelerometer X', 'Accelerometer Y', 'Accelerometer Z'];
+export const components = ['x', 'y', 'z'];
 
 export const config: SensorConfiguration = {
     name: 'Accelerometer',

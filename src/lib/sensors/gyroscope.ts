@@ -1,6 +1,7 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
 
 export const format = ['Gyroscope X', 'Gyroscope Y', 'Gyroscope Z'];
+export const components = ['x', 'y', 'z'];
 
 export const config: SensorConfiguration = {
     name: 'Gyroscope',

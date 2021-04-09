@@ -1,3 +1,4 @@
+import Loading from 'components/Loading';
 import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, InlineAlert } from 'evergreen-ui';
 import { TrainingParameters } from 'lib/API/DesktopAPI';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
@@ -9,11 +10,11 @@ import { HyperparameterConfiguration } from './HyperParameterConfiguration';
 export type ParamsType = PromisePack<{
     params: TrainingParameters;
     actions: {
-        selectNormalizer: (n: string) => void;
-        selectImputer: (n: string) => void;
+        selectNormalizer: (sensor: string, component: string, n: string) => void;
+        selectImputer: (sensor: string, component: string, n: string) => void;
+        selectFeatures: (sensor: string, component: string, n: string[]) => void;
         setWindowSize: (n: number) => void;
         setSlidingStep: (n: number) => void;
-        selectFeatures: (n: string[]) => void;
         selectClassifier: (n: string) => void;
         setHyperparameter: (h: string, v: number | string) => void;
     };
@@ -30,30 +31,34 @@ export type State = {
 };
 
 export type ModelOptionsProps = {
+    sensorsAndComponentsPH: PromisePack<[string, readonly string[]][]>,
     paramsPH: ParamsType,
-    state: State,
+    state: State | undefined,
     name: string,
     onName: (n: string) => void
     onTrain: () => void,
     isValid: boolean,
     didSendRequestCorrectly: boolean,
-    sensorsAndComponents: [string, string[]][]
 };
 export const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
 export const mapRGroup = (x: string) => ({ value: x, label: format(x) });
 
-const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly, sensorsAndComponents }: ModelOptionsProps) => {
+const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly, sensorsAndComponentsPH }: ModelOptionsProps) => {
+    if (typeof state === 'undefined') return <Loading/>;
     return <Pane padding={majorScale(2)} display="grid" gridTemplateColumns="2fr 1fr" gap={majorScale(4)}>
         <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
-            {sensorsAndComponents.map(([sensor, components]) => <>
-                <Heading gridColumn="span 3" paddingTop={majorScale(2)}>{sensor}</Heading>
-                {components.map(component => <Pane>
-                    <Heading paddingBottom={majorScale(1)} textAlign="center" size={400} >{`${sensor}, ${component}`}</Heading>
-                    <Pane elevation={1}>
-                        <Component paramsPH={paramsPH} state={state} sensor={sensor} component={component} />
-                    </Pane>
-                </Pane>)}
-            </>)}
+            <Promised promise={sensorsAndComponentsPH} pending={'loading...'}>{(sensorsAndComponents) =>
+                sensorsAndComponents.map(([sensor, components]) => <>
+                    <Heading gridColumn="span 3" paddingTop={majorScale(2)}>{sensor}</Heading>
+                    {components.map(component => <Pane>
+                        <Heading paddingBottom={majorScale(1)} textAlign="center" size={400} >{`${sensor}, ${component}`}</Heading>
+                        <Pane elevation={1}>
+                            <Component paramsPH={paramsPH} state={state} sensor={sensor} component={component} />
+                        </Pane>
+                    </Pane>)}
+                </>)
+            }</Promised>
+            
         </Pane>
 
         <Pane alignSelf="start" top={0} position="sticky" padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>

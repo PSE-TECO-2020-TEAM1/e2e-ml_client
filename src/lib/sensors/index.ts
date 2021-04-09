@@ -1,7 +1,7 @@
 import { UnixTimestamp } from 'lib/utils';
-import { config as accelConfig, implementation as accelImpl, format as accelFormat } from './accelerometer';
-import { config as gyroConfig, implementation as gyroImpl, format as gyroFormat } from './gyroscope';
-import { config as magConfig, implementation as magImpl, format as magFormat } from './magnetometer';
+import { config as accelConfig, implementation as accelImpl, format as accelFormat, components as accelComp } from './accelerometer';
+import { config as gyroConfig, implementation as gyroImpl, format as gyroFormat, components as gyroComp } from './gyroscope';
+import { config as magConfig, implementation as magImpl, format as magFormat, components as magComp } from './magnetometer';
 
 export type SensorName = 'Gyroscope' | 'Accelerometer' | 'Magnetometer';
 export type SamplingRate = number;
@@ -25,6 +25,27 @@ export interface SensorImplementation {
     onRead: (fn: onReadCallback) => void;
     stop: () => void;
 }
+
+export const getSensorTree = <T,>(val: T) => ({
+    'Accelerometer': accelComp.reduce((acc: Record<string, T>, cur) => {
+        acc[cur] = val;
+        return acc;
+    }, {}),
+    'Gyroscope': gyroComp.reduce((acc: Record<string, T>, cur) => {
+        acc[cur] = val;
+        return acc;
+    }, {}),
+    'Magnetometer': magComp.reduce((acc: Record<string, T>, cur) => {
+        acc[cur] = val;
+        return acc;
+    }, {}),
+});
+
+export const sensorComponents: Record<SensorName, readonly string[]> = {
+    'Accelerometer': accelComp,
+    'Gyroscope': gyroComp,
+    'Magnetometer': magComp,
+};
 
 export const sensorFormats: Record<SensorName, readonly string[]> = {
     'Accelerometer': accelFormat,

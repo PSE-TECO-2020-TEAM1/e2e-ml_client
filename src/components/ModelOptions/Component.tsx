@@ -32,14 +32,14 @@ const Accord = ({ header, children }: { header: string, children: React.ReactNod
         </Pane></AccordionItemPanel>
     </AccordionItem>;
 
-export const Component = ({ paramsPH, state }: ComponentProps) =>
+export const Component = ({ paramsPH, state, sensor, component }: ComponentProps) =>
     <Accordion allowMultipleExpanded allowZeroExpanded>
         <Accord header="Imputation">
             <Promised promise={paramsPH} pending={'loading...'}>{({ params: { imputers }, actions: { selectImputer } }) =>
                 <RadioGroup
-                    value={state.imputation}
+                    value={state.imputation[sensor][component]}
                     options={imputers.map(mapRGroup)}
-                    onChange={(e: ETV<string>) => selectImputer(e.target.value)}
+                    onChange={(e: ETV<string>) => selectImputer(sensor, component, e.target.value)}
                 />
             }</Promised>
         </Accord>
@@ -48,9 +48,9 @@ export const Component = ({ paramsPH, state }: ComponentProps) =>
                 <Pane>
                     {features.map(f =>
                         <Checkbox
-                            checked={state.features.includes(f)}
+                            checked={state.features[sensor][component].includes(f)}
                             label={format(f)}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFeatures(handleCheckbox(f, state.features, e.target.checked))}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFeatures(sensor, component, handleCheckbox(f, state.features[sensor][component], e.target.checked))}
                         ></Checkbox>
                     )}
                 </Pane>
@@ -59,9 +59,9 @@ export const Component = ({ paramsPH, state }: ComponentProps) =>
         <Accord header="Normalizer">
             <Promised promise={paramsPH} pending={'loading...'}>{({ params: { normalizers }, actions: { selectNormalizer } }) =>
                 <RadioGroup
-                    value={state.normalizer}
+                    value={state.normalizer[sensor][component]}
                     options={normalizers.map(mapRGroup)}
-                    onChange={(e: ETV<string>) => selectNormalizer(e.target.value)}
+                    onChange={(e: ETV<string>) => selectNormalizer(sensor, component, e.target.value)}
                 />
             }</Promised>
         </Accord>

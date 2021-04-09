@@ -20,9 +20,9 @@ export type ParamsType = PromisePack<{
 }>;
 
 export type State = {
-    normalizer?: string,
-    imputation?: string,
-    features: string[],
+    normalizer: Record<string, Record<string, string>>,
+    imputation: Record<string, Record<string, string>>,
+    features: Record<string, Record<string, string[]>>,
     classifier?: string,
     hyperparameters: Record<string, number | string>,
     slidingStep?: number,

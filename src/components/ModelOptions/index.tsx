@@ -43,7 +43,7 @@ export const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCa
 export const mapRGroup = (x: string) => ({ value: x, label: format(x) });
 
 const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly }: ModelOptionsProps) => {
-    return <Pane padding={majorScale(2)} display="grid" gridTemplateColumns="2fr 1fr" gap={majorScale(2)}>
+    return <Pane padding={majorScale(2)} display="grid" gridTemplateColumns="2fr 1fr" gap={majorScale(4)}>
         <Pane display="flex" flexDirection="column" gap={majorScale(2)}>
             <Component paramsPH={paramsPH} state={state} />
         </Pane>

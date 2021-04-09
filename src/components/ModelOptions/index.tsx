@@ -37,18 +37,26 @@ export type ModelOptionsProps = {
     onTrain: () => void,
     isValid: boolean,
     didSendRequestCorrectly: boolean,
-    sensorsAndComponents: [string, string][]
+    sensorsAndComponents: [string, string[]][]
 };
 export const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
 export const mapRGroup = (x: string) => ({ value: x, label: format(x) });
 
-const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly }: ModelOptionsProps) => {
+const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly, sensorsAndComponents }: ModelOptionsProps) => {
     return <Pane padding={majorScale(2)} display="grid" gridTemplateColumns="2fr 1fr" gap={majorScale(4)}>
-        <Pane display="flex" flexDirection="column" gap={majorScale(2)}>
-            <Component paramsPH={paramsPH} state={state} />
+        <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
+            {sensorsAndComponents.map(([sensor, components]) => <>
+                <Heading gridColumn="span 3" paddingTop={majorScale(2)}>{sensor}</Heading>
+                {components.map(component => <Pane>
+                    <Heading paddingBottom={majorScale(1)} textAlign="center" size={400} >{`${sensor}, ${component}`}</Heading>
+                    <Pane elevation={1}>
+                        <Component paramsPH={paramsPH} state={state} sensor={sensor} component={component} />
+                    </Pane>
+                </Pane>)}
+            </>)}
         </Pane>
 
-        <Pane elevation={1} padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
+        <Pane alignSelf="start" top={0} position="sticky" padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
             <TextInputField {...{ marginBottom: 0 }} onChange={(e: ETV<string>) => onName(e.target.value)} label="Name" value={name} />
             <Heading>Classifier</Heading>
             <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifiers }, actions: { selectClassifier } }) =>

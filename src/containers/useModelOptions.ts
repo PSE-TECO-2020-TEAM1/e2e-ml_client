@@ -147,11 +147,10 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         onNameChange(name);
     };
 
-    const sensorsAndComponents: [string, string][] = [
-        ['Acc', 'x'],
-        ['Acc', 'y'],
-        ['fgdf', 'x'],
-        ['fgdf', 'y']
+    const sensorsAndComponents: [string, string[]][] = [
+        ['Acc', ['x', 'y', 'z']],
+        ['Aasdascc', ['aax', 'yaa', 'az']],
+        ['gyr', ['xas', 'ys', 'z44']]
     ];
 
     return { state, paramsPH, name, onName, onTrain, isValid: isValid(), didSendRequestCorrectly, sensorsAndComponents };

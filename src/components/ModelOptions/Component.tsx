@@ -1,4 +1,4 @@
-import { RadioGroup, Pane, Heading, majorScale, Checkbox } from 'evergreen-ui';
+import { RadioGroup, Pane, Label, majorScale, Checkbox } from 'evergreen-ui';
 import { Promised  } from 'lib/hooks/Promise';
 import { ETV } from 'lib/utils';
 import React from 'react';
@@ -8,6 +8,8 @@ import { format, ParamsType, State, mapRGroup } from '.';
 type ComponentProps = {
     paramsPH: ParamsType,
     state: State,
+    sensor: string,
+    component: string,
 }
 
 const handleCheckbox = (x: string, l: string[], b: boolean) => {
@@ -16,64 +18,51 @@ const handleCheckbox = (x: string, l: string[], b: boolean) => {
     return ret;
 };
 
+const Accord = ({ header, children }: { header: string, children: React.ReactNode }) =>
+    <AccordionItem>
+        <AccordionItemHeading>
+            <AccordionItemButton>
+                <Pane borderBottom="muted" padding={majorScale(2)}>
+                    <Label>{header}</Label>
+                </Pane>
+            </AccordionItemButton>
+        </AccordionItemHeading>
+        <AccordionItemPanel><Pane paddingLeft={majorScale(2)} paddingRight={majorScale(2)} paddingBottom={majorScale(1)}>
+            {children}
+        </Pane></AccordionItemPanel>
+    </AccordionItem>;
+
 export const Component = ({ paramsPH, state }: ComponentProps) =>
     <Accordion allowMultipleExpanded allowZeroExpanded>
-        <AccordionItem>
-            <AccordionItemHeading>
-                <AccordionItemButton>
-                    <Pane borderBottom="muted" padding={majorScale(2)}>
-                        <Heading>Imputation</Heading>
-                    </Pane>
-                </AccordionItemButton>
-            </AccordionItemHeading>
-            <AccordionItemPanel><div>
-                <Promised promise={paramsPH} pending={'loading...'}>{({ params: { imputers }, actions: { selectImputer } }) =>
-                    <RadioGroup
-                        value={state.imputation}
-                        options={imputers.map(mapRGroup)}
-                        onChange={(e: ETV<string>) => selectImputer(e.target.value)}
-                    />
-                }</Promised>
-            </div></AccordionItemPanel>
-        </AccordionItem>
-        <AccordionItem>
-            <AccordionItemHeading>
-                <AccordionItemButton>
-                    <Pane borderBottom="muted" padding={majorScale(2)}>
-                        <Heading>Features</Heading>
-                    </Pane>
-                </AccordionItemButton>
-            </AccordionItemHeading>
-            <AccordionItemPanel><div>
-                <Promised promise={paramsPH} pending={'loading...'}>{({ params: { features }, actions: { selectFeatures } }) =>
-                    <Pane>
-                        {features.map(f =>
-                            <Checkbox
-                                checked={state.features.includes(f)}
-                                label={format(f)}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFeatures(handleCheckbox(f, state.features, e.target.checked))}
-                            ></Checkbox>
-                        )}
-                    </Pane>
-                }</Promised>
-            </div></AccordionItemPanel>
-        </AccordionItem>
-        <AccordionItem>
-            <AccordionItemHeading>
-                <AccordionItemButton>
-                    <Pane borderBottom="muted" padding={majorScale(2)}>
-                        <Heading>Normalizer</Heading>
-                    </Pane>
-                </AccordionItemButton>
-            </AccordionItemHeading>
-            <AccordionItemPanel><div>
-                <Promised promise={paramsPH} pending={'loading...'}>{({ params: { normalizers }, actions: { selectNormalizer } }) =>
-                    <RadioGroup
-                        value={state.normalizer}
-                        options={normalizers.map(mapRGroup)}
-                        onChange={(e: ETV<string>) => selectNormalizer(e.target.value)}
-                    />
-                }</Promised>
-            </div></AccordionItemPanel>
-        </AccordionItem>
+        <Accord header="Imputation">
+            <Promised promise={paramsPH} pending={'loading...'}>{({ params: { imputers }, actions: { selectImputer } }) =>
+                <RadioGroup
+                    value={state.imputation}
+                    options={imputers.map(mapRGroup)}
+                    onChange={(e: ETV<string>) => selectImputer(e.target.value)}
+                />
+            }</Promised>
+        </Accord>
+        <Accord header="Features">
+            <Promised promise={paramsPH} pending={'loading...'}>{({ params: { features }, actions: { selectFeatures } }) =>
+                <Pane>
+                    {features.map(f =>
+                        <Checkbox
+                            checked={state.features.includes(f)}
+                            label={format(f)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFeatures(handleCheckbox(f, state.features, e.target.checked))}
+                        ></Checkbox>
+                    )}
+                </Pane>
+            }</Promised>
+        </Accord>
+        <Accord header="Normalizer">
+            <Promised promise={paramsPH} pending={'loading...'}>{({ params: { normalizers }, actions: { selectNormalizer } }) =>
+                <RadioGroup
+                    value={state.normalizer}
+                    options={normalizers.map(mapRGroup)}
+                    onChange={(e: ETV<string>) => selectNormalizer(e.target.value)}
+                />
+            }</Promised>
+        </Accord>
     </Accordion>;

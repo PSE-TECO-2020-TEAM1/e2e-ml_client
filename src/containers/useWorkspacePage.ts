@@ -10,7 +10,6 @@ import { navigate } from 'raviger';
 import { modelOptions, workspacesListRoute } from 'routes';
 import useTrainingState from 'lib/hooks/TrainingState';
 import { DYNAMIC_UPDATE_INTERVAL } from 'config';
-import { TrainingStateEnum } from 'lib/API/DesktopAPI';
 
 const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
     useAuth();
@@ -45,7 +44,7 @@ const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
         onDeleteClick,
         onRenameClick,
         modelCreateHref,
-        training: [TrainingStateEnum.NO_TRAINING_YET, null]
+        training
     };
 };
 

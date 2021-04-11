@@ -339,7 +339,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
 
     async getTrainingState(w: WorkspaceID): Promise<TrainingState> {
         // return Promise.resolve({ state: TrainingStateEnum.CLASSIFICATION_REPORT, error: null });
-        return await this.get<{ state: TrainingStateEnum, error: null | string }>(`/api/workspaces/${w}/trainingProgress`);
+        return await this.get<{ state: TrainingStateEnum, error: null | string }>(`/api/workspaces/${w}/trainingState`);
     }
     
     async getWorkspaces(): Promise<IWorkspace[]> {

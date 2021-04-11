@@ -1,4 +1,5 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
+import { Gyroscope } from 'motion-sensors-polyfill';
 
 export const format = ['Gyroscope X', 'Gyroscope Y', 'Gyroscope Z'];
 

@@ -1,4 +1,5 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
+import { Accelerometer } from 'motion-sensors-polyfill';
 
 export const format = ['Accelerometer X', 'Accelerometer Y', 'Accelerometer Z'];
 

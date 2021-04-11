@@ -3,12 +3,14 @@ import { useAPI, useAuth } from 'lib/hooks';
 import { useHeader } from 'lib/hooks/Header';
 
 import useSampleList from './useSampleList';
-import useModelOptions from './useModelOptions';
 import useWorkspaceLabelsPage from 'containers/useWorkspaceLabels';
 import useWorkspaceModelsPage from 'containers/useWorkspaceModels';
 import { useState } from 'react';
 import { navigate } from 'raviger';
-import { workspacesListRoute } from 'routes';
+import { modelOptions, workspacesListRoute } from 'routes';
+import useTrainingState from 'lib/hooks/TrainingState';
+import { DYNAMIC_UPDATE_INTERVAL } from 'config';
+import { TrainingStateEnum } from 'lib/API/DesktopAPI';
 
 const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
     useAuth();
@@ -18,7 +20,6 @@ const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
     const [renameName, setRenameName] = useState('');
 
     const sampleProps = useSampleList(workspaceId);
-    const modelOptionsProps = useModelOptions(workspaceId);
     const labelsProps = useWorkspaceLabelsPage(workspaceId);
     const modelsProps = useWorkspaceModelsPage(workspaceId);
 
@@ -33,12 +34,18 @@ const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
         header({ workspaceId });
     };
 
+    const modelCreateHref = modelOptions(workspaceId);
+
+    const training = useTrainingState(workspaceId, DYNAMIC_UPDATE_INTERVAL);
+
     return {
-        sampleProps, modelOptionsProps, labelsProps, modelsProps,
+        sampleProps, labelsProps, modelsProps,
         workspaceRename: renameName,
         onWorkspaceRenameChange: setRenameName,
         onDeleteClick,
-        onRenameClick
+        onRenameClick,
+        modelCreateHref,
+        training: [TrainingStateEnum.NO_TRAINING_YET, null]
     };
 };
 

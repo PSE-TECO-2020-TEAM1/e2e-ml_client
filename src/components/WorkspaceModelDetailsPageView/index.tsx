@@ -14,12 +14,17 @@ export type ModelDetails = {
         }[]
     },
     pars: {
-        imputation: string,
-        features: string[],
-        normalizer: string,
+        perComponentConfigs: {
+            sensor: string,
+            component: string,
+            imputation: string,
+            features: string[],
+            normalizer: string,
+
+        }[]
         classifier: string,
         hyperparameters: { name: string, value: any }[]
-    }
+    },
 };
 
 export type WorkspaceModelDetailsPageViewProps = {
@@ -59,7 +64,7 @@ const WorkspaceModelDetailsPageView = ({
     <aside>
         <header>Model Parameters</header>
         <ul>
-            <li>
+            {/* <li>
                 <em>Imputation:</em>
                 <span>
                     <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { imputation } }) => imputation}</Promised>
@@ -76,7 +81,7 @@ const WorkspaceModelDetailsPageView = ({
                 <span>
                     <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { normalizer } }) => normalizer}</Promised>
                 </span>
-            </li>
+            </li> */}
             <li>
                 <em>Classifier:</em>
                 <span>

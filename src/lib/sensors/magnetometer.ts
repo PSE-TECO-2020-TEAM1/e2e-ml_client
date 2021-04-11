@@ -1,6 +1,7 @@
 import { onReadCallback, SensorConfiguration, SensorImplementation } from './index';
 
 export const format = ['Magnetometer X', 'Magnetometer Y', 'Magnetometer Z'];
+export const components = ['x', 'y', 'z'];
 
 export const config: SensorConfiguration = {
     name: 'Magnetometer',

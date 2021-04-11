@@ -57,15 +57,21 @@ export interface TrainingParameters {
     slidingStep: number,
 }
 
-interface ModelOptions {
-    modelName: string,
+interface PerComponentConfig {
+    sensor: string,
+    component: string,
     imputation: string,
     features: string[],
     normalizer: string,
+}
+
+interface ModelOptions {
+    perComponentConfigs: PerComponentConfig[]
+    modelName: string,
     classifier: string,
     windowSize: number,
     slidingStep: number,
-    hyperparameters: any // FIXME wot
+    hyperparameters: any // wontfix
 }
 
 export interface SensorOptions {
@@ -135,11 +141,20 @@ interface IHyperparameter {
 interface IModelDetails {
     name: string,
     labelPerformance: ILabelPerformance[],
-    imputation: string,
-    normalizer: string,
-    features: string[],
+    perComponentConfigs: PerComponentConfig[],
     classifier: string,
     hyperparameters: IHyperparameter[],
+}
+
+interface TrainingState { state: TrainingStateEnum, error: null | string }
+
+export enum TrainingStateEnum {
+    NO_TRAINING_YET = 'NO_TRAINING_YET',
+    TRAINING_INITIATED = 'TRAINING_INITIATED',
+    FEATURE_EXTRACTION = 'FEATURE_EXTRACTION',
+    MODEL_TRAINING = 'MODEL_TRAINING',
+    CLASSIFICATION_REPORT = 'CLASSIFICATION_REPORT',
+    TRAINING_SUCCESSFUL = 'TRAINING_SUCCESSFUL'
 }
 
 export interface DesktopAPI {
@@ -149,10 +164,10 @@ export interface DesktopAPI {
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>;
     train(w: WorkspaceID, options: ModelOptions): Promise<void>;
-    getTrainingProgress(w: WorkspaceID): Promise<number>;
+    getTrainingState(w: WorkspaceID): Promise<TrainingState>;
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
-    getWorkspaceSensors(): Promise<ISensor[]>;
+    getWorkspaceSensors(w: WorkspaceID): Promise<ISensor[]>;
     getSampleIds(w: WorkspaceID): Promise<SampleID[]>;
     deleteSample(w: WorkspaceID, sample: string): Promise<void>; 
     getDataCollectionID(w: WorkspaceID): Promise<string>;
@@ -253,15 +268,15 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
                 conditions: string[]
             }[]
             features: string[],
-            imputers: string[],
-            normalizers: string[],
+            imputations: string[],
+            normalizations: string[],
             windowSize: number,
             slidingStep: number,
         }
 
         const params = await this.get<JSONIngest>('/api/parameters');
 
-        const { features, imputers, normalizers, classifierSelections, windowSize, slidingStep } = params;
+        const { features, imputations: imputers, normalizations: normalizers, classifierSelections, windowSize, slidingStep } = params;
 
         const options = classifierSelections.reduce<Record<string, ClassifierOptions>>((agg, cur) => {
             const hyperparameters: Record<string, Hyperparameter> = {};
@@ -322,9 +337,9 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.post<ModelOptions, void>(`/api/workspaces/${w}/train`, opt);
     }
 
-    async getTrainingProgress(w: WorkspaceID): Promise<number> {
-        const { progress } = await this.get<{ progress: number }>(`/api/workspaces/${w}/trainingProgress`);
-        return progress;
+    async getTrainingState(w: WorkspaceID): Promise<TrainingState> {
+        // return Promise.resolve({ state: TrainingStateEnum.CLASSIFICATION_REPORT, error: null });
+        return await this.get<{ state: TrainingStateEnum, error: null | string }>(`/api/workspaces/${w}/trainingProgress`);
     }
     
     async getWorkspaces(): Promise<IWorkspace[]> {
@@ -335,8 +350,8 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.post('/api/workspaces/create', { name, sensors });
     }
     
-    getWorkspaceSensors(): Promise<ISensor[]> {
-        throw new Error('Method not implemented.');
+    async getWorkspaceSensors(w: WorkspaceID): Promise<ISensor[]> {
+        return await this.get<ISensor[]>(`/api/workspaces/${w}/sensors`);
     }
     
     async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {
@@ -405,32 +420,34 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
 
     async getModels(w: string): Promise<IModel[]> {
-        const { models: list } = await this.get<{ models: { id: string, name: string }[]}>(`/api/workspaces/${w}/models`);
+        const list = await this.get<{ id: string, name: string }[]>(`/api/workspaces/${w}/models`);
         return list.map(({ id, name }) => ({ id, name }));
     }
     
     async getModelDetails(w: string, m: string): Promise<IModelDetails> {
         const {
-            sortedFeatures: features,
-            normalization: normalizer,
             labelPerformanceMetrics: labelPerformance,
+            config: {
+                modelName: name,
+                ...configRest
+            },
             ...rest
         } = await this.get<{
-            name: string,
             labelPerformanceMetrics: {
                 label: string,
                 metrics: IMetric[]
             }[],
-            imputation: string,
-            normalization: string,
-            sortedFeatures: string[],
-            classifier: string,
-            hyperparameters: IHyperparameter[],
-            windowSize: number,
-            slidingStep: number
+            config: {
+                modelName: string,
+                windowSize: number,
+                slidingStep: number,
+                classifier: string,
+                perComponentConfigs: PerComponentConfig[]
+                hyperparameters: IHyperparameter[],
+            }
         }>(`/api/workspaces/${w}/models/${m}`);
 
-        return { ...rest, normalizer, features,
+        return { ...rest, ...configRest, name,
             labelPerformance: labelPerformance.map(({ label, metrics }) => ({ label, metrics }))
         };
     }

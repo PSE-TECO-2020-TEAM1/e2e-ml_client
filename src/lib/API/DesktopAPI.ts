@@ -3,6 +3,7 @@ import { UnixTimestamp } from 'lib/utils';
 import { del, get, post, put } from './utils';
 
 import LoginController from 'lib/LoginController';
+import { ACCESS_TOKEN_REFRESH_INTERVAL } from 'config';
 
 type Username = string;
 type Password = string;
@@ -173,7 +174,7 @@ export interface DesktopAPI {
 }
 
 export default class SameOriginDesktopAPI implements DesktopAPI {
-    private lc = new LoginController();
+    private lc;
     
     private get<T,>(url: string): Promise<T> {
         return get(this.lc.getAccessToken())<T>(url);
@@ -187,6 +188,10 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     private post<T,Y>(url: string, data: T) {
         return post(this.lc.getAccessToken())<T,Y>(url, data);
     }
+
+    constructor() {
+        this.lc = new LoginController(this);
+    }
     
     async login(username: Username, password: Password): Promise<void> {
         const {
@@ -196,11 +201,16 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         this.lc.login(accessToken, refreshToken);
     }
 
-    async refresh(userId: string, token: string): Promise<void> {
+    async refresh(token: string): Promise<void> {
         const {
             newAccessToken,
             newRefreshToken
-        } = await post()('/auth/refresh', { userId, refreshToken: token });
+        } = await this.post<{
+            refreshToken: string
+        }, {
+            newAccessToken: string,
+            newRefreshToken: string
+        }>('/auth/refresh', { refreshToken: token });
         this.lc.login(newAccessToken, newRefreshToken);
     }
 

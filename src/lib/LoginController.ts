@@ -1,12 +1,11 @@
-const CREDS = 'creds';
-const EXPIRATION = 15 * 60000;
+import { ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_REFRESH_INTERVAL, LOGIN_CONTROLLER_LOCALSTORAGE_CREDS } from 'config';
 
 export default class LoginController {
-    private accessToken: string | undefined = undefined;
-    private refreshToken: string | undefined = undefined;
+    private accessToken: string = '';
+    private refreshToken: string = '';
 
-    constructor() {
-        const stored = localStorage.getItem(CREDS);
+    constructor(api: { refresh: (token: string) => void }) {
+        const stored = localStorage.getItem(LOGIN_CONTROLLER_LOCALSTORAGE_CREDS);
         if (stored === null) return;
         const creds: {
             accessToken: string,
@@ -16,22 +15,24 @@ export default class LoginController {
         if (Date.now() >= creds.timestamp) return; // expired
         this.accessToken = creds.accessToken;
         this.refreshToken = creds.refreshToken;
+
+        setInterval(() => api.refresh(this.refreshToken), ACCESS_TOKEN_REFRESH_INTERVAL);
     }
 
     login(a: string, r: string) {
         this.accessToken = a;
         this.refreshToken = r;
-        localStorage.setItem(CREDS, JSON.stringify({
+        localStorage.setItem(LOGIN_CONTROLLER_LOCALSTORAGE_CREDS, JSON.stringify({
             accessToken: this.accessToken,
             refreshToken: this.refreshToken,
-            timestamp: (new Date(Date.now() + EXPIRATION)).getTime()
+            timestamp: (new Date(Date.now() + ACCESS_TOKEN_EXPIRATION)).getTime()
         }));
     }
 
     logout() {
-        this.accessToken = undefined;
-        this.refreshToken = undefined;
-        localStorage.removeItem(CREDS);
+        this.accessToken = '';
+        this.refreshToken = '';
+        localStorage.removeItem(LOGIN_CONTROLLER_LOCALSTORAGE_CREDS);
     }
 
     getAccessToken() {

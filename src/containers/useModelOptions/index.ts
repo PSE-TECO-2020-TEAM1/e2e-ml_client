@@ -173,7 +173,6 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     const [trainingState, trainingError] = useTrainingState(workspaceId, TRAINING_STATE_CHECK_INTERVAL, didSendRequestCorrectly);
 
     const onName = (name: string) => {
-        clearSentCorrectly();
         onNameChange(name);
     };
 

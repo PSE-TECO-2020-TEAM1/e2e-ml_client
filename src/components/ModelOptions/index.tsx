@@ -81,7 +81,7 @@ const ModelOptions = ({
             <HyperparameterConfiguration paramsPH={paramsPH} state={state} />
             <Pane display="flex" flexDirection="row">
                 {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent!</InlineAlert> : null}
-                <Button marginLeft="auto" disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
+                <Button marginLeft="auto" disabled={!isValid || didSendRequestCorrectly} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
             </Pane>
             {didSendRequestCorrectly
                 ? <TrainingStateCounter

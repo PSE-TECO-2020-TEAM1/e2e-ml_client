@@ -17,6 +17,7 @@ export default class LoginController {
         this.refreshToken = creds.refreshToken;
 
         setInterval(() => api.refresh(this.refreshToken), ACCESS_TOKEN_REFRESH_INTERVAL);
+        setImmediate(() => api.refresh(this.refreshToken)); // this is needed for the case when exiting without refreshing
     }
 
     login(a: string, r: string) {

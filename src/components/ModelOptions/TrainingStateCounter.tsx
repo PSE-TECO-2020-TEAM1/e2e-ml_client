@@ -19,7 +19,7 @@ export const isOngoingTraining = (training: [State, string | null]) => !(trainin
 
 export const TrainingStateCounter = ({ training: [current, error] }: TrainingStateCounterProps) => {
     return error
-        ? <InlineAlert intent="danger">{Error}</InlineAlert>
+        ? <InlineAlert intent="danger">{error}</InlineAlert>
         : <Pane>
             {states.map(([k, v], i) =>
                 <Pane

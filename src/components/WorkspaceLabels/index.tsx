@@ -1,5 +1,7 @@
-import { IconButton, Menu, MoreIcon, Popover, Table, Button, majorScale, Small } from 'evergreen-ui';
+import Form from 'components/Form';
+import { IconButton, Menu, MoreIcon, Popover, Table, Button, majorScale, Small, Heading, TextInput } from 'evergreen-ui';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
+import { ETV } from 'lib/utils';
 import React from 'react';
 
 export type Label = {
@@ -57,10 +59,15 @@ const WorkspaceLabels = ({
                         <Small>No labels created yet, create one below</Small>
                     </Table.Row>}
             </Promised>
-            <Table.Row borderBottom="none">
-                <Table.TextCell flex={0} flexBasis={majorScale(8)}>Name: </Table.TextCell>
-                <Table.EditableCell onChange={onCreateName}>{createName}</Table.EditableCell>
-                <Table.Cell flex={0} flexBasis={majorScale(12)}><Button appearance="primary" onClick={onCreate}>Create</Button></Table.Cell>
+            <Table.Row
+                borderBottom="none" is={Form} onSubmit={onCreate} display="grid"
+                paddingY={majorScale(1)} paddingX={majorScale(2)}
+                alignItems="baseline" gridTemplateColumns="auto 1fr auto"
+                gap={majorScale(2)}
+            >
+                <Heading size={400}>Name: </Heading>
+                <TextInput width="auto" value={createName} onChange={(e: ETV<string>) => onCreateName(e.target.value)}/>
+                <Button appearance="primary">Create</Button>
             </Table.Row>
         </Table.Body>
     </Table>

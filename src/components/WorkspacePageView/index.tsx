@@ -24,7 +24,7 @@ export type WorkspacePageViewProps = {
 }
 
 const Setting = ({ children, onSubmit }: { children: React.ReactNode, onSubmit: () => void }) =>
-    <Pane is={Form} onSubmit={onSubmit} display="flex" justifyContent="space-between">
+    <Pane is={Form} onSubmit={onSubmit} display="flex" justifyContent="space-between" alignItems="baseline">
         {children}
     </Pane>;
 
@@ -58,7 +58,7 @@ const WorkspacePageView = ({
             <Heading>Danger Zone</Heading>
             <Pane elevation={1} padding={majorScale(2)} display="flex" gap={majorScale(2)} flexDirection="column">
                 <Setting onSubmit={onRenameClick}>
-                    <Heading size={400}>Rename Workspace</Heading>
+                    <Heading size={400}>Rename Workspace:</Heading>
                     <TextInput value={workspaceRename} onChange={(e: ETV<string>) => onWorkspaceRenameChange(e.target.value)}/>
                     <Button>Rename</Button>
                 </Setting>

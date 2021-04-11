@@ -77,7 +77,7 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     const [didSendRequestCorrectly, setSentCorrectly, clearSentCorrectly] = useBoolean(false);
     const paramsPH = usePromise(async () => {
         const params = await api.getAvailableTrainingParameters();
-        const availableSensors = await api.getWorkspaceSensors();
+        const availableSensors = await api.getWorkspaceSensors(workspaceId);
         const selectNormalizer = (sensor: string, component: string, n: string) => dispatch({ normalizer: n, sensor, component });
         const selectImputer = (sensor: string, component: string, n: string) => dispatch({ imputation: n, sensor, component });
         const selectFeatures = (sensor: string, component: string, n: string[]) => dispatch({ features: n, sensor, component });
@@ -118,7 +118,7 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     }, []);
 
     const sensorsAndComponentsPH = usePromise(async () => {
-        const availableSensors = await api.getWorkspaceSensors();
+        const availableSensors = await api.getWorkspaceSensors(workspaceId);
         const sensorsAndComponents: [string, readonly string[]][] = availableSensors.map(({ name }) => [name, sensorComponents[name]]);
 
         return sensorsAndComponents;

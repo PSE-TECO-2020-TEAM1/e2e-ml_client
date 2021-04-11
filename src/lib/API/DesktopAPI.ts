@@ -155,7 +155,7 @@ export interface DesktopAPI {
     getTrainingProgress(w: WorkspaceID): Promise<number>;
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
-    getWorkspaceSensors(): Promise<ISensor[]>;
+    getWorkspaceSensors(w: WorkspaceID): Promise<ISensor[]>;
     getSampleIds(w: WorkspaceID): Promise<SampleID[]>;
     deleteSample(w: WorkspaceID, sample: string): Promise<void>; 
     getDataCollectionID(w: WorkspaceID): Promise<string>;
@@ -329,17 +329,8 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.post('/api/workspaces/create', { name, sensors });
     }
     
-    getWorkspaceSensors(): Promise<ISensor[]> { // FIXME murat needs to do this one justice
-        return Promise.resolve([{
-            id: 'asdfsdf',
-            name: 'Accelerometer',
-            samplingRate: 5
-        }, {
-            id: 'asdaf',
-            name: 'Gyroscope',
-            samplingRate: 6
-        }]);
-        // return await this.get<>(`/api/workspaces/${w}/sensors`);
+    async getWorkspaceSensors(w: WorkspaceID): Promise<ISensor[]> {
+        return await this.get<ISensor[]>(`/api/workspaces/${w}/sensors`);
     }
     
     async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {

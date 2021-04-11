@@ -339,7 +339,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
             name: 'Gyroscope',
             samplingRate: 6
         }]);
-        throw new Error('Method not implemented.');
+        // return await this.get<>(`/api/workspaces/${w}/sensors`);
     }
     
     async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {

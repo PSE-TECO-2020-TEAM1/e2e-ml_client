@@ -329,7 +329,16 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.post('/api/workspaces/create', { name, sensors });
     }
     
-    getWorkspaceSensors(): Promise<ISensor[]> {
+    getWorkspaceSensors(): Promise<ISensor[]> { // FIXME murat needs to do this one justice
+        return Promise.resolve([{
+            id: 'asdfsdf',
+            name: 'Accelerometer',
+            samplingRate: 5
+        }, {
+            id: 'asdaf',
+            name: 'Gyroscope',
+            samplingRate: 6
+        }]);
         throw new Error('Method not implemented.');
     }
     

@@ -145,6 +145,17 @@ interface IModelDetails {
     hyperparameters: IHyperparameter[],
 }
 
+interface TrainingState { state: TrainingStateEnum, error: null | string }
+
+export enum TrainingStateEnum {
+    NO_TRAINING_YET = 'NO_TRAINING_YET',
+    TRAINING_INITIATED = 'TRAINING_INITIATED',
+    FEATURE_EXTRACTION = 'FEATURE_EXTRACTION',
+    MODEL_TRAINING = 'MODEL_TRAINING',
+    CLASSIFICATION_REPORT = 'CLASSIFICATION_REPORT',
+    TRAINING_SUCCESSFUL = 'TRAINING_SUCCESSFUL'
+}
+
 export interface DesktopAPI {
     login(username: Username, password: Password): Promise<void>;
     logout(): void;
@@ -152,7 +163,7 @@ export interface DesktopAPI {
     isAuthenticated(): boolean,
     getAvailableTrainingParameters(): Promise<TrainingParameters>;
     train(w: WorkspaceID, options: ModelOptions): Promise<void>;
-    getTrainingProgress(w: WorkspaceID): Promise<number>;
+    getTrainingState(w: WorkspaceID): Promise<TrainingState>;
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
     getWorkspaceSensors(w: WorkspaceID): Promise<ISensor[]>;
@@ -247,15 +258,15 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
                 conditions: string[]
             }[]
             features: string[],
-            imputers: string[],
-            normalizers: string[],
+            imputations: string[],
+            normalizations: string[],
             windowSize: number,
             slidingStep: number,
         }
 
         const params = await this.get<JSONIngest>('/api/parameters');
 
-        const { features, imputers, normalizers, classifierSelections, windowSize, slidingStep } = params;
+        const { features, imputations: imputers, normalizations: normalizers, classifierSelections, windowSize, slidingStep } = params;
 
         const options = classifierSelections.reduce<Record<string, ClassifierOptions>>((agg, cur) => {
             const hyperparameters: Record<string, Hyperparameter> = {};
@@ -316,9 +327,9 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.post<ModelOptions, void>(`/api/workspaces/${w}/train`, opt);
     }
 
-    async getTrainingProgress(w: WorkspaceID): Promise<number> {
-        const { progress } = await this.get<{ progress: number }>(`/api/workspaces/${w}/trainingProgress`);
-        return progress;
+    async getTrainingState(w: WorkspaceID): Promise<TrainingState> {
+        // return Promise.resolve({ state: TrainingStateEnum.CLASSIFICATION_REPORT, error: null });
+        return await this.get<{ state: TrainingStateEnum, error: null | string }>(`/api/workspaces/${w}/trainingProgress`);
     }
     
     async getWorkspaces(): Promise<IWorkspace[]> {
@@ -399,7 +410,7 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
 
     async getModels(w: string): Promise<IModel[]> {
-        const { models: list } = await this.get<{ models: { id: string, name: string }[]}>(`/api/workspaces/${w}/models`);
+        const list = await this.get<{ id: string, name: string }[]>(`/api/workspaces/${w}/models`);
         return list.map(({ id, name }) => ({ id, name }));
     }
     

@@ -8,6 +8,9 @@ import useWorkspaceModelsPage from 'containers/useWorkspaceModels';
 import { useState } from 'react';
 import { navigate } from 'raviger';
 import { modelOptions, workspacesListRoute } from 'routes';
+import useTrainingState from 'lib/hooks/TrainingState';
+import { DYNAMIC_UPDATE_INTERVAL } from 'config';
+import { TrainingStateEnum } from 'lib/API/DesktopAPI';
 
 const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
     useAuth();
@@ -33,13 +36,16 @@ const useWorkspacePage = (workspaceId: string): WorkspacePageViewProps => {
 
     const modelCreateHref = modelOptions(workspaceId);
 
+    const training = useTrainingState(workspaceId, DYNAMIC_UPDATE_INTERVAL);
+
     return {
         sampleProps, labelsProps, modelsProps,
         workspaceRename: renameName,
         onWorkspaceRenameChange: setRenameName,
         onDeleteClick,
         onRenameClick,
-        modelCreateHref
+        modelCreateHref,
+        training: [TrainingStateEnum.NO_TRAINING_YET, null]
     };
 };
 

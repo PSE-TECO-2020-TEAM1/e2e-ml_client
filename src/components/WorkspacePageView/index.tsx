@@ -8,6 +8,8 @@ import WorkspaceLabels, { WorkspaceLabelsProps } from 'components/WorkspaceLabel
 import { ETV } from 'lib/utils';
 import Form from 'components/Form';
 import { Link } from 'raviger';
+import { Training } from 'lib/hooks/TrainingState';
+import TrainingStateCounter, { isOngoingTraining } from 'components/ModelOptions/TrainingStateCounter';
 
 export type WorkspacePageViewProps = {
     sampleProps: SampleListProps,
@@ -18,6 +20,7 @@ export type WorkspacePageViewProps = {
     modelCreateHref: string,
     workspaceRename: string,
     onWorkspaceRenameChange: (n: string) => void,
+    training: Training
 }
 
 const Setting = ({ children, onSubmit }: { children: React.ReactNode, onSubmit: () => void }) =>
@@ -27,7 +30,7 @@ const Setting = ({ children, onSubmit }: { children: React.ReactNode, onSubmit: 
 
 const WorkspacePageView = ({
     sampleProps, labelsProps, modelsProps, modelCreateHref,
-    workspaceRename, onRenameClick, onDeleteClick, onWorkspaceRenameChange
+    workspaceRename, onRenameClick, onDeleteClick, onWorkspaceRenameChange, training
 }: WorkspacePageViewProps) => {
     return <Pane display="grid" gridTemplateColumns={`${majorScale(80)}px ${majorScale(80)}px`} justifyContent="space-evenly" gap={majorScale(4)}>
         <Pane display="flex" gap={majorScale(4)} flexDirection="column">
@@ -38,9 +41,15 @@ const WorkspacePageView = ({
         </Pane>
         <Pane display="flex" gap={majorScale(4)} flexDirection="column">
             <Heading>Workspace Models</Heading>
-            <Pane display="flex" flexDirection="column" gap={majorScale(1)} elevation={1}>
-                <WorkspaceModels {...modelsProps} />
-                <Button marginRight={majorScale(2)} marginBottom={majorScale(1)} alignSelf="flex-end" appearance="primary" is={Link} href={modelCreateHref}>Create new model</Button>
+            <Pane display="grid" gridTemplateColumns="auto 150px" gap={majorScale(1)} elevation={1}>
+                <Pane gridColumn="span 2">
+                    <WorkspaceModels {...modelsProps} />
+                </Pane>
+                {isOngoingTraining(training) ? <Pane padding={majorScale(1)} paddingTop={0}>
+                    <TrainingStateCounter training={training}/>
+                </Pane> : null}
+                <Button disabled={isOngoingTraining(training)} gridColumn="2" marginRight={majorScale(2)}
+                    marginBottom={majorScale(1)} appearance="primary" is={Link} href={modelCreateHref}>Create new model</Button>
             </Pane>
             <Heading>Workspace Labels</Heading>
             <Pane elevation={1}>

@@ -6,6 +6,7 @@ import { ETV } from 'lib/utils';
 import React from 'react';
 import { Component } from './Component';
 import { HyperparameterConfiguration } from './HyperParameterConfiguration';
+import { TrainingStateCounter, State as TrainingState } from './TrainingStateCounter';
 
 export type ParamsType = PromisePack<{
     params: TrainingParameters;
@@ -39,11 +40,16 @@ export type ModelOptionsProps = {
     onTrain: () => void,
     isValid: boolean,
     didSendRequestCorrectly: boolean,
+    currentTrainingState: TrainingState,
+    trainingError: string | null
 };
 export const format = (x: string) => x.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(' ');
 export const mapRGroup = (x: string) => ({ value: x, label: format(x) });
 
-const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly, sensorsAndComponentsPH }: ModelOptionsProps) => {
+const ModelOptions = ({
+    paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly, sensorsAndComponentsPH,
+    currentTrainingState, trainingError
+}: ModelOptionsProps) => {
     if (typeof state === 'undefined') return <Loading/>;
     return <Pane padding={majorScale(2)} display="grid" gridTemplateColumns="2fr 1fr" gap={majorScale(4)}>
         <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
@@ -73,8 +79,15 @@ const ModelOptions = ({ paramsPH, state, name, onName, onTrain, isValid, didSend
             }</Promised>
             <Heading>Hyperparameters</Heading>
             <HyperparameterConfiguration paramsPH={paramsPH} state={state} />
-            <Button disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
-            {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent and accepted!</InlineAlert> : null}
+            <Pane display="flex" flexDirection="row">
+                {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent!</InlineAlert> : null}
+                <Button marginLeft="auto" disabled={!isValid} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
+            </Pane>
+            {didSendRequestCorrectly
+                ? <TrainingStateCounter
+                    training={[currentTrainingState, trainingError]}
+                />
+                : null}
         </Pane>
     </Pane>;
 };

@@ -6,6 +6,8 @@ import { useHeader } from 'lib/hooks/Header';
 import { getSensorTree, sensorComponents } from 'lib/sensors';
 import { useReducer, useState } from 'react';
 import pick from 'object.pick';
+import { TRAINING_STATE_CHECK_INTERVAL } from 'config';
+import useTrainingState from 'lib/hooks/TrainingState';
 
 type State = {
     normalizer: Record<string, Record<string, string>>,
@@ -75,6 +77,7 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
     const [state, dispatch] = useReducer(reducer, undefined as State);
     const [name, onNameChange] = useState('New Model');
     const [didSendRequestCorrectly, setSentCorrectly, clearSentCorrectly] = useBoolean(false);
+
     const paramsPH = usePromise(async () => {
         const params = await api.getAvailableTrainingParameters();
         const availableSensors = await api.getWorkspaceSensors(workspaceId);
@@ -167,12 +170,19 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         setSentCorrectly();
     };
 
+    const [trainingState, trainingError] = useTrainingState(workspaceId, TRAINING_STATE_CHECK_INTERVAL, didSendRequestCorrectly);
+
     const onName = (name: string) => {
         clearSentCorrectly();
         onNameChange(name);
     };
 
-    return { state, paramsPH, name, onName, onTrain, isValid: isValid(), didSendRequestCorrectly, sensorsAndComponentsPH };
+    return {
+        state, paramsPH, name, onName, onTrain, isValid: isValid(),
+        didSendRequestCorrectly, sensorsAndComponentsPH,
+        currentTrainingState: trainingState,
+        trainingError
+    };
 };
 
 export default useModelOptions;

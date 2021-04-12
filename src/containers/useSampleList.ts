@@ -37,7 +37,7 @@ const useSampleList = (workspaceId: string): SampleListProps => {
         default:
             return items;
         }
-    }, [workspaceId, validity]);
+    }, [workspaceId, validity, order]);
 
     const onSampleDelete = async (id: string) => {
         await api.deleteSample(workspaceId, id);

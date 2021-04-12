@@ -39,7 +39,7 @@ const WorkspacePageView = ({
                 <SampleList {...sampleProps} />
             </Pane>
         </Pane>
-        <Pane display="flex" gap={majorScale(4)} flexDirection="column">
+        <Pane alignSelf="start" top={majorScale(10)} position="sticky" display="flex" gap={majorScale(4)} flexDirection="column">
             <Heading>Workspace Models</Heading>
             <Pane display="grid" gridTemplateColumns="auto 150px" gap={majorScale(1)} elevation={1}>
                 <Pane gridColumn="span 2">

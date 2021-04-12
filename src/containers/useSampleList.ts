@@ -1,5 +1,6 @@
 import { SampleListProps } from 'components/SampleList';
 import { useAPI, useInvalidator, usePromise } from 'lib/hooks';
+import { goldenAngleColor, string2NumberHash } from 'lib/utils';
 import { collectRoute, sampleRoute } from 'routes';
 
 const useSampleList = (workspaceId: string): SampleListProps => {
@@ -9,9 +10,14 @@ const useSampleList = (workspaceId: string): SampleListProps => {
     const [validity, flip] = useInvalidator();
 
     const samplesPH = usePromise(async () =>
-        (await api.getSampleIds(workspaceId))
-            .map(id => {
-                return ({ id, href: sampleRoute(workspaceId, id) });
+        (await api.getSamples(workspaceId))
+            .map(({ id, label }) => {
+                return ({
+                    id,
+                    href: sampleRoute(workspaceId, id),
+                    label,
+                    color: goldenAngleColor(string2NumberHash(label))
+                });
             })
     , [workspaceId, validity]);
 

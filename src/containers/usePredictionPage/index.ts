@@ -20,6 +20,7 @@ type Data = Record<SensorName, {
 }[]>;
 
 const createTable = (predictions: string[], start: number, end: number) => {
+    console.log(start, end);
     const modes = [];
     const n = 10;
     for (let i = 0; i < predictions.length - n + 1; i++) {
@@ -82,12 +83,22 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         const start = Math.min(...Object.values(data.current).map(x => x[0]?.timestamp || Infinity));
         const end = Math.max(...Object.values(data.current).map(x => x[x.length - 1]?.timestamp || 0));
 
+        if (state !== State.Resolved) throw new Error('sensor configuration did not arrive');
+        assert(typeof res !== 'undefined');
+
         const formattedData = Object.entries(data.current).map(([k, v]) => ({ sensor: k as SensorName, dataPoints: v }))
-            .filter(v => v.dataPoints.length !== 0);
+            // .filter(v => v.dataPoints.length !== 0);
+            .filter(v => res.sensors.find(x => x.name === v.sensor));
 
         if (formattedData.length === 0) return 0;
+        if (start === null) return 0;
+        if (end === 0) return 0;
 
-        if (globalStart === NaN) setStart(start);
+        console.log('eneskek', start, globalStart);
+        if (Number.isNaN(globalStart)) {
+            console.log('enes', start, globalStart);
+            setStart(start);
+        }
 
         api.predict(predictionId, start, end, formattedData);
         data.current = sensorNameArrayRecordGen();

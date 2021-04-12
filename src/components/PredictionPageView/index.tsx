@@ -17,7 +17,7 @@ type TableType = {
     timeframe: number[];
 }[];
 
-const roundTo2 = (num: number) => Math.round(num * 100) / 100;
+const tableTime = (num: number) => (Math.round(num * 100) / 100) / 1000 + 's';
 
 const renderGraph = (data: DataRecord, format: DataFormat) => {
     const d: {name: string, data: [number, number][]}[] = [];
@@ -44,7 +44,7 @@ const renderTable = (table: TableType) => {
         <Table.Body height={240}>
             {table.map(row => (
                 <Table.Row key={row.timeframe[0] + '-' + row.timeframe[1] + '-' + row.label}>
-                    <Table.TextCell>{roundTo2(row.timeframe[0])} - {roundTo2(row.timeframe[1])}</Table.TextCell>
+                    <Table.TextCell>{tableTime(row.timeframe[0])} - {tableTime(row.timeframe[1])}</Table.TextCell>
                     <Table.TextCell>{row.label}</Table.TextCell>
                 </Table.Row>
             ))}

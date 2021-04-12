@@ -35,19 +35,13 @@ interface SensorDatapoints {
     dataPoints: Datapoint[]
 }
 
-interface PredictionResult {
-    labels: string[],
-    start: UnixTimestamp,
-    end: UnixTimestamp
-}
-
 export interface MobileAPI {
     submitSample(id: SubmissionID, label: LabelID, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void>;
     predict(id: PredictionID, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void>;
     getSubmissionConfiguration(id: SubmissionID): Promise<ISubmissionConfiguration>;
     // discardSubmission(id: SubmissionID): Promise<void>;
     getPredictionConfiguration(id: PredictionID): Promise<IPredictionConfiguration>;
-    getPrediction(id: PredictionID): Promise<PredictionResult>;
+    getPrediction(id: PredictionID): Promise<string[]>;
 }
 
 const post = postRaw();
@@ -57,15 +51,17 @@ class SameOriginMobileAPI implements MobileAPI {
     async predict(id: string, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void> {
         const toSend = {
             predictionId: id,
-            sensorDataPoints: data,
-            start,
-            end
+            sample: {
+                sensorDataPoints: data,
+                start,
+                end
+            }
         };
         return await post('/api/submitData', toSend);
     }
 
-    getPrediction(id: string): Promise<PredictionResult> {
-        return get<PredictionResult>(`/api/predictionResults?predictionId=${id}`);
+    getPrediction(id: string): Promise<string[]> {
+        return get<string[]>(`/api/predictionResults?predictionId=${id}`);
     }
 
     async submitSample(id: string, label: string, start: number, end: number, data: SensorDatapoints[]): Promise<void> {

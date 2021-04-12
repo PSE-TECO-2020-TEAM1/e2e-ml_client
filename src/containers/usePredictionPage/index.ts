@@ -91,7 +91,6 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
 
     const [predictions, setPredictions] = useState<Predictions>();
 
-
     // use forceUpdate to trigger refreshes on updated ref
     const [,,,forceUpdate] = useBoolean();
 
@@ -99,7 +98,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     const sensorsPH = mapPack([state, res, error], v => v.sensors.map(({ name, samplingRate }) => ({ name, rate: samplingRate })));
 
     const stopSensors = () => {
-        if (state !== State.Resolved) throw new Error('sensor configuration not arrived');
+        if (state !== State.Resolved) throw new Error('sensor configuration did not arrive');
         assert(typeof res !== 'undefined');
         const { sensors } = res;
         for (const { name } of sensors) {
@@ -118,8 +117,8 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         data.current = sensorNameArrayRecordGen();
     };
     
+    // Mounting and initiating sensor collection
     useEffect(() => {
-        // Mounting and initiating sensor collection
         if (state !== State.Resolved) return;
         assert(typeof res !== 'undefined');
         const { sensors } = res;
@@ -129,6 +128,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
                 // mutate!
                 data.current[name].push({ timestamp, data: sampleData });
 
+                // remove old values from the graph to increase performance
                 const first = graphData.current[name][0];
                 if (typeof first !== 'undefined' && Date.now() - first.timestamp > GRAPH_OLD_DISCARD) {
                     graphData.current[name].shift();
@@ -142,14 +142,14 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         return stopSensors;         
     }, [state]);
     
+    // send data at this interval
     useInterval(() => {
-        // send data at this interval
         if (isDone) return;
         sendPeriod();
     }, SEND_INTERVAL);
     
+    // receive predictions at this interval
     useInterval(async () => {
-        // receive predictions at this interval
         const pred = await api.getPrediction(predictionId);
         if (pred.labels.length === 0) return;
         setPredictions(old => {

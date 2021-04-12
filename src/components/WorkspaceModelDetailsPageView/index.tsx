@@ -59,24 +59,6 @@ const WorkspaceModelDetailsPageView = ({
                 </Table.Body>
             </Table>
             <Heading>Model Parameters</Heading>
-            {/* <Pane>
-                <Heading>Imputation:</Heading>
-                <Text>
-                    <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { imputation } }) => imputation}</Promised>
-                </Text>
-            </Pane>
-            <Pane>
-                <Heading>Feature Extraction:</Heading>
-                <Text>
-                    <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { features } }) => features.join(', ')}</Promised>
-                </Text>
-            </li>
-            <li>
-                <Heading>Normalizer:</Heading>
-                <Text>
-                    <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { normalizer } }) => normalizer}</Promised>
-                </Text>
-            </li> */}
             <Heading size={400}>Classifier:</Heading>
             <Text>
                 <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { classifier } }) => classifier}</Promised>

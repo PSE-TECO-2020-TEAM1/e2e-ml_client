@@ -51,43 +51,45 @@ const ModelOptions = ({
     currentTrainingState, trainingError
 }: ModelOptionsProps) => {
     if (typeof state === 'undefined') return <Loading/>;
-    return <Pane padding={majorScale(2)} display="grid" gridTemplateColumns="2fr 1fr" gap={majorScale(4)}>
-        <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
-            <Promised promise={sensorsAndComponentsPH} pending={'loading...'}>{(sensorsAndComponents) =>
-                sensorsAndComponents.map(([sensor, components]) => <>
-                    <Heading gridColumn="span 3" paddingTop={majorScale(2)}>{sensor}</Heading>
-                    {components.map(component => <Pane>
-                        <Heading paddingBottom={majorScale(1)} textAlign="center" size={400} >{`${sensor}, ${component}`}</Heading>
-                        <Pane elevation={1}>
-                            <Component paramsPH={paramsPH} state={state} sensor={sensor} component={component} />
-                        </Pane>
-                    </Pane>)}
-                </>)
-            }</Promised>
-            
-        </Pane>
-
-        <Pane alignSelf="start" top={0} position="sticky" padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
-            <TextInputField {...{ marginBottom: 0 }} onChange={(e: ETV<string>) => onName(e.target.value)} label="Name" value={name} />
-            <Heading>Classifier</Heading>
-            <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifiers }, actions: { selectClassifier } }) =>
-                <RadioGroup
-                    value={state.classifier}
-                    options={classifiers.map(mapRGroup)}
-                    onChange={(e: ETV<string>) => selectClassifier(e.target.value)}
-                />
-            }</Promised>
-            <Heading>Hyperparameters</Heading>
-            <HyperparameterConfiguration paramsPH={paramsPH} state={state} />
-            <Pane display="flex" flexDirection="row">
-                {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent!</InlineAlert> : null}
-                <Button marginLeft="auto" disabled={!isValid || didSendRequestCorrectly} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
+    return <Pane display="flex" justifyContent="center">
+        <Pane minWidth={`min(${majorScale(200)}px, 90vw)`} padding={majorScale(2)} display="grid" gridTemplateColumns="3fr 1fr" gap={majorScale(4)}>
+            <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
+                <Promised promise={sensorsAndComponentsPH} pending={'loading...'}>{(sensorsAndComponents) =>
+                    sensorsAndComponents.map(([sensor, components]) => <>
+                        <Heading gridColumn="span 3" paddingTop={majorScale(2)}>{sensor}</Heading>
+                        {components.map(component => <Pane>
+                            <Heading paddingBottom={majorScale(1)} textAlign="center" size={400} >{`${sensor}, ${component}`}</Heading>
+                            <Pane elevation={1}>
+                                <Component paramsPH={paramsPH} state={state} sensor={sensor} component={component} />
+                            </Pane>
+                        </Pane>)}
+                    </>)
+                }</Promised>
+                
             </Pane>
-            {didSendRequestCorrectly
-                ? <TrainingStateCounter
-                    training={[currentTrainingState, trainingError]}
-                />
-                : null}
+
+            <Pane alignSelf="start" top={0} position="sticky" padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>
+                <TextInputField {...{ marginBottom: 0 }} onChange={(e: ETV<string>) => onName(e.target.value)} label="Name" value={name} />
+                <Heading>Classifier</Heading>
+                <Promised promise={paramsPH} pending={'loading...'}>{({ params: { classifiers }, actions: { selectClassifier } }) =>
+                    <RadioGroup
+                        value={state.classifier}
+                        options={classifiers.map(mapRGroup)}
+                        onChange={(e: ETV<string>) => selectClassifier(e.target.value)}
+                    />
+                }</Promised>
+                <Heading>Hyperparameters</Heading>
+                <HyperparameterConfiguration paramsPH={paramsPH} state={state} />
+                <Pane display="flex" flexDirection="row">
+                    {didSendRequestCorrectly ? <InlineAlert intent="success">Training request has been sent!</InlineAlert> : null}
+                    <Button marginLeft="auto" disabled={!isValid || didSendRequestCorrectly} alignSelf="flex-end" appearance="primary" onClick={onTrain}>Train</Button>
+                </Pane>
+                {didSendRequestCorrectly
+                    ? <TrainingStateCounter
+                        training={[currentTrainingState, trainingError]}
+                    />
+                    : null}
+            </Pane>
         </Pane>
     </Pane>;
 };

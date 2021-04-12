@@ -55,7 +55,7 @@ const WorkspaceLabels = ({
                         </Table.Cell>
                     </Table.Row>
                 ):
-                    <Table.Row height={majorScale(12)} display="flex" justifyContent="center" alignItems="center">
+                    <Table.Row height={majorScale(8)} display="flex" justifyContent="center" alignItems="center">
                         <Small>No labels created yet, create one below</Small>
                     </Table.Row>}
             </Promised>

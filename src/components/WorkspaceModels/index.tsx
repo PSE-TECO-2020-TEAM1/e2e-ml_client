@@ -1,4 +1,4 @@
-import { IconButton, majorScale, Menu, MoreIcon, Popover, Table, Button, BarcodeIcon, Tooltip } from 'evergreen-ui';
+import { IconButton, majorScale, Menu, MoreIcon, Popover, Table, Button, BarcodeIcon, Tooltip, Small } from 'evergreen-ui';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { Link } from 'raviger';
 import React from 'react';
@@ -26,7 +26,7 @@ const WorkspaceModels = ({
             <Table.HeaderCell flex={0} flexBasis={majorScale(7)}></Table.HeaderCell>
         </Table.Head>
         <Table.Body>
-            <Promised promise={modelsPH} pending="loading">{m => m.map(({name, id, href, modelDetailsHref, onDelete}, i) =>
+            <Promised promise={modelsPH} pending="loading">{m => m.length > 0 ? m.map(({name, id, href, modelDetailsHref, onDelete}, i) =>
                 <Table.Row key={name}>
                     <Table.TextCell color="muted" flex={0} flexBasis={majorScale(5)}>{i + 1}</Table.TextCell>
                     <Table.TextCell><Button width="100%" appearance="minimal" is={Link} href={modelDetailsHref}>{name}</Button></Table.TextCell>
@@ -49,7 +49,10 @@ const WorkspaceModels = ({
                     {/* <td><button onClick={onDelete}>DEL</button></td> */}
                     {/* <td><Link href={href}><button>QR</button></Link></td> */}
                 </Table.Row>
-            )}
+            ) :
+                <Table.Row height={majorScale(8)} display="flex" justifyContent="center" alignItems="center">
+                    <Small>No models created yet, create one below</Small>
+                </Table.Row>}
             </Promised>
         </Table.Body>
     </Table>

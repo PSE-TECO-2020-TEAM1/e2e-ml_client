@@ -1,8 +1,6 @@
+import { Heading, majorScale, Pane, Table, Text } from 'evergreen-ui';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import React from 'react';
-import styles from './index.module.scss';
-import Wrapper from 'components/Wrapper';
-const { main } = styles;
 
 export type ModelDetails = {
     name: string,
@@ -33,73 +31,79 @@ export type WorkspaceModelDetailsPageViewProps = {
 
 const WorkspaceModelDetailsPageView = ({
     modelDetailsPH,
-}: WorkspaceModelDetailsPageViewProps) => <Wrapper className={main}>
-    <section>
-        <header>Performance Metrics</header>
-        <table>
-            <thead>
-                <tr>
-                    <td>#</td>
-                    <Promised promise={modelDetailsPH} pending={<th>loading...</th>} >{({ perf: { headers } }) => headers.map(h => 
-                        <th key={h} >{h}</th>
+}: WorkspaceModelDetailsPageViewProps) => {
+    console.log(modelDetailsPH);
+    return <Pane display="flex" flexDirection="column" alignItems="center" paddingBottom={majorScale(2)}>
+        <Pane minWidth={majorScale(120)} display="flex" flexDirection="column" gap={majorScale(2)} alignItems="start">
+            <Heading>Performance Metrics</Heading>
+            <Table minWidth={majorScale(120)} elevation={1}>
+                <Table.Head>
+                    <Table.TextHeaderCell>Label</Table.TextHeaderCell>
+                    <Promised promise={modelDetailsPH} pending={<Table.TextHeaderCell>loading...</Table.TextHeaderCell>} >{({ perf: { headers } }) => headers.map(h => 
+                        <Table.TextHeaderCell key={h} >{h}</Table.TextHeaderCell>
                     )}</Promised>
-                </tr>
-            </thead>
-            <tbody>
-                <Promised promise={modelDetailsPH} pending={
-                    <tr>
-                        <th>loading...</th>
-                        <td>loading...</td>
-                    </tr>
-                }>{({ perf: { labels } }) => labels.map(({ name, metrics }) =>
-                        <tr key={name} >
-                            <th>{name}</th>
-                            {metrics.map(({ key, data }) => 
-                                <td key={key} >{data}</td>)}
-                        </tr>)}
-                </Promised>
-            </tbody>
-        </table>
-    </section>
-    <aside>
-        <header>Model Parameters</header>
-        <ul>
-            {/* <li>
-                <em>Imputation:</em>
-                <span>
+                </Table.Head>
+                <Table.Body>
+                    <Promised promise={modelDetailsPH} pending={
+                        <Table.Row>
+                            <Table.TextCell>loading...</Table.TextCell>
+                            <Table.TextCell>loading...</Table.TextCell>
+                        </Table.Row>
+                    }>{({ perf: { labels } }) => labels.map(({ name, metrics }) =>
+                            <Table.Row key={name} >
+                                <Table.TextCell>{name}</Table.TextCell>
+                                {metrics.map(({ key, data }) => 
+                                    <Table.TextCell key={key} >{data}</Table.TextCell>)}
+                            </Table.Row>)}
+                    </Promised>
+                </Table.Body>
+            </Table>
+            <Heading>Model Parameters</Heading>
+            {/* <Pane>
+                <Heading>Imputation:</Heading>
+                <Text>
                     <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { imputation } }) => imputation}</Promised>
-                </span>
-            </li>
-            <li>
-                <em>Feature Extraction:</em>
-                <span>
+                </Text>
+            </Pane>
+            <Pane>
+                <Heading>Feature Extraction:</Heading>
+                <Text>
                     <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { features } }) => features.join(', ')}</Promised>
-                </span>
+                </Text>
             </li>
             <li>
-                <em>Normalizer:</em>
-                <span>
+                <Heading>Normalizer:</Heading>
+                <Text>
                     <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { normalizer } }) => normalizer}</Promised>
-                </span>
+                </Text>
             </li> */}
-            <li>
-                <em>Classifier:</em>
-                <span>
-                    <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { classifier } }) => classifier}</Promised>
-                </span>
-            </li>
-            <li>
-                <em>Hyperparameters:</em>
-                <ul>
-                    <Promised promise={modelDetailsPH} pending={<li>loading...</li>} >{({ pars: { hyperparameters: h } }) =>
-                        h.map(({ name, value }) => <li key={name}>
-                            {name} = {value}
-                        </li>)
-                    }</Promised>
-                </ul>
-            </li>
-        </ul>
-    </aside>
-</Wrapper>;
+            <Heading size={400}>Classifier:</Heading>
+            <Text>
+                <Promised promise={modelDetailsPH} pending={'loading...'} >{({ pars: { classifier } }) => classifier}</Promised>
+            </Text>
+            <Heading size={400}>Hyperparameters:</Heading>
+            <Pane display="flex" flexDirection="column">
+                <Promised promise={modelDetailsPH} pending={<Pane>loading...</Pane>} >{({ pars: { hyperparameters: h } }) =>
+                    h.map(({ name, value }) =>
+                        <Text key={name}>{name} = {value}</Text>
+                    )
+                }</Promised>
+            </Pane>
+            <Heading>Sensor Parameters</Heading>
+            <Pane display="flex" flexDirection="column" gap={majorScale(1)}>
+                <Promised promise={modelDetailsPH} pending={<Pane>loading...</Pane>}>{({ pars: { perComponentConfigs } }) =>
+                    perComponentConfigs.map(({ sensor, component, imputation, features, normalizer }) =>
+                        <Pane display="flex" flexDirection="column">
+                            <Heading size={400}>{sensor}, {component}</Heading>
+                            <Text>Imputation = {imputation}</Text>
+                            <Text>Normalization = {normalizer}</Text>
+                            <Text>Features = {features.join(', ')}</Text>
+                        </Pane>
+                    )
+                }</Promised>
+            </Pane>
+        </Pane>
+    </Pane>;
+};
 
 export default WorkspaceModelDetailsPageView;

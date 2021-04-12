@@ -32,7 +32,7 @@ const WorkspacePageView = ({
     sampleProps, labelsProps, modelsProps, modelCreateHref,
     workspaceRename, onRenameClick, onDeleteClick, onWorkspaceRenameChange, training
 }: WorkspacePageViewProps) => {
-    return <Pane display="grid" gridTemplateColumns={`${majorScale(80)}px ${majorScale(80)}px`} justifyContent="space-evenly" gap={majorScale(4)}>
+    return <Pane display="grid" gridTemplateColumns={`${majorScale(80)}px ${majorScale(80)}px`} justifyContent="space-evenly" gap={majorScale(4)} paddingBottom={majorScale(2)}>
         <Pane display="flex" gap={majorScale(4)} flexDirection="column">
             <Heading>Collected Samples</Heading>
             <Pane elevation={1}>

@@ -26,7 +26,7 @@ export type WorkspaceSampleDetailsPageViewProps = {
 
 const WorkspaceSampleDetailsPageView = ({ labelsPH, samplePH, onLabel, onGraphClick, timeframeAction, timeframeActionName }: WorkspaceSampleDetailsPageViewProps) => {
     const onLabelEvent = useCallback(e => onLabel(e.target.value), [onLabel]);
-    return <Pane>
+    return <Pane paddingBottom={majorScale(2)}>
         <Pane display="flex" gap={majorScale(2)} justifyContent="space-evenly">
             <Pane display="flex" gap={majorScale(2)} alignItems="baseline">
                 <Heading>Label: </Heading>

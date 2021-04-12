@@ -113,6 +113,11 @@ export interface ISensorDatapoints {
     dataPoints: IDatapoint[]
 }
 
+interface ListedSample {
+    label: string,
+    id: string,
+}
+
 interface ISample {
     label: string,
     start: UnixTimestamp,
@@ -168,7 +173,7 @@ export interface DesktopAPI {
     getWorkspaces(): Promise<IWorkspace[]>;
     createWorkspace(name: string, sensors: SensorOptions[]): Promise<boolean>;
     getWorkspaceSensors(w: WorkspaceID): Promise<ISensor[]>;
-    getSampleIds(w: WorkspaceID): Promise<SampleID[]>;
+    getSamples(w: WorkspaceID): Promise<ListedSample[]>;
     deleteSample(w: WorkspaceID, sample: string): Promise<void>; 
     getDataCollectionID(w: WorkspaceID): Promise<string>;
     getPredictionID(w: WorkspaceID, m: ModelID): Promise<string>;
@@ -354,8 +359,8 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
         return await this.get<ISensor[]>(`/api/workspaces/${w}/sensors`);
     }
     
-    async getSampleIds(w: WorkspaceID): Promise<SampleID[]> {
-        return (await this.get<{sampleId: string}[]>(`/api/workspaces/${w}/samples?showDataPoints=false`)).map(v => v.sampleId);
+    async getSamples(w: WorkspaceID): Promise<ListedSample[]> {
+        return (await this.get<{sampleId: string, label: string}[]>(`/api/workspaces/${w}/samples?showDataPoints=false`)).map(v => ({id: v.sampleId, label: v.label }));
     }
     
     async deleteSample(w: WorkspaceID, sample: string): Promise<void> {

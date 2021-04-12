@@ -28,7 +28,7 @@ type Action =
     | { features: string[], sensor: string, component: string }
     | { slidingStep: number }
     | { windowSize: number }
-    | { classifier: string, hyperparameters: Record<string, number | string>, windowSize: number, slidingStep: number }
+    | { classifier: string, hyperparameters: Record<string, number | string>}
     | { type: ActionType.Hyperparameter, parameter: string, value: number | string }
     | { type: ActionType.Override, state: State };
     
@@ -45,7 +45,7 @@ const reducer = (s: State, a: Action): State => {
     }
 
     assert(typeof s !== 'undefined');
-    if ('classifier' in a) return { ...s, classifier: a.classifier, hyperparameters: a.hyperparameters, windowSize: a.windowSize, slidingStep: a.slidingStep };
+    if ('classifier' in a) return { ...s, classifier: a.classifier, hyperparameters: a.hyperparameters };
     if ('normalizer' in a) return { ...s, normalizer: {...s.normalizer, [a.sensor]: {...s.normalizer[a.sensor], [a.component]: a.normalizer}} };
     if ('imputation' in a) return { ...s, imputation: {...s.imputation, [a.sensor]: {...s.imputation[a.sensor], [a.component]: a.imputation}} };
     if ('features' in a) return { ...s, features: {...s.features, [a.sensor]: {...s.features[a.sensor], [a.component]: a.features}} };
@@ -89,9 +89,7 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
         const setSlidingStep = (n: number) => dispatch({ slidingStep: n });
         const selectClassifier = (n: string) => dispatch({
             classifier: n,
-            hyperparameters: mapParamsToClassifierHyperparameterState(params, n),
-            windowSize: params.windowSize,
-            slidingStep: params.slidingStep
+            hyperparameters: mapParamsToClassifierHyperparameterState(params, n)
         });
         const setHyperparameter = (h: string, v: number | string) => dispatch({ type: ActionType.Hyperparameter, parameter: h, value: v });
         

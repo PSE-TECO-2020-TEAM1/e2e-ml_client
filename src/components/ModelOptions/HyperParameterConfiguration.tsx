@@ -22,7 +22,7 @@ export const HyperparameterConfiguration = ({ paramsPH, state }: HyperparameterC
                 <Label>Conditions: </Label>
                 {opt.conditions.map(c => <Text display="block">{c}</Text>)}
             </Pane>
-            <TextInputField {...nMB} label="Window Size" onChange={(e: ETV<string>) => setWindowSize(parseInt(e.target.value))} type="number" step={1} value={state.windowsSize}/>
+            <TextInputField {...nMB} label="Window Size" onChange={(e: ETV<string>) => setWindowSize(parseInt(e.target.value))} type="number" step={1} value={state.windowSize}/>
             <TextInputField {...nMB} label="Sliding Step" onChange={(e: ETV<string>) => setSlidingStep(parseInt(e.target.value))} type="number" step={1} value={state.slidingStep} />
             <Pane display="flex" flexDirection="column" gap={majorScale(1)}>
                 {Object.entries(opt.hyperparameters).map(([k, v]) => {

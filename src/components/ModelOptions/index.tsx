@@ -28,7 +28,7 @@ export type State = {
     classifier?: string,
     hyperparameters: Record<string, number | string>,
     slidingStep?: number,
-    windowsSize?: number
+    windowSize?: number
 };
 
 export type ModelOptionsProps = {
@@ -53,6 +53,7 @@ const ModelOptions = ({
     if (typeof state === 'undefined') return <Loading/>;
     return <Pane display="flex" justifyContent="center">
         <Pane minWidth={`min(${majorScale(200)}px, 90vw)`} padding={majorScale(2)} display="grid" gridTemplateColumns="3fr 1fr" gap={majorScale(4)}>
+            {/* left pane, (sensors) */}
             <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
                 <Promised promise={sensorsAndComponentsPH} pending={'loading...'}>{(sensorsAndComponents) =>
                     sensorsAndComponents.map(([sensor, components]) => <>
@@ -65,7 +66,6 @@ const ModelOptions = ({
                         </Pane>)}
                     </>)
                 }</Promised>
-                
             </Pane>
 
             <Pane alignSelf="start" top={0} position="sticky" padding={majorScale(2)} display="flex" flexDirection="column" gap={majorScale(2)}>

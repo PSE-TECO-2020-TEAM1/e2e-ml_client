@@ -222,16 +222,16 @@ export default class SameOriginDesktopAPI implements DesktopAPI {
     }
 
     async refresh(token: string): Promise<void> {
-        const {
-            newAccessToken,
-            newRefreshToken
-        } = await this.post<{
-            refreshToken: string
-        }, {
-            newAccessToken: string,
-            newRefreshToken: string
-        }>('/auth/refresh', { refreshToken: token });
-        this.lc.login(newAccessToken, newRefreshToken);
+        // const {
+        //     newAccessToken,
+        //     newRefreshToken
+        // } = await this.post<{
+        //     refreshToken: string
+        // }, {
+        //     newAccessToken: string,
+        //     newRefreshToken: string
+        // }>('/auth/refresh', { refreshToken: token });
+        // this.lc.login(newAccessToken, newRefreshToken);
     }
 
     logout() {

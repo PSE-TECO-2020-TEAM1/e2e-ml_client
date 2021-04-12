@@ -32,8 +32,6 @@ describe('WorkspacePage', () => {
             <WorkspacePageView
                 sampleProps={samlist}
                 modelOptionsProps={modopt}
-                labelsHref={'label ref'}
-                modelsHref={'model ref'}
             />,
             div
         );

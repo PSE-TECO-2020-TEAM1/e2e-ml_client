@@ -17,7 +17,6 @@ describe('LoginPage', () => {
                 onUser={noop}
                 onPass={noop}
                 onButton={noop}
-                invalid={false}
             />,
             div
         );
@@ -33,21 +32,15 @@ describe('LoginPage', () => {
                     onUser={noop}
                     onPass={noop}
                     onButton={noop}
-                    invalid={false}
                 />,
                 div
             );
         });
 
         expect(pretty(div.innerHTML)).toMatchInlineSnapshot(`
-            "<div class=\\"main wrapper small\\"><label class=\\"header\\">Please enter your credentials.</label>
-              <div class=\\"MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth\\"><label class=\\"MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled\\" data-shrink=\\"true\\">Username</label>
-                <div class=\\"MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl\\"><input aria-invalid=\\"false\\" type=\\"text\\" class=\\"MuiInputBase-input MuiInput-input\\" value=\\"omer\\"></div>
-              </div>
-              <div class=\\"MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth\\"><label class=\\"MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled\\" data-shrink=\\"true\\">Password</label>
-                <div class=\\"MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl\\"><input aria-invalid=\\"false\\" type=\\"password\\" class=\\"MuiInputBase-input MuiInput-input\\" value=\\"123\\"></div>
-              </div><label class=\\"incorrect \\">Invalid credentials entered.</label><button class=\\"MuiButtonBase-root MuiButton-root MuiButton-text\\" tabindex=\\"0\\" type=\\"button\\"><span class=\\"MuiButton-label\\">Log In</span><span class=\\"MuiTouchRipple-root\\"></span></button>
-            </div>"
+            "<form class=\\"css-nil ub-dspl_flex ub-flx-drct_column ub-gap_16px ub-algn-itms_center ub-box-szg_border-box\\">
+              <h2 class=\\"ub-mt_0px ub-mb_0px ub-fnt-sze_16px ub-f-wght_500 ub-ln-ht_20px ub-ltr-spc_-0-05px ub-fnt-fam_b77syt ub-color_234361 ub-box-szg_border-box\\">Please enter your credentials</h2><input class=\\"css-5ljhhe ub-color_425A70 ub-fnt-fam_b77syt ub-fnt-sze_12px ub-f-wght_400 ub-ln-ht_16px ub-ltr-spc_0 ub-w_280px ub-h_32px ub-pl_10px ub-pr_10px ub-bblr_3px ub-bbrr_3px ub-btlr_3px ub-btrr_3px ub-box-szg_border-box\\" type=\\"text\\" placeholder=\\"Username\\" spellcheck=\\"true\\" aria-invalid=\\"false\\" name=\\"username\\" value=\\"omer\\"><input class=\\"css-5ljhhe ub-color_425A70 ub-fnt-fam_b77syt ub-fnt-sze_12px ub-f-wght_400 ub-ln-ht_16px ub-ltr-spc_0 ub-w_280px ub-h_32px ub-pl_10px ub-pr_10px ub-bblr_3px ub-bbrr_3px ub-btlr_3px ub-btrr_3px ub-box-szg_border-box\\" type=\\"password\\" placeholder=\\"Password\\" spellcheck=\\"true\\" aria-invalid=\\"false\\" name=\\"password\\" value=\\"123\\"><button class=\\"css-69cngj ub-fnt-fam_b77syt ub-mt_0px ub-fnt-sze_12px ub-f-wght_500 ub-ln-ht_32px ub-ltr-spc_0 ub-btrr_3px ub-bbrr_3px ub-btlr_3px ub-bblr_3px ub-pt_0px ub-pb_0px ub-pr_16px ub-pl_16px ub-ml_0px ub-mr_0px ub-mb_0px ub-h_32px ub-pst_relative ub-dspl_inline-flex ub-algn-itms_center ub-flx-wrap_nowrap ub-box-szg_border-box\\">Log In</button>
+            </form>"
         `); /* ... gets filled automatically by jest ... */
     });
 });

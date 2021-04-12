@@ -12,8 +12,6 @@ const SEND_INTERVAL = 200;
 const RECEIVE_INTERVAL = 200;
 const UNKNOWN_LABEL = 'no prediction yet';
 
-const USER_SELECT = 1000;
-
 const GRAPH_OLD_DISCARD = 5000;
 
 type Data = Record<SensorName, {
@@ -21,80 +19,54 @@ type Data = Record<SensorName, {
     data: number[]
 }[]>;
 
-type Prediction = {
-    labels: string[],
-    start: UnixTimestamp,
-    end: UnixTimestamp
-}
-
-type Predictions = {
-    allLabels: Prediction[],
-    lastMode: string,
-    valid: boolean
-}
-
-const lastNWindows = (n: number, predictions: Predictions) => {
-    if (predictions.allLabels.length < n) return UNKNOWN_LABEL;
-    if (!predictions.valid) {
-        // console.log('calculate again');
-        let relevant_labels = [];
-        for (let i = 0; i < n; ++i) {
-            relevant_labels.push(predictions.allLabels[predictions.allLabels.length - 1 - i].labels);
-        }
-        predictions.lastMode = mode(relevant_labels);
-        predictions.valid = true;
+const createTable = (predictions: string[], start: number, end: number) => {
+    const modes = [];
+    const n = 10;
+    for (let i = 0; i < predictions.length - n + 1; i++) {
+        const sliced = predictions.slice(i, i + n);
+        modes.push(mode(sliced));
     }
-    return predictions.lastMode;
-};
-
-const createTable = (predictions: Predictions | undefined) => {
-    // if (typeof predictions === 'undefined') return [];
-
-    // const temp = [];
-    // const n = USER_SELECT / SEND_INTERVAL;
     
-    // for (let index = 0; index < predictions.labels.length - n; index++) {
-    //     const label = mode(predictions.labels.slice(index, index + n));
-    //     temp.push(label);
-    // }
-    
-    // const arr = [];
+    const delta = Math.floor((end - start) / (modes.length));
+    const arr = [];
+    for (const label of modes) {
+        if (arr.length === 0) {
+            arr.push({ label, timeframe: [0, delta] });
+            continue;
+        }
 
-    // const singleTime = SEND_INTERVAL;
+        if (arr[arr.length - 1].label === label) { // coalesce
+            arr[arr.length - 1].timeframe[1] += delta;
+        } else {
+            arr.push({ label, timeframe: [arr[arr.length - 1].timeframe[1], arr[arr.length - 1].timeframe[1] + delta] });
+        }
+    }
 
-    // for (const label of temp) {
-    //     if (arr.length === 0) {
-    //         arr.push({ label, timeframe: [0, singleTime] });
-    //         continue;
-    //     }
-
-    //     if (arr[arr.length - 1].label === label) { // coalesce
-    //         arr[arr.length - 1].timeframe[1] += singleTime;
-    //     } else {
-    //         arr.push({ label, timeframe: [arr[arr.length - 1].timeframe[1], arr[arr.length - 1].timeframe[1] + singleTime] });
-    //     }
-    // }
-
-    // return arr
-
-    return [];
+    return arr;
 };
 
 const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     const api = useAPI();
     const [isDone, setDone] = useBoolean();
+
+    const [globalStart, setStart] = useState<number>(NaN);
+    const [globalEnd, setEnd] = useState<number>(NaN);
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
     const data = useRef<Data>(sensorNameArrayRecordGen());
     const graphData = useRef<Data>(sensorNameArrayRecordGen());
 
-    const [predictions, setPredictions] = useState<Predictions>();
+    const [predictions, setPredictions] = useState<string[]>([]);
 
     // use forceUpdate to trigger refreshes on updated ref
     const [,,,forceUpdate] = useBoolean();
 
-    const [state, res, error] = usePromise(() => api.getPredictionConfiguration(predictionId), [predictionId]);
+    const [state, res, error] = usePromise(() => {
+        api.startPrediction(predictionId);
+        const conf = api.getPredictionConfiguration(predictionId);
+        return conf;
+    }, [predictionId]);
     const sensorsPH = mapPack([state, res, error], v => v.sensors.map(({ name, samplingRate }) => ({ name, rate: samplingRate })));
 
     const stopSensors = () => {
@@ -106,15 +78,21 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         }
     };
 
-    const sendPeriod = () => {
+    const sendPeriod = (): number => {
         const start = Math.min(...Object.values(data.current).map(x => x[0]?.timestamp || Infinity));
         const end = Math.max(...Object.values(data.current).map(x => x[x.length - 1]?.timestamp || 0));
 
         const formattedData = Object.entries(data.current).map(([k, v]) => ({ sensor: k as SensorName, dataPoints: v }))
             .filter(v => v.dataPoints.length !== 0);
 
+        if (formattedData.length === 0) return 0;
+
+        if (globalStart === NaN) setStart(start);
+
         api.predict(predictionId, start, end, formattedData);
         data.current = sensorNameArrayRecordGen();
+
+        return end;
     };
     
     // Mounting and initiating sensor collection
@@ -151,23 +129,15 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     // receive predictions at this interval
     useInterval(async () => {
         const pred = await api.getPrediction(predictionId);
-        if (pred.labels.length === 0) return;
-        setPredictions(old => {
-            if (typeof old === 'undefined') {
-                const temp = [];
-                temp.push(pred);
-                return {allLabels: temp, lastMode: '', valid: false};
-            };
-            old.allLabels.push(pred);
-            old.valid = false;
-            return old;
-        });
+        if (pred.length === 0) return;
+        setPredictions(old => [...old, ...pred]);
     }, RECEIVE_INTERVAL);
 
     const onStop = () => {
         if (state !== State.Resolved) return;
         stopSensors();
-        sendPeriod();
+        const end = sendPeriod();
+        setEnd(end);
         setDone();
     };
 
@@ -180,8 +150,8 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     return {
         isDone,
         data: graphData.current,
-        realtime: predictions ? lastNWindows(USER_SELECT / SEND_INTERVAL, predictions) : UNKNOWN_LABEL, // look at the last 2 elems here // TODO improve
-        table: createTable(predictions),
+        realtime: predictions.length > 0 ? predictions[predictions.length - 1] : UNKNOWN_LABEL,
+        table: !isDone ? [] : createTable(predictions, globalStart, globalEnd),
         format,
         sensorsPH,
         onRestart,

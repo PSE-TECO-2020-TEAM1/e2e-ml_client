@@ -37,9 +37,9 @@ interface SensorDatapoints {
 
 export interface MobileAPI {
     submitSample(id: SubmissionID, label: LabelID, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void>;
-    predict(id: PredictionID, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void>;
     getSubmissionConfiguration(id: SubmissionID): Promise<ISubmissionConfiguration>;
-    // discardSubmission(id: SubmissionID): Promise<void>;
+    startPrediction(id: PredictionID) : Promise<void>;
+    predict(id: PredictionID, start: UnixTimestamp, end: UnixTimestamp, data: SensorDatapoints[]): Promise<void>;
     getPredictionConfiguration(id: PredictionID): Promise<IPredictionConfiguration>;
     getPrediction(id: PredictionID): Promise<string[]>;
 }
@@ -60,6 +60,10 @@ class SameOriginMobileAPI implements MobileAPI {
         return await post('/api/submitData', toSend);
     }
 
+    startPrediction(id: string) {
+        return get<void>(`/api/startPrediction?predictionId=${id}`);
+    }
+    
     getPrediction(id: string): Promise<string[]> {
         return get<string[]>(`/api/predictionResults?predictionId=${id}`);
     }

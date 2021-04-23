@@ -1,9 +1,9 @@
 import { UnixTimestamp } from 'lib/utils';
 import { config as accelConfig, implementation as accelImpl, format as accelFormat, components as accelComp } from './accelerometer';
 import { config as gyroConfig, implementation as gyroImpl, format as gyroFormat, components as gyroComp } from './gyroscope';
-import { config as magConfig, implementation as magImpl, format as magFormat, components as magComp } from './magnetometer';
+// import { config as magConfig, implementation as magImpl, format as magFormat, components as magComp } from './magnetometer';
 
-export type SensorName = 'Gyroscope' | 'Accelerometer' | 'Magnetometer';
+export type SensorName = 'Gyroscope' | 'Accelerometer'; //| 'Magnetometer';
 export type SamplingRate = number;
 export type onReadCallback = (sample: { data: number[], timestamp: UnixTimestamp }) => void;
 
@@ -11,7 +11,7 @@ export type onReadCallback = (sample: { data: number[], timestamp: UnixTimestamp
 export const sensorNameArrayRecordGen = () => ({
     'Accelerometer': [],
     'Gyroscope': [],
-    'Magnetometer': []
+    // 'Magnetometer': []
 });
 
 export interface SensorConfiguration {
@@ -35,32 +35,32 @@ export const getSensorTree = <T,>(val: T) => ({
         acc[cur] = val;
         return acc;
     }, {}),
-    'Magnetometer': magComp.reduce((acc: Record<string, T>, cur) => {
-        acc[cur] = val;
-        return acc;
-    }, {}),
+    // 'Magnetometer': magComp.reduce((acc: Record<string, T>, cur) => {
+    //     acc[cur] = val;
+    //     return acc;
+    // }, {}),
 });
 
 export const sensorComponents: Record<SensorName, readonly string[]> = {
     'Accelerometer': accelComp,
     'Gyroscope': gyroComp,
-    'Magnetometer': magComp,
+    // 'Magnetometer': magComp,
 };
 
 export const sensorFormats: Record<SensorName, readonly string[]> = {
     'Accelerometer': accelFormat,
     'Gyroscope': gyroFormat,
-    'Magnetometer': magFormat,
+    // 'Magnetometer': magFormat,
 };
 
 export const sensorConfigurations: Record<SensorName, SensorConfiguration> = {
     'Accelerometer': accelConfig,
     'Gyroscope': gyroConfig,
-    'Magnetometer': magConfig,
+    // 'Magnetometer': magConfig,
 };
 
 export const sensorImplementations: Record<SensorName, SensorImplementation> = {
     'Accelerometer': accelImpl,
     'Gyroscope': gyroImpl,
-    'Magnetometer': magImpl,
+    // 'Magnetometer': magImpl,
 };

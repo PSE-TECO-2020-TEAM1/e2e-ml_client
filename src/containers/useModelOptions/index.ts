@@ -102,8 +102,8 @@ const useModelOptions = (workspaceId: string): ModelOptionsProps => {
             normalizer: pick(getSensorTree(params.normalizers[0]), availableSensors.map(({ name }) => name)),
             features: pick(getSensorTree(params.features), availableSensors.map(({ name }) => name)),
 
-            windowSize: 10,
-            slidingStep: 5,
+            windowSize: 50,
+            slidingStep: 25,
         };
         dispatch({ type: ActionType.Override, state: newState });
 

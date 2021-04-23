@@ -23,6 +23,7 @@ export interface SensorConfiguration {
 export interface SensorImplementation {
     start: (samplingRate: number) => void;
     onRead: (fn: onReadCallback) => void;
+    onError: (fn: (error: Error) => void) => void;
     stop: () => void;
 }
 

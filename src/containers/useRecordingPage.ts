@@ -6,7 +6,7 @@ import { mapPack, State } from 'lib/hooks/Promise';
 import { sensorFormats as format, sensorImplementations, SensorName, sensorNameArrayRecordGen } from 'lib/sensors';
 import { UnixTimestamp } from 'lib/utils';
 import { useQueryParams } from 'raviger';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { countdownQueryParam, createCollectionLink, durationQueryParam, labelQueryParam } from 'routes';
 
 type Data = Record<SensorName, {
@@ -22,6 +22,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     const [duration, beginDur] = useCountdown(parseFloat(initDur) * 1000);
     const [isRecording, setRecord, clearRecord] = useBoolean(false);
     const [canSend, , clearSend] = useBoolean(true);
+    const [shownError, setError] = useState<Error | null>(null);
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
@@ -31,6 +32,15 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
 
     const [state, res, error] = usePromise(() => api.getSubmissionConfiguration(submissionId), [submissionId]);
     const sensorsPH = mapPack([state, res, error], v => v.sensors.map(({ name, samplingRate }) => ({ name, rate: samplingRate })));
+
+    const stopSensors = () => {
+        if (state !== State.Resolved) throw new Error('sensor configuration did not arrive');
+        assert(typeof res !== 'undefined');
+        const { sensors } = res;
+        for (const { name } of sensors) {
+            sensorImplementations[name].stop();
+        }
+    };
 
     useEffect(() => {
         if (state === State.Resolved) beginCnt();
@@ -57,9 +67,12 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
                 data.current[name].push({ timestamp, data: sampleData });
                 forceUpdate();
             });
+            sensorImplementations[name].onError(error => {
+                stopSensors();
+                setError(error);
+            });
             sensorImplementations[name].start(samplingRate);
         }
-         
     }, [beginDur, countdown, duration, forceUpdate, isRecording, res, setRecord]);
 
     useEffect(() => {
@@ -96,7 +109,7 @@ const useRecordingPage = (submissionId: string): RecordingPageViewProps => {
     useBareHeader('Record Data');
     return { onSend, data: data.current, format, label, sensorsPH, isRecording, countdown: countdown / 1000,
         remaining: duration / 1000, isPre: !isRecording && countdown !== 0, canSend,
-        reconfigureLink: createCollectionLink(submissionId), onRestart
+        reconfigureLink: createCollectionLink(submissionId), onRestart, error: shownError
     };
 };
 

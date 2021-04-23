@@ -4,13 +4,14 @@ export const format = ['Gyroscope X', 'Gyroscope Y', 'Gyroscope Z'];
 export const components = ['x', 'y', 'z'];
 
 export const config: SensorConfiguration = {
-    name: 'Gyroscope',
+    name: 'Accelerometer',
     maxSamplingRate: 100,
     defaultSamplingRate: 50,
 } as const;
 
 export const implementation: SensorImplementation = ((() => { // FIXME implement sensor collection
     let f: onReadCallback = () => {};
+    let handleError = (e: Error) => {};
     const handler = (ac: { target: { x: number; y: number; z: number; }}) => {
         f({ timestamp: Date.now(), data: [ac.target.x, ac.target.y, ac.target.z] });
     };
@@ -20,22 +21,22 @@ export const implementation: SensorImplementation = ((() => { // FIXME implement
         try {
             const res = await navigator.permissions.query({ name: 'gyroscope' });
             if (res.state === 'denied') {
-                console.log('denied');
+                handleError(new Error('Sensor permission denied.'));
                 return;    
             };
             accel = new Gyroscope({ referenceFrame: 'device', frequency: rate });
             accel.addEventListener('error', () => {
-                console.log('Cannot connect to the sensor.');
+                handleError(new Error('Cannot connect to the sensor.'));
             });
             accel.addEventListener('reading', handler);
             accel.start();
         } catch (error) {
             if (error.name === 'SecurityError') {
-                console.log('Sensor construction was blocked by a feature policy.');
+                handleError(new Error('Sensor construction was blocked by a feature policy.'));
             } else if (error.name === 'ReferenceError') {
-                console.log('Sensor is not supported by the User Agent.');
+                handleError(new Error('Sensor is not supported by the User Agent.'));
             } else {
-                throw error;
+                handleError(new Error('Sensor couldn\'t start.'));
             }
         }
     };
@@ -48,5 +49,9 @@ export const implementation: SensorImplementation = ((() => { // FIXME implement
         console.log('sensor read callback given');
         f = fn;
     };
-    return { start, stop, onRead };
+    const onError = (fn: (e: Error) => void) => {
+        console.log('sensor error callback given');
+        handleError = fn;
+    };
+    return { start, stop, onRead, onError };
 })());

@@ -51,6 +51,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
 
     const [globalStart, setStart] = useState<number>(NaN);
     const [globalEnd, setEnd] = useState<number>(NaN);
+    const [errorShowed, setError] = useState<Error | null>(null);
     
     // keep sensor data as a MUTABLE array. Reason: performance suffers hard 
     // when recreating the array from stratch on each sensor update
@@ -79,6 +80,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     };
 
     const sendPeriod = (): number => {
+        if (error) return globalEnd;
         const start = Math.min(...Object.values(data.current).map(x => x[0]?.timestamp || Infinity));
         const end = Math.max(...Object.values(data.current).map(x => x[x.length - 1]?.timestamp || 0));
 
@@ -110,6 +112,10 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         const { sensors } = res;
 
         for (const { name, samplingRate } of sensors) {
+            sensorImplementations[name].onError(error => {
+                stopSensors();
+                setError(error);
+            });
             sensorImplementations[name].onRead(({ data: sampleData, timestamp }) => {
                 // mutate!
                 data.current[name].push({ timestamp, data: sampleData });
@@ -150,7 +156,6 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
     };
 
     const onRestart = () => {
-        // FIXME: add getPrediction cause of backend quirks
         window.location.reload(); // TODO: handle this better pls
     };
 
@@ -163,7 +168,8 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         format,
         sensorsPH,
         onRestart,
-        onStop
+        onStop,
+        error: errorShowed
     };
 };
 

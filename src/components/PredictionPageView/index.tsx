@@ -1,4 +1,5 @@
 import Graph from 'components/Graph';
+import { AppleError } from 'components/RecordingPageView/AppleError';
 import { Pane, majorScale, Heading, Text, Button, Table, Strong } from 'evergreen-ui';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { SensorName } from 'lib/sensors';
@@ -63,26 +64,31 @@ export type PredictionPageViewProps = {
     }[]>,
     onRestart: () => void,
     onStop: () => void,
-    table: TableType
+    table: TableType,
+    error: Error | null
 }
 
-const PredictionPageView = ({ isDone, data, realtime, format, sensorsPH, onRestart, onStop, table }: PredictionPageViewProps) => {
+const PredictionPageView = ({ isDone, data, realtime, format, sensorsPH, onRestart, onStop, table, error }: PredictionPageViewProps) => {
     return <Pane gap={majorScale(2)} display="grid" gridTemplateColumns={'0 minmax(0, 1fr) minmax(0, 1fr) 0'}>
-        <Heading gridColumn="2 / span 2">{isDone ? 'Identification complete' : 'Identifying actions'}</Heading>
-        <Text gridColumn="2 / span 2">Realtime prediction: <Strong>{realtime}</Strong></Text>
-        {isDone
-            ? <Pane gridColumn="2 / span 2">
-                {renderTable(table)}
-            </Pane>
-            : <Pane gridColumn="1 / span 4">
-                {renderGraph(data, format)}
-            </Pane>
-        }
-        <Heading gridColumn="2 / span 2" >Selected Sensors and Sampling Rates:</Heading>
-        <Promised promise={sensorsPH} pending={'loading...'}>{sensors =>
-            sensors.map(({ name, rate }, i) => <Text gridColumn={(i % 2) + 2} key={name} >{name} ({rate} Hz)</Text>)
-        }</Promised>
-        <Button appearance="primary" gridColumn="2 / span 2" onClick={isDone ? onRestart : onStop}>{!isDone ? 'Stop Classifying' : 'Restart Classifying'}</Button>
+        {error ? <Pane gridColumn="2 / span 2">
+            <AppleError error={error}/>
+        </Pane> : <>
+            <Heading gridColumn="2 / span 2">{isDone ? 'Identification complete' : 'Identifying actions'}</Heading>
+            <Text gridColumn="2 / span 2">Realtime prediction: <Strong>{realtime}</Strong></Text>
+            {isDone
+                ? <Pane gridColumn="2 / span 2">
+                    {renderTable(table)}
+                </Pane>
+                : <Pane gridColumn="1 / span 4">
+                    {renderGraph(data, format)}
+                </Pane>
+            }
+            <Heading gridColumn="2 / span 2" >Selected Sensors and Sampling Rates:</Heading>
+            <Promised promise={sensorsPH} pending={'loading...'}>{sensors =>
+                sensors.map(({ name, rate }, i) => <Text gridColumn={(i % 2) + 2} key={name} >{name} ({rate} Hz)</Text>)
+            }</Promised>
+            <Button appearance="primary" gridColumn="2 / span 2" onClick={isDone ? onRestart : onStop}>{!isDone ? 'Stop Classifying' : 'Restart Classifying'}</Button>
+        </>}
     </Pane>;
 };
 

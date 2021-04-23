@@ -6,6 +6,7 @@ import { Link } from 'raviger';
 import WorkspaceCreation, { WorkspaceCreationProps } from 'components/WorkspaceCreation';
 import { Pane, Dialog, Button, majorScale, Text } from 'evergreen-ui';
 import { useBoolean } from 'lib/hooks';
+import { useMobile } from 'lib/hooks/Mobile';
 
 export type WorkspaceListPageProps = {
     workspaceCreationProps: WorkspaceCreationProps,
@@ -14,8 +15,9 @@ export type WorkspaceListPageProps = {
 
 const WorkspacesListPage = ({ workspacesPH, workspaceCreationProps }: WorkspaceListPageProps) => {
     const [isShown, setShown, clearShown] = useBoolean();
+    const isMobile = useMobile();
     return (
-        <Pane display="flex" flexDirection="column" alignItems="center" position="relative" gap={majorScale(2)}>
+        <Pane display="flex" flexDirection="column" alignItems="center" position="relative" gap={majorScale(2)} paddingBottom={majorScale(2)}>
             <Dialog
                 isShown={isShown}
                 title="Create a new workspace"
@@ -30,7 +32,7 @@ const WorkspacesListPage = ({ workspacesPH, workspaceCreationProps }: WorkspaceL
                     ? <Pane display="flex" justifyContent="center" alignItems="center" minHeight={majorScale(10)}>
                         <Text>No workspaces yet.</Text>
                     </Pane>
-                    : <Pane display="grid" gap={majorScale(2)} gridTemplateColumns="1fr 1fr 1fr 1fr">
+                    : <Pane display="grid" gap={majorScale(2)} gridTemplateColumns={isMobile ? '1fr' : '1fr 1fr 1fr 1fr'}>
                         {w.map(({ text, href }) =>
                             <Button height={majorScale(7)} display="inline-block" minWidth={majorScale(20)} textAlign="center" appearance="minimal" is={Link} key={text} href={href}>{text}</Button>)}
                     </Pane>

@@ -1,6 +1,7 @@
 import Loading from 'components/Loading';
 import { RadioGroup, TextInputField, Pane, Heading, majorScale, Button, InlineAlert } from 'evergreen-ui';
 import { TrainingParameters } from 'lib/API/DesktopAPI';
+import { useMobile } from 'lib/hooks/Mobile';
 import { Promised, PromisePack } from 'lib/hooks/Promise';
 import { ETV } from 'lib/utils';
 import React from 'react';
@@ -50,9 +51,16 @@ const ModelOptions = ({
     paramsPH, state, name, onName, onTrain, isValid, didSendRequestCorrectly, sensorsAndComponentsPH,
     currentTrainingState, trainingError
 }: ModelOptionsProps) => {
+    const isMobile = useMobile();
     if (typeof state === 'undefined') return <Loading/>;
     return <Pane display="flex" justifyContent="center">
-        <Pane minWidth={`min(${majorScale(200)}px, 90vw)`} padding={majorScale(2)} display="grid" gridTemplateColumns="3fr 1fr" gap={majorScale(4)}>
+        <Pane
+            minWidth={isMobile ? '100vw' : `min(${majorScale(200)}px, 90vw)`}
+            padding={majorScale(2)}
+            display="grid"
+            gridTemplateColumns={isMobile ? '1fr' : '3fr 1fr'}
+            gap={majorScale(4)}
+        >
             {/* left pane, (sensors) */}
             <Pane display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={majorScale(2)} alignItems="start" alignContent="start">
                 <Promised promise={sensorsAndComponentsPH} pending={'loading...'}>{(sensorsAndComponents) =>

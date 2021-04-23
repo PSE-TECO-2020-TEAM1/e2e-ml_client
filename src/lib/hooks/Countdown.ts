@@ -8,7 +8,6 @@ const useCounter = (from: number = 1000, refresh: number = 100): [remaining: num
     const [value, setValue] = useState<number>(from);
 
     const tick = useCallback(() => {
-        console.log('tick', value);
         const current = Date.now();
         setValue(v => from - (current - init.current));
     }, [from, value]);

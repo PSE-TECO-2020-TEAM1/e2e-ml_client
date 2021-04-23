@@ -32,7 +32,6 @@ export type WorkspaceModelDetailsPageViewProps = {
 const WorkspaceModelDetailsPageView = ({
     modelDetailsPH,
 }: WorkspaceModelDetailsPageViewProps) => {
-    console.log(modelDetailsPH);
     return <Pane display="flex" flexDirection="column" alignItems="center" paddingBottom={majorScale(2)}>
         <Pane minWidth={majorScale(120)} display="flex" flexDirection="column" gap={majorScale(2)} alignItems="start">
             <Heading>Performance Metrics</Heading>

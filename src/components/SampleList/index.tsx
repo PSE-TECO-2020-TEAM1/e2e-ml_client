@@ -54,7 +54,6 @@ const SortedHeaderCell = ({ order, setOrder, children, ...rest }: SortedHeaderCe
                     ]}
                     selected={order}
                     onChange={value => {
-                        console.log(value, order);
                         setOrder(value);
                         close();
                     }}

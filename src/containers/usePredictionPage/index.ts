@@ -20,7 +20,6 @@ type Data = Record<SensorName, {
 }[]>;
 
 const createTable = (predictions: string[], start: number, end: number) => {
-    console.log(start, end);
     const modes = [];
     const n = 10;
     for (let i = 0; i < predictions.length - n + 1; i++) {
@@ -94,9 +93,7 @@ const usePredictionPage = (predictionId: string): PredictionPageViewProps => {
         if (start === null) return 0;
         if (end === 0) return 0;
 
-        console.log('eneskek', start, globalStart);
         if (Number.isNaN(globalStart)) {
-            console.log('enes', start, globalStart);
             setStart(start);
         }
 

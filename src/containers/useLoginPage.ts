@@ -3,7 +3,7 @@ import { useQueryParams, navigate } from 'raviger';
 
 import { useAPI, useMountEffect } from 'lib/hooks';
 
-import { rootRoute } from 'routes';
+import { workspacesListRoute } from 'routes';
 import { LoginPageViewProps } from 'components/LoginPageView';
 import { useLoginHeader } from 'lib/hooks/Header';
 
@@ -16,7 +16,7 @@ const useLoginPage = (): LoginPageViewProps => {
     const [{ ref }] = useQueryParams();
 
     useMountEffect(() => {
-        if (api.isAuthenticated()) navigate(rootRoute);
+        if (api.isAuthenticated()) navigate(workspacesListRoute);
     });
 
     const onUser = useCallback((str: string) => {
@@ -30,7 +30,7 @@ const useLoginPage = (): LoginPageViewProps => {
     const onButton = async () => {
         await api.login(user, pass);
         if (ref) navigate(ref);
-        else navigate(rootRoute);
+        else navigate(workspacesListRoute);
     };
 
     return { user, pass, onUser, onPass, onButton };

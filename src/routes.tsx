@@ -47,8 +47,9 @@ const RecordingPage = ({ submissionId }: QueryParams) => <RecordingPageView {...
 const PredictionPage = ({ predictionId }: QueryParams) => <PredictionPageView {...usePredictionPage(predictionId)} />;
 
 const routing = {
-    '/': () => <WorkspacesListPage />,
+    '/dashboard': () => <WorkspacesListPage />,
     '/login': () => <LoginPage />,
+    '/': () => <LoginPage />, // can put a real landing page on this route
     '/signup': () => <SignupPage />,
     '/w/:workspaceId': ({ workspaceId } : QueryParams) => <WorkspacePage workspaceId={workspaceId} />,
     '/w/:workspaceId/collect': ({ workspaceId } : QueryParams) => <WorkspaceCollectDataPage workspaceId={workspaceId} />,
@@ -65,8 +66,8 @@ const routing = {
 };
 export default routing;
 
-export const workspacesListRoute = '/';
-export const rootRoute = workspacesListRoute;
+export const workspacesListRoute = '/dashboard';
+export const rootRoute = '/';
 export const loginRoute = '/login';
 export const signupRoute = '/signup';
 export const workspaceRoute = (workspaceId: string) => `/w/${workspaceId}`;
